@@ -45,20 +45,18 @@
   <main>
     <!-- ============ HERO ============ -->
     <section class="hero" id="hero">
-      <!-- Fond : images/image 55.png (2x, 2880x1276) -->
+      <!-- Fond : images/image 55.png (3772x1668) -->
       <div class="hero-haze" aria-hidden="true"></div>
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="hero-fx" aria-hidden="true">
-        <span class="tv-glow"></span>
-      </div>
+      <div class="hero-bg" aria-hidden="true"><span class="tv-screen"></span></div>
       <div class="hero-fireflies" aria-hidden="true"></div>
       <div class="hero-glow" aria-hidden="true"></div>
-      <!-- Image : images/feuille.png (retournée en miroir, comme sur la maquette) -->
-      <div class="hero-leaf" aria-hidden="true"><span></span></div>
+      <!-- Image : images/profile.png (retournée en miroir, comme sur la maquette) -->
+      <div class="hero-woman" aria-hidden="true"></div>
 
       <div class="hero-content">
         <h1 class="hero-title">
-          <span class="line"><span>Vos chambre valent q’une</span></span>
+          <span class="line"><span>Vos chambre</span></span>
+          <span class="line"><span>valent q’une</span></span>
           <span class="line line-muted"><span>commission de 20%</span></span>
         </h1>
 
@@ -79,7 +77,9 @@
         <div class="response-info">
           <p>Réponse sous</p>
           <div class="response-value">
-            <span class="response-icon" aria-hidden="true"></span>
+            <span class="response-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/><path class="tick" d="M8.5 14.5l2.2 2.2 4.8-4.6"/></svg>
+            </span>
             <strong><span class="counter" data-target="48">0</span> H</strong>
           </div>
         </div>
@@ -143,6 +143,72 @@
     </section>
   </main>
 
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="contact" data-reveal>
+    <!-- Image : images/logo footer.png (3261 x 734) -->
+    <div class="footer-logo" role="img" aria-label="Tropi'Com"></div>
+    <!-- Image : images/image 55.png, retournée en miroir -->
+    <div class="footer-hill" aria-hidden="true"><span class="tv-screen"></span></div>
+    <div class="footer-fireflies" aria-hidden="true"></div>
+
+    <nav class="footer-col footer-nav" aria-label="Navigation du pied de page">
+      <h2 class="footer-title">Navigation</h2>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">L’Agence</a></li>
+        <li><a href="#">Réalisation</a></li>
+        <li><a href="#">Expertises</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-col footer-contact">
+      <h2 class="footer-title">Restons en contact</h2>
+      <ul>
+        <li><a href="mailto:admin@tropicomagency.com" class="footer-mail">admin@tropicomagency.com</a></li>
+        <li><a href="tel:+40746907300">+40 746 907 300</a></li>
+        <li><a href="tel:+261386049449">+261 38 60 494 49</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col footer-social">
+      <h2 class="footer-title footer-title-lg">Suivez-nous</h2>
+      <ul>
+        <li><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg></a></li>
+        <li><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" class="stroke"><rect x="1.1" y="1.1" width="21.8" height="21.8" rx="6.2"/><circle cx="12" cy="12" r="4.9"/><circle cx="18.2" cy="5.8" r=".7" class="dot"/></svg></a></li>
+        <li><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 0h20a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm1.6 9v11.4h3.6V9H3.6zm1.8-5.6a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2zM9.4 9v11.4H13v-5.6c0-1.5.3-3 2.1-3 1.8 0 1.9 1.7 1.9 3.1v5.5h3.5v-6.3c0-3.1-.7-5.4-4.3-5.4-1.7 0-2.9.9-3.4 1.8V9H9.4z"/></svg></a></li>
+        <li><a href="#" aria-label="TikTok"><svg viewBox="3.9 3 17 18" preserveAspectRatio="none" class="tt"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 0 1-2.6 2.5 2.6 2.6 0 0 1-2.6-2.6c0-1.7 1.7-3 3.4-2.5V9.7c-3.5-.5-6.5 2.2-6.5 5.6 0 3.3 2.8 5.7 5.7 5.7 3.1 0 5.7-2.6 5.7-5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3s-1.9.1-3.2-1.5z"/></svg></a></li>
+      </ul>
+    </div>
+
+    <ul class="footer-info">
+      <li>
+        <svg viewBox="0 0 24 24" class="info-pin"><path fill-rule="evenodd" d="M12 2a7.5 7.5 0 0 0-7.5 7.5C4.5 15 12 22 12 22s7.5-7 7.5-12.5A7.5 7.5 0 0 0 12 2zm0 10.4a2.9 2.9 0 1 1 0-5.8 2.9 2.9 0 0 1 0 5.8z"/></svg>
+        <span>Andrefan’Amboijanahary,<br>Antananarivo 101 Madagascar</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" class="info-cal"><path d="M6.5 2.5h2.2v2h6.6v-2h2.2v2h1.6a1.9 1.9 0 0 1 1.9 1.9v2.7H3V6.4a1.9 1.9 0 0 1 1.9-1.9h1.6v-2zM3 10.6h18v9.5a1.9 1.9 0 0 1-1.9 1.9H4.9A1.9 1.9 0 0 1 3 20.1v-9.5z"/></svg>
+        <span>Lundi – Vendredi de 9 à 17 heures</span>
+      </li>
+    </ul>
+
+    <!-- Newsletter -->
+    <form class="footer-news" onsubmit="event.preventDefault(); this.classList.add('sent');">
+      <label class="sr-only" for="news-mail">Votre adresse e-mail</label>
+      <input type="email" id="news-mail" placeholder="Rakoto@gmail" required>
+      <button type="submit" class="cta news-btn">
+        <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="cta-label">S’abonner</span>
+      </button>
+    </form>
+
+    <p class="footer-copy">Copyright©2027 Tropi’com Agency. Tous droits réservés.</p>
+    <ul class="footer-legal">
+      <li><a href="#">Conditions d’utilisation</a></li>
+      <li><a href="#">Politique de confidentialité</a></li>
+    </ul>
+  </footer>
+
   <script>
     const navbar = document.getElementById('navbar');
     const burger = document.getElementById('burger');
@@ -155,18 +221,27 @@
 
     // Lucioles sur tout le hero
     const fireflies = document.querySelector('.hero-fireflies');
-    // 25 lucioles : environ 2/3 sur la moitié gauche, 1/3 sur la droite
-    for (let i = 0; i < 25; i++) {
+    const r = (min, max) => (Math.random() * (max - min) + min).toFixed(2);
+    const addFirefly = (box, left, top) => {
       const f = document.createElement('span');
       f.className = 'firefly';
-      const r = (min, max) => (Math.random() * (max - min) + min).toFixed(2);
-      f.style.left = (i % 3 === 2 ? r(50, 97) : r(3, 50)) + '%';
-      f.style.top = r(5, 98) + '%';
+      f.style.left = left + '%';
+      f.style.top = top + '%';
       f.style.setProperty('--s', r(2, 4) + 'px');
       f.style.setProperty('--d', r(6, 12) + 's');
       f.style.setProperty('--delay', r(0, 8) + 's');
       f.style.setProperty('--dx', r(-30, 30) + 'px');
-      fireflies.appendChild(f);
+      box.appendChild(f);
+    };
+    // 25 lucioles : environ 2/3 sur la moitié gauche, 1/3 sur la droite
+    for (let i = 0; i < 25; i++) {
+      addFirefly(fireflies, i % 3 === 2 ? r(50, 97) : r(3, 50), r(5, 98));
+    }
+
+    // Lucioles du footer : 25, surtout au-dessus de l'herbe (moitié basse)
+    const footFireflies = document.querySelector('.footer-fireflies');
+    for (let i = 0; i < 25; i++) {
+      addFirefly(footFireflies, r(2, 98), i % 4 === 3 ? r(30, 60) : r(60, 98));
     }
 
     // Compteur 0 → 48
