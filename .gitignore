@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+npm-debug.log*
+
+# originaux des images (lourds, non utilisés par le site)
+sources-images/
+# prompt brut du composant 21st.dev
+case-stack-scroll.txt

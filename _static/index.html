@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tropi'Com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Bangers&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar" id="navbar">
+    <!-- Logo -->
+    <a href="#" class="logo" aria-label="Tropi'Com - Accueil">
+      <img src="images/Logo 1 1.svg" alt="Tropi'Com" width="110" height="60">
+    </a>
+
+    <nav class="nav" id="nav">
+      <ul>
+        <li><a href="#" class="active">Accueil</a></li>
+        <li><a href="#">L'Agence</a></li>
+        <li><a href="#">Expertises</a></li>
+        <li><a href="#">Réalisations</a></li>
+        <li><a href="#">Ressources</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <a href="#" class="cta cta-mobile">
+        <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="cta-label">Demander un diagnostic</span>
+      </a>
+    </nav>
+
+    <a href="#" class="cta cta-desktop">
+      <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      <span class="cta-label">Demander un diagnostic</span>
+    </a>
+
+    <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <!-- Fond : images/image 55.png (3772x1668) -->
+      <div class="hero-haze" aria-hidden="true"></div>
+      <div class="hero-bg" aria-hidden="true"><span class="tv-screen"></span></div>
+      <div class="hero-fireflies" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <!-- Image : images/profile.png (retournée en miroir, comme sur la maquette) -->
+      <div class="hero-woman" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="line"><span>Vos chambre</span></span>
+          <span class="line"><span>valent q’une</span></span>
+          <span class="line line-muted"><span>commission de 20%</span></span>
+        </h1>
+
+        <a href="#" class="cta hero-cta">
+          <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <span class="cta-label">Entrer en contact</span>
+        </a>
+
+        <p class="hero-text">
+          Tropi'Com est l'agence de marketing digital et d'automatisation dédiée aux hôtels, lodges et
+          tour-opérateurs de l'Océan Indien. Marque, contenu, acquisition, intelligence artificielle : nous
+          construisons la machine qui remplit vos chambres en direct, et qui continue de tourner en basse saison.
+        </p>
+      </div>
+
+      <!-- Carte "Réponse sous 48 H" -->
+      <div class="response-card">
+        <div class="response-info">
+          <p>Réponse sous</p>
+          <div class="response-value">
+            <span class="response-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/><path class="tick" d="M8.5 14.5l2.2 2.2 4.8-4.6"/></svg>
+            </span>
+            <strong><span class="counter" data-target="48">0</span> H</strong>
+          </div>
+        </div>
+        <!-- Image : images/Rectangle 27.png -->
+        <div class="response-img"></div>
+      </div>
+
+      <!-- Destinations -->
+      <ul class="hero-tags">
+        <li>Madagascar</li>
+        <li>Maurice</li>
+        <li>La Réunion</li>
+        <li>Seychelles</li>
+      </ul>
+    </section>
+
+    <!-- ============ INTRO ============ -->
+    <section class="intro" id="intro" data-reveal>
+      <h2 class="intro-title">
+        <span class="intro-row">
+          <span class="w"><span>Votre établissement</span></span>
+          <!-- Image : images/Rectangle 28.png -->
+          <span class="pill pill-ananas"><span class="pill-img"></span></span>
+          <span class="w muted"><span>est exceptionnel.</span></span>
+        </span>
+        <span class="intro-row">
+          <span class="w"><span>Sa visibilité</span></span>
+          <!-- Image : images/Rectangle 29.png -->
+          <span class="pill pill-coco"><span class="pill-img"></span></span>
+          <span class="w"><span>ne l'est pas encore.</span></span>
+        </span>
+      </h2>
+
+      <div class="intro-cols">
+        <p>
+          Un lieu rare. Une équipe qui fait la différence. Des voyageurs qui repartent conquis et le disent.<br>
+          Et pourtant. La basse saison creuse vos taux d'occupation. Les plateformes prélèvent leur part sur chaque nuitée.
+          Votre site reçoit des visites mais génère peu de demandes. Vos réseaux sociaux attirent des curieux, rarement des
+          clients. Et vos meilleurs avis dorment sans réponse.
+        </p>
+        <div>
+          <p>Le problème n'est pas votre offre. C'est la distance entre ce que vous valez et ce que le voyageur perçoit avant de réserver.</p>
+          <p>Nous existons pour supprimer cette distance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ils nous ont fait confiance -->
+    <section class="trust" id="references" data-reveal>
+      <!-- Image : images/ruban-confiance.png -->
+      <div class="trust-ribbon" aria-hidden="true"></div>
+      <h2 class="trust-title"><span>Ils nous ont</span><span>fait confiance</span></h2>
+      <!-- Image : images/logos-partenaires.png (20 logos de 64 × 64) -->
+      <div class="trust-strip" role="img" aria-label="Logos de nos partenaires : Tourisme Artisanat, Alizé Voyages, Iendriko, Le Boulanger, Ulahara Café, Lenka, JK'Hay, Havoana Land, Zà Bibikely, BiJor, Confédération du Tourisme de Madagascar, Veezit, Ortana, ORTVak, CanCham, Nature &amp; Culture Madagascar, GassyTour, Rencontre avec Dago, Globatlas, Aventure Madagascar">
+        <div class="trust-track"></div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES (5 expertises) ============ -->
+    <section class="svc" id="expertises">
+      <!-- Ligne qui relie les cartes : se dessine au scroll (magenta → doré → bleu canard) -->
+      <svg class="svc-line" viewBox="0 0 1440 4208" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="svcGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="4208">
+            <stop offset="0" stop-color="#de0b7d"/>
+            <stop offset="0.38" stop-color="#de0b7d"/>
+            <stop offset="0.511" stop-color="#a07d1c"/>
+            <stop offset="0.547" stop-color="#473609"/>
+            <stop offset="0.587" stop-color="#7e6314"/>
+            <stop offset="0.684" stop-color="#256161"/>
+            <stop offset="0.713" stop-color="#266262"/>
+            <stop offset="0.846" stop-color="#193c3d"/>
+            <stop offset="0.92" stop-color="#081617"/>
+          </linearGradient>
+        </defs>
+        <path class="svc-path" d="M 350 560 C 350 700 350 820 351 900 C 352 1100 400 1380 470 1600 C 560 1880 760 2130 900 2196 C 1080 2280 1240 2265 1236 2312 C 1232 2370 1060 2400 880 2470 C 600 2600 380 2770 300 2895 C 200 3030 260 3300 600 3450 C 760 3530 900 3560 1000 3600 C 1200 3680 1350 3760 1460 3870"/>
+        <circle class="svc-tip" r="9" cx="350" cy="560"/>
+      </svg>
+
+      <!-- Panneau « 05 EXPERTISES » : reste visible pendant le défilement des cartes -->
+      <div class="svc-aside">
+        <div class="svc-panel">
+          <!-- Image : images/Cercle animation.png — l'anneau de texte tourne, le centre reste fixe -->
+          <div class="svc-badge" aria-hidden="true"><span class="ring"></span><span class="core"></span></div>
+          <p class="svc-kicker"><img src="images/services-traits.png" alt="" width="62" height="28"><span>Services professionnels<sup>®</sup></span></p>
+          <h2 class="svc-heading"><span class="big">05</span> EXPERTISES.</h2>
+          <p class="svc-sub">Un seul objectif : la réservation<br>directe.</p>
+          <p class="svc-text">Vous pouvez nous confier un chantier précis ou<br>l’ensemble du dispositif. Dans les deux cas, chaque<br>livrable est jugé sur ce qu’il rapporte, pas sur ce qu’il<br>coûte.</p>
+          <p class="svc-count" aria-hidden="true"><span class="cur">01</span><span class="bar"><i></i></span><span>05</span></p>
+          <a href="#" class="cta svc-btn">
+            <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+            <span class="cta-label">Découvrir plus</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="svc-cards">
+      <article class="svc-card" style="--i: 0; --r: -3deg; --accent: #ffffff; --img-y: 165; --lead-y: 390.5; --desc-y: 437.2; --tags-x: 380; --tags-y: 418.5;">
+        <h3 class="svc-title"><span class="svc-num">01./</span><span class="svc-name">Marque &amp; Direction artistique</span></h3>
+        <div class="svc-imgs">
+          <div class="svc-img"><img src="images/services/01-a.jpg" alt="Canette noire en mouvement" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+          <div class="svc-img"><img src="images/services/01-b.jpg" alt="Papeterie d’hôtel dans un plateau en rotin" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+        </div>
+        <p class="svc-lead">Une identité qui justifie votre prix</p>
+        <p class="svc-desc">Plateforme de marque, identité visuelle, <br>charte, nommage, éditions print, <br>signalétique, brand book multi- <br>établissements.</p>
+        <div class="svc-tags">
+          <p><span>Identité visuelle</span><span>Systèmes typographiques</span></p>
+          <p><span>Conception de logo</span><span>Conception d’emballage</span></p>
+          <p><span>Positionnement de la marque</span><span>Refonte de l’image</span></p>
+        </div>
+        <span class="svc-dot" aria-hidden="true"></span>
+      </article>
+      <article class="svc-card" style="--i: 1; --r: 3deg; --accent: #ffffff; --img-y: 165; --lead-y: 430.5; --desc-y: 478.2; --tags-x: 481; --tags-y: 418.5;">
+        <h3 class="svc-title"><span class="svc-num">02./</span><span class="svc-name">Contenu &amp; Studio</span></h3>
+        <div class="svc-imgs">
+          <div class="svc-img"><img src="images/services/02-a.jpg" alt="Appareil photo en tournage" loading="lazy" style="object-position: center 70%"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+          <div class="svc-img"><img src="images/services/02-b.jpg" alt="Clap de cinéma" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+        </div>
+        <p class="svc-lead">Trois jours de tournage. Trois mois de contenu</p>
+        <p class="svc-desc">Photo, vidéo, drone, format vertical, visites immersives, <br>UGC et créateurs, rédaction FR/EN, calendrier éditorial.</p>
+        <div class="svc-tags">
+          <p><span>Création de contenu</span><span>Drone</span></p>
+          <p><span>Photo &amp; Vidéo</span><span>SEO</span></p>
+          <p><span>UGC</span><span>Production audiovisuelle</span></p>
+        </div>
+        <span class="svc-dot" aria-hidden="true"></span>
+      </article>
+      <article class="svc-card svc-card--2l" style="--i: 2; --r: -3deg; --accent: var(--rose-magenta); --img-y: 193; --lead-y: 394.5; --desc-y: 442.2; --tags-x: 404; --tags-y: 422.5;">
+        <h3 class="svc-title"><span class="svc-num">03./</span><span class="svc-name">Academy -Coaching &amp; <br>Formation</span></h3>
+        <div class="svc-imgs">
+          <div class="svc-img"><img src="images/services/03-a.jpg" alt="Prise de notes sur un bloc-notes" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+          <div class="svc-img"><img src="images/services/03-b.jpg" alt="Formation en ligne" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+        </div>
+        <p class="svc-lead">Vos équipes deviennent autonomes</p>
+        <p class="svc-desc">Réseaux sociaux, e-mailing, création de <br>contenu, e-réputation. En présentiel sur <br>votre site ou à distance, avec certification <br>interne.</p>
+        <div class="svc-tags">
+          <p><span>Académie</span><span>Coaching</span></p>
+          <p><span>Formation</span><span>DéveloppementDesCompétence</span></p>
+          <p><span>Mentorat</span><span>Refonte de l’image</span></p>
+        </div>
+        <span class="svc-dot" aria-hidden="true"></span>
+      </article>
+      <article class="svc-card svc-card--2l" style="--i: 3; --r: 3deg; --accent: #c9a227; --img-y: 193; --lead-y: 411; --desc-y: 457.2; --tags-x: 471; --tags-y: 418.5;">
+        <h3 class="svc-title"><span class="svc-num">04./</span><span class="svc-name">Acquisition &amp; Réservation <br>directe</span></h3>
+        <div class="svc-imgs">
+          <div class="svc-img"><img src="images/services/04-a.jpg" alt="Indicateur de performance en 3D" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+          <div class="svc-img"><img src="images/services/04-b.jpg" alt="Lettres SEO" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+        </div>
+        <p class="svc-lead">Être trouvé à l’instant précis où l’on vous cherche</p>
+        <p class="svc-desc">Site et moteur de réservation, SEO, GEO (IA génératives), <br>Google Ads &amp; Hotel Ads, méta-moteurs, réseaux sociaux, e- <br>mailing, distribution et plateformes de voyage.</p>
+        <div class="svc-tags">
+          <p><span>Référencement</span><span>Moteur de réservation</span></p>
+          <p><span>Acquisition de clients</span><span>SEO</span></p>
+          <p><span>Conversion</span><span>Référencement local</span></p>
+        </div>
+        <span class="svc-dot" aria-hidden="true"></span>
+      </article>
+      <article class="svc-card" style="--i: 4; --r: -3deg; --accent: var(--jaune-dore); --img-y: 165; --lead-y: 413; --desc-y: 459.2; --tags-x: 512; --tags-y: 418.5;">
+        <h3 class="svc-title"><span class="svc-num">05./</span><span class="svc-name">Labs - IA &amp; Automatisation</span></h3>
+        <div class="svc-imgs">
+          <div class="svc-img"><img src="images/services/05-a.jpg" alt="Robot qui écrit sur un clavier" loading="lazy" style="object-position: center 62%"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+          <div class="svc-img"><img src="images/services/05-b.jpg" alt="Main robotique et main humaine autour des lettres AI" loading="lazy" style="object-position: center"><span class="svc-voir" aria-hidden="true">VOIR</span></div>
+        </div>
+        <p class="svc-lead">Répondre à tout le monde, en quatre langues, en continu</p>
+        <p class="svc-desc">Agent conversationnel sur votre site et WhatsApp, veille et pilotage d’e- <br>réputation, réponse assistée aux avis, recommandation personnalisée <br>pendant le séjour.</p>
+        <div class="svc-tags">
+          <p><span>IA conversationnelle</span><span>Automatisation</span></p>
+          <p><span>Chatbots</span><span>WhatsApp</span></p>
+          <p><span>Personnalisation</span><span>Expérience client</span></p>
+        </div>
+        <span class="svc-dot" aria-hidden="true"></span>
+      </article>
+      </div>
+    </section>
+
+    <section class="demo">
+      <p>Section suivante…</p>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="contact" data-reveal>
+    <!-- Image : images/logo footer.png (3261 x 734) -->
+    <div class="footer-logo" role="img" aria-label="Tropi'Com"></div>
+    <!-- Image : images/image 55.png, retournée en miroir -->
+    <div class="footer-hill" aria-hidden="true"><span class="tv-screen"></span></div>
+    <div class="footer-fireflies" aria-hidden="true"></div>
+
+    <nav class="footer-col footer-nav" aria-label="Navigation du pied de page">
+      <h2 class="footer-title">Navigation</h2>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">L’Agence</a></li>
+        <li><a href="#">Réalisation</a></li>
+        <li><a href="#">Expertises</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer-col footer-contact">
+      <h2 class="footer-title">Restons en contact</h2>
+      <ul>
+        <li><a href="mailto:admin@tropicomagency.com" class="footer-mail">admin@tropicomagency.com</a></li>
+        <li><a href="tel:+40746907300">+40 746 907 300</a></li>
+        <li><a href="tel:+261386049449">+261 38 60 494 49</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col footer-social">
+      <h2 class="footer-title footer-title-lg">Suivez-nous</h2>
+      <ul>
+        <li><a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg></a></li>
+        <li><a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" class="stroke"><rect x="1.1" y="1.1" width="21.8" height="21.8" rx="6.2"/><circle cx="12" cy="12" r="4.9"/><circle cx="18.2" cy="5.8" r=".7" class="dot"/></svg></a></li>
+        <li><a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 0h20a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm1.6 9v11.4h3.6V9H3.6zm1.8-5.6a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2zM9.4 9v11.4H13v-5.6c0-1.5.3-3 2.1-3 1.8 0 1.9 1.7 1.9 3.1v5.5h3.5v-6.3c0-3.1-.7-5.4-4.3-5.4-1.7 0-2.9.9-3.4 1.8V9H9.4z"/></svg></a></li>
+        <li><a href="#" aria-label="TikTok"><svg viewBox="3.9 3 17 18" preserveAspectRatio="none" class="tt"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 0 1-2.6 2.5 2.6 2.6 0 0 1-2.6-2.6c0-1.7 1.7-3 3.4-2.5V9.7c-3.5-.5-6.5 2.2-6.5 5.6 0 3.3 2.8 5.7 5.7 5.7 3.1 0 5.7-2.6 5.7-5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3s-1.9.1-3.2-1.5z"/></svg></a></li>
+      </ul>
+    </div>
+
+    <ul class="footer-info">
+      <li>
+        <svg viewBox="0 0 24 24" class="info-pin"><path fill-rule="evenodd" d="M12 2a7.5 7.5 0 0 0-7.5 7.5C4.5 15 12 22 12 22s7.5-7 7.5-12.5A7.5 7.5 0 0 0 12 2zm0 10.4a2.9 2.9 0 1 1 0-5.8 2.9 2.9 0 0 1 0 5.8z"/></svg>
+        <span>Andrefan’Amboijanahary,<br>Antananarivo 101 Madagascar</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" class="info-cal"><path d="M6.5 2.5h2.2v2h6.6v-2h2.2v2h1.6a1.9 1.9 0 0 1 1.9 1.9v2.7H3V6.4a1.9 1.9 0 0 1 1.9-1.9h1.6v-2zM3 10.6h18v9.5a1.9 1.9 0 0 1-1.9 1.9H4.9A1.9 1.9 0 0 1 3 20.1v-9.5z"/></svg>
+        <span>Lundi – Vendredi de 9 à 17 heures</span>
+      </li>
+    </ul>
+
+    <!-- Newsletter -->
+    <form class="footer-news" onsubmit="event.preventDefault(); this.classList.add('sent');">
+      <label class="sr-only" for="news-mail">Votre adresse e-mail</label>
+      <input type="email" id="news-mail" placeholder="Rakoto@gmail" required>
+      <button type="submit" class="cta news-btn">
+        <span class="cta-icon"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+        <span class="cta-label">S’abonner</span>
+      </button>
+    </form>
+
+    <p class="footer-copy">Copyright©2027 Tropi’com Agency. Tous droits réservés.</p>
+    <ul class="footer-legal">
+      <li><a href="#">Conditions d’utilisation</a></li>
+      <li><a href="#">Politique de confidentialité</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    const burger = document.getElementById('burger');
+    const nav = document.getElementById('nav');
+
+    // Barre compacte au scroll
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    });
+
+    // Lucioles sur tout le hero
+    const fireflies = document.querySelector('.hero-fireflies');
+    const r = (min, max) => (Math.random() * (max - min) + min).toFixed(2);
+    const addFirefly = (box, left, top) => {
+      const f = document.createElement('span');
+      f.className = 'firefly';
+      f.style.left = left + '%';
+      f.style.top = top + '%';
+      f.style.setProperty('--s', r(2, 4) + 'px');
+      f.style.setProperty('--d', r(6, 12) + 's');
+      f.style.setProperty('--delay', r(0, 8) + 's');
+      f.style.setProperty('--dx', r(-30, 30) + 'px');
+      box.appendChild(f);
+    };
+    // 25 lucioles : environ 2/3 sur la moitié gauche, 1/3 sur la droite
+    for (let i = 0; i < 25; i++) {
+      addFirefly(fireflies, i % 3 === 2 ? r(50, 97) : r(3, 50), r(5, 98));
+    }
+
+    // Lucioles du footer : 25, surtout au-dessus de l'herbe (moitié basse)
+    const footFireflies = document.querySelector('.footer-fireflies');
+    for (let i = 0; i < 25; i++) {
+      addFirefly(footFireflies, r(2, 98), i % 4 === 3 ? r(30, 60) : r(60, 98));
+    }
+
+    // Newsletter : la pilule s'élargit avec l'e-mail saisi
+    const newsInput = document.getElementById('news-mail');
+    const newsSizer = document.createElement('span');
+    newsSizer.className = 'news-sizer';
+    newsSizer.setAttribute('aria-hidden', 'true');
+    newsInput.after(newsSizer);
+    const fitNews = () => {
+      newsSizer.textContent = newsInput.value || newsInput.placeholder;
+      newsInput.style.width = newsSizer.offsetWidth + 'px';
+    };
+    newsInput.addEventListener('input', fitNews);
+    window.addEventListener('resize', fitNews);
+    document.fonts.ready.then(fitNews);
+
+    // Compteur 0 → 48
+    const counter = document.querySelector('.counter');
+    setTimeout(() => {
+      const target = +counter.dataset.target;
+      const duration = 1400;
+      const start = performance.now();
+      const tick = now => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        counter.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, 1900);
+
+    // Parallaxe à la souris (fond + halo + carte)
+    const hero = document.getElementById('hero');
+    const glow = hero.querySelector('.hero-glow');
+    const card = hero.querySelector('.response-card');
+    hero.addEventListener('mousemove', e => {
+      const r = hero.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      glow.style.translate = `${x * 40}px ${y * 30}px`;
+      card.style.translate = `${x * 14}px ${y * 14}px`;
+    });
+    hero.addEventListener('mouseleave', () => {
+      glow.style.translate = card.style.translate = '';
+    });
+
+    // ===== Services : ligne dessinée au scroll, cartes qui se posent, carte active =====
+    const svc = document.querySelector('.svc');
+    if (svc) {
+      const path = svc.querySelector('.svc-path');
+      const tip = svc.querySelector('.svc-tip');
+      const cards = [...svc.querySelectorAll('.svc-card')];
+      const countCur = svc.querySelector('.svc-count .cur');
+      const countBar = svc.querySelector('.svc-count .bar');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const len = path.getTotalLength();
+      // échantillons (longueur → y) : la ligne descend toujours, on retrouve la longueur pour un y donné
+      const samples = [];
+      for (let i = 0; i <= 600; i++) {
+        const l = len * i / 600;
+        samples.push([l, path.getPointAtLength(l).y]);
+      }
+      const lengthAtY = y => {
+        if (y <= samples[0][1]) return 0;
+        for (let i = 1; i < samples.length; i++) {
+          if (samples[i][1] >= y) {
+            const [l0, y0] = samples[i - 1], [l1, y1] = samples[i];
+            return l0 + (l1 - l0) * (y - y0) / Math.max(y1 - y0, 0.001);
+          }
+        }
+        return len;
+      };
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = reduce ? 0 : len;
+
+      // arrivée des cartes
+      const cardIo = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); cardIo.unobserve(e.target); } });
+      }, { threshold: 0.2 });
+      cards.forEach(c => reduce ? c.classList.add('in') : cardIo.observe(c));
+
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const r = svc.getBoundingClientRect();
+        const scale = r.width / 1440;
+        const mark = innerHeight * 0.62;              // point de l'écran que suit la ligne
+        const y = (mark - r.top) / scale;             // en coordonnées de la maquette
+        if (!reduce) {
+          const l = lengthAtY(y);
+          path.style.strokeDashoffset = len - l;
+          const p = path.getPointAtLength(l);
+          tip.setAttribute('cx', p.x);
+          tip.setAttribute('cy', p.y);
+          svc.classList.toggle('drawing', l > 0 && l < len - 1);
+        }
+        // cartes atteintes = allumées ; la plus proche du centre de l'écran = « current »
+        let best = 0, bestD = Infinity;
+        cards.forEach((c, i) => {
+          const cr = c.getBoundingClientRect();
+          c.classList.toggle('lit', reduce || cr.top < mark);
+          const d = Math.abs(cr.top + cr.height / 2 - innerHeight / 2);
+          if (d < bestD) { bestD = d; best = i; }
+        });
+        cards.forEach((c, i) => c.classList.toggle('current', i === best));
+        countCur.textContent = String(best + 1).padStart(2, '0');
+        countBar.style.setProperty('--p', (best + 1) / cards.length);
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onScroll);
+      update();
+
+      // bulle « VOIR » + léger décalage de l'image qui suivent la souris
+      svc.querySelectorAll('.svc-img').forEach(box => {
+        // position mise à jour une fois par image (requestAnimationFrame) ; dès l'entrée de la souris,
+        // pour que la bulle n'apparaisse pas d'abord dans le coin
+        let ev = null;
+        const place = () => {
+          const e = ev; ev = null;
+          if (!e) return;
+          const b = box.getBoundingClientRect();
+          box.style.setProperty('--vx', (e.clientX - b.left) + 'px');
+          box.style.setProperty('--vy', (e.clientY - b.top) + 'px');
+          box.style.setProperty('--mx', ((e.clientX - b.left) / b.width - 0.5).toFixed(3));
+          box.style.setProperty('--my', ((e.clientY - b.top) / b.height - 0.5).toFixed(3));
+        };
+        box.addEventListener('mouseenter', e => { ev = e; place(); });
+        box.addEventListener('mousemove', e => {
+          if (!ev) requestAnimationFrame(place);
+          ev = e;
+        });
+        box.addEventListener('mouseleave', () => {
+          box.style.setProperty('--mx', 0);
+          box.style.setProperty('--my', 0);
+        });
+      });
+    }
+
+    // Apparition des sections au scroll
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+    // Menu mobile
+    burger.addEventListener('click', () => {
+      const open = navbar.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    nav.querySelectorAll('ul a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        nav.querySelector('a.active')?.classList.remove('active');
+        link.classList.add('active');
+        navbar.classList.remove('open');
+        burger.setAttribute('aria-expanded', false);
+        document.body.style.overflow = '';
+      });
+    });
+  </script>
+</body>
+</html>
