@@ -1860,6 +1860,358 @@ a {
   .proof-corner path { stroke-dashoffset: 0; transition: none; }
 }
 
+/* ============ BLOC MÉTHODE : fond animé commun aux 2 sections ============ */
+.method-block {
+  position: relative;
+  isolation: isolate;
+}
+
+.method-field {
+  position: absolute !important;
+  inset: 0;
+  z-index: -1;
+  /* fondu en haut et en bas : se fond dans le noir des sections voisines */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 140px, #000 calc(100% - 180px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 140px, #000 calc(100% - 180px), transparent 100%);
+}
+
+/* ============ MÉTHODE : « CINQ TEMPS. ZÉRO IMPROVISATION. » ============
+   Maquette : 1440 × 367, fond noir + léger halo blanc en haut à droite.
+   Reprend les styles .proof-* ; seules les positions changent. */
+.proof.method {
+  z-index: auto;
+  height: calc(367 * var(--p));
+  margin-top: 0;
+  /* fond : le Dimensional Field du bloc méthode (voir .method-block) */
+  background: transparent;
+}
+
+.method .proof-title  { top: calc(80.75 * var(--p)); font-size: calc(68.7 * var(--p)); line-height: calc(64 * var(--p)); }
+.method .proof-sub    { top: calc(227.5 * var(--p)); line-height: calc(20 * var(--p)); }
+.method .proof-tag    { left: calc(792 * var(--p)); top: calc(81.5 * var(--p)); }
+.method .proof-traits { top: calc(82 * var(--p)); }
+.method .proof-corner { top: calc(79 * var(--p)); }
+
+@media (max-width: 900px) {
+  .proof.method { height: auto; padding: 56px 16px; }
+  .method .proof-sub br { display: none; }
+}
+
+/* ============ LES 5 TEMPS ============
+   Maquette : 1440 × 765, fond : Dimensional Field du bloc méthode.
+   Pastilles noires (radius 48, bord #111) à x = 521, y = 64, tous les 135 px ;
+   numéro DM Sans 500 47 px ; pastille grise #CCC 50 px de haut, libellé DM Sans 400 31,5 px. */
+.steps {
+  --v: calc(100vw / 1440);
+  position: relative;
+  height: calc(765 * var(--v));
+  overflow: hidden;
+  /* fond : le Dimensional Field du bloc méthode (voir .method-block) */
+  background: transparent;
+}
+
+.steps-list {
+  position: absolute;
+  left: calc(521 * var(--v));
+  top: calc(64 * var(--v));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(39 * var(--v));
+  list-style: none;
+}
+
+/* pastille noire : 96 px fermée ; le bord du panneau replié dépasse en bas */
+.step {
+  position: relative;
+  width: calc(var(--w) * var(--v));
+  min-height: calc(96 * var(--v));
+  border-radius: calc(48 * var(--v));
+  background: #000;
+  box-shadow: inset 0 0 0 1px #111;
+  opacity: 0;
+  transform: translateX(calc(-40 * var(--v)));
+  transition: opacity 0.7s calc(var(--i) * 0.1s) var(--ease), transform 0.9s calc(var(--i) * 0.1s) var(--ease);
+}
+
+.steps.in-view .step { opacity: 1; transform: none; }
+
+.step::after {
+  content: "";
+  position: absolute;
+  left: calc(34 * var(--v));
+  right: calc(28 * var(--v));
+  bottom: calc(1 * var(--v));
+  height: calc(5 * var(--v));
+  border-radius: calc(6 * var(--v)) calc(6 * var(--v)) 0 0;
+  background: #0d0d0d;
+  box-shadow: inset 0 1px 0 #181818;
+  transition: background 0.4s;
+}
+
+/* reflet sur le panneau replié au survol */
+.step:hover::after {
+  background: linear-gradient(90deg, #0d0d0d 10%, #6b6b6b 55%, #0d0d0d 90%);
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: calc(27 * var(--v));
+  width: 100%;
+  height: calc(84 * var(--v));
+  padding: 0 0 0 calc(33 * var(--v));
+  border: 0;
+  background: none;
+  color: var(--white);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.step-num {
+  position: relative;
+  top: calc(-1 * var(--v));
+  font-size: calc(47 * var(--v));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.step-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(var(--pw) * var(--v));
+  height: calc(50 * var(--v));
+  padding: 0 calc(16 * var(--v)) 0 calc(11.5 * var(--v));
+  border-radius: calc(25 * var(--v));
+  background: #ccc;
+  color: #000;
+  transition: background 0.3s, transform 0.4s var(--ease);
+}
+
+.step-label {
+  font-size: calc(31.5 * var(--v));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.step-chevron {
+  flex-shrink: 0;
+  width: calc(12 * var(--v));
+  height: calc(6 * var(--v));
+  fill: none;
+  stroke: #000;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+  transition: transform 0.4s var(--ease);
+}
+
+.step-head:hover .step-pill { background: var(--jaune-dore); transform: translateX(calc(4 * var(--v))); }
+.step-head:focus-visible { outline: 2px solid var(--jaune-dore); outline-offset: 4px; border-radius: calc(48 * var(--v)); }
+/* temps actif : pastille grise en jaune doré, chevron tourné vers le panneau */
+.step.is-active .step-pill { background: var(--jaune-dore); }
+.step.is-active .step-chevron { transform: rotate(-90deg); }
+.step.is-active { box-shadow: inset 0 0 0 1px rgba(247, 194, 39, 0.45); }
+
+/* trait jaune : du bord droit de la pastille active jusqu'au panneau (x = 960) */
+.steps-link {
+  position: absolute;
+  left: calc((521 + var(--w)) * var(--v));
+  top: calc((64 + 42 + var(--i) * 135) * var(--v));
+  width: calc((960 - 521 - var(--w)) * var(--v));
+  height: 1px;
+  background: linear-gradient(90deg, var(--jaune-dore), rgba(247, 194, 39, 0.35));
+  transform-origin: left;
+  animation: stepsLink 0.5s var(--ease) both;
+  pointer-events: none;
+}
+
+.steps-link::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--jaune-dore);
+}
+
+@keyframes stepsLink {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* panneau de détail : zone vide à droite des pastilles (x 960 → 1376, même hauteur que la liste) */
+.steps-detail {
+  position: absolute;
+  left: calc(960 * var(--v));
+  top: calc(64 * var(--v));
+  width: calc(416 * var(--v));
+  height: calc(635 * var(--v));
+  padding: calc(32 * var(--v));
+  border-radius: calc(32 * var(--v));
+  background: rgba(10, 10, 10, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(24 * var(--v)));
+  transition: opacity 0.5s var(--ease), transform 0.6s var(--ease), visibility 0s 0.5s;
+}
+
+.steps[data-active] .steps-detail {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.5s var(--ease), transform 0.6s var(--ease), visibility 0s;
+}
+
+.steps-detail-in {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeUp 0.45s var(--ease) both;   /* fondu à chaque changement de temps */
+}
+
+.steps-detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.steps-detail-count {
+  font-size: calc(13 * var(--v));
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.steps-detail-count b {
+  font-weight: 500;
+  color: var(--jaune-dore);
+}
+
+.steps-detail-close {
+  display: grid;
+  place-items: center;
+  width: calc(36 * var(--v));
+  height: calc(36 * var(--v));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.steps-detail-close svg {
+  width: calc(16 * var(--v));
+  height: calc(16 * var(--v));
+  fill: none;
+  stroke: var(--white);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.steps-detail-close:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.35); }
+
+.steps-detail-title {
+  margin-top: calc(28 * var(--v));
+  font-size: calc(40 * var(--v));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.steps-detail-text {
+  margin-top: calc(18 * var(--v));
+  font-size: calc(15 * var(--v));
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.steps-detail-text.is-empty { color: rgba(255, 255, 255, 0.35); }
+
+.steps-detail-points {
+  margin-top: calc(18 * var(--v));
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--v));
+  font-size: calc(14 * var(--v));
+  line-height: 1.4;
+}
+
+.steps-detail-points li {
+  position: relative;
+  padding-left: calc(18 * var(--v));
+}
+
+.steps-detail-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: calc(7 * var(--v));
+  height: calc(7 * var(--v));
+  border-radius: 2px;
+  background: var(--jaune-dore);
+}
+
+.steps-detail-nav {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: calc(12 * var(--v));
+  padding-top: calc(20 * var(--v));
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.steps-detail-nav button {
+  border: 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.7);
+  font: inherit;
+  font-size: calc(14 * var(--v));
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.steps-detail-nav button:hover:not(:disabled) { color: var(--jaune-dore); }
+.steps-detail-nav button:disabled { visibility: hidden; }
+
+@media (max-width: 900px) {
+  .steps {
+    --v: min(1px, calc((100vw - 32px) / 398));
+    height: auto;
+    padding: 48px 16px 64px;
+  }
+  .steps-list { position: relative; left: auto; top: auto; align-items: center; }
+  .steps-link { display: none; }
+  .steps-detail {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    max-width: 398px;
+    height: auto;
+    min-height: 0;
+    margin: 0 auto;
+    display: none;
+  }
+  .steps[data-active] .steps-detail { display: block; margin-top: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step { opacity: 1; transform: none; transition: none; }
+}
+
 /* ============ FOOTER ============
    Maquette : 1440 × 881. Unité --f = 1 px de la maquette.
    Fond : noir + halo gris clair (derrière la TV) + halo jaune doré (bord droit) :
