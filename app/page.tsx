@@ -7,6 +7,8 @@ import Stats from "@/components/Stats";
 import MethodBlock from "@/components/MethodBlock";
 import Proof from "@/components/Proof";
 import CaseStack from "@/components/CaseStack";
+import Testimonials from "@/components/Testimonials";
+import Why from "@/components/Why";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
@@ -23,6 +25,8 @@ export default function Home() {
         <CaseStack />
         <Stats />
         <MethodBlock />
+        <Testimonials />
+        <Why />
       </main>
       <Footer />
       {/* Ajoute .in-view aux sections [data-reveal] quand elles arrivent à l'écran */}

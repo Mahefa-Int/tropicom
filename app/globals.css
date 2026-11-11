@@ -1717,16 +1717,6 @@ a {
   .svc-tags span::after { transform: none; transition: none; }
 }
 
-/* Études de cas (pile 3D) : sur mobile, hauteur juste suffisante pour la pile */
-@media (max-width: 900px) {
-  .case-stack .cs-root {
-    height: calc(100vw * 0.94 * 666 / 1312 * 1.32 + 64px) !important;
-    min-height: 0 !important;
-  }
-  /* pas de libellés : la scène occupe toute la hauteur */
-  .case-stack .cs-stage { top: 0 !important; bottom: 0 !important; }
-}
-
 /* ============ CHIFFRES CLÉS ============
    Maquette : 1440 × 386, fond noir. 4 cartes 244 × 130 (radius 16) à y = 128,
    x = 64 / 420 / 776 / 1132. Libellé DM Sans 400 15 px, nombre DM Sans 500 48 px (-4 %). */
@@ -2296,6 +2286,520 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
   .step { opacity: 1; transform: none; transition: none; }
+}
+
+/* ============ TÉMOIGNAGES : « NOS CLIENTS EN PARLENT » ============
+   Maquette : 1440 × 793, fond noir. Titre DM Sans 500, 70 px, -2 % ; « Témoignage » 15 px.
+   Bande de cartes x 180 → 1260 (bords fondus dans le noir), cartes 375 × 368, écart 30. */
+.tm {
+  --t: calc(100vw / 1440);
+  position: relative;
+  height: calc(793 * var(--t));
+  background: var(--black);
+  color: var(--white);
+}
+
+.tm > * { position: absolute; }
+
+.tm-title {
+  left: calc(66 * var(--t));
+  top: calc(197.3 * var(--t));
+  font-size: calc(69.4 * var(--t));
+  font-weight: 500;
+  line-height: calc(70 * var(--t));
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.tm-title .line {
+  display: block;
+  overflow: hidden;
+  padding: 0.12em 0;
+  margin: -0.12em 0;
+}
+
+.tm-title .line > span {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 1s var(--ease);
+}
+
+.tm-tag {
+  left: calc(1009 * var(--t));
+  top: calc(203 * var(--t));
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--t));
+  font-size: calc(15 * var(--t));
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tm-tag .dot {
+  width: calc(9 * var(--t));
+  height: calc(9 * var(--t));
+  border-radius: calc(2 * var(--t));
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.tm-traits {
+  left: calc(1313.3 * var(--t));
+  top: calc(201.3 * var(--t));
+  width: calc(60.6 * var(--t));    /* images/graphic-point.png : encre de 54 px */
+  height: auto;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.9s 0.5s var(--ease);
+}
+
+/* bande de cartes : coupée à x 180 et 1260, bords fondus dans le noir (mesurés sur la maquette).
+   24 px de marge en haut et en bas pour la lueur de la bordure animée. */
+.tm-track {
+  left: calc(180 * var(--t));
+  top: calc(320 * var(--t));
+  width: calc(1080 * var(--t));
+  height: calc(416 * var(--t));
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  outline: none;
+}
+
+.tm-track:active { cursor: grabbing; }
+
+
+.tm-track::before,
+.tm-track::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: calc(68 * var(--t));
+  pointer-events: none;
+}
+
+.tm-track::before {
+  left: 0;
+  background: linear-gradient(to right, #000 0, #000 calc(16 * var(--t)), rgba(0, 0, 0, 0) 100%);
+}
+
+.tm-track::after {
+  right: 0;
+  background: linear-gradient(to left, #000 0, #000 calc(20 * var(--t)), rgba(0, 0, 0, 0) 100%);
+}
+
+.tm-list {
+  --card: calc(375 * var(--t));
+  --gap: calc(30 * var(--t));
+  display: flex;
+  gap: var(--gap);
+  height: 100%;
+  padding: calc(24 * var(--t)) 0;
+  list-style: none;
+  will-change: transform; /* position pilotée en JS (défilement continu, 3 copies des avis → boucle) */
+}
+
+.tm-slide {
+  flex: 0 0 var(--card);
+  height: 100%;
+  opacity: 0;
+  transform: translateY(calc(40 * var(--t)));
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  transition-delay: calc(0.35s + var(--i) * 0.12s);
+}
+
+.tm-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(24 * var(--t));
+  background: var(--noir-charbon);
+  transition: background-color 0.4s;
+}
+
+/* Bordure animée au survol : faisceau aux couleurs de la charte qui tourne autour de la carte.
+   ::before = trait net de 1,5 px (anneau masqué), ::after = halo flou derrière la carte. */
+@property --tm-a {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.tm-card::before,
+.tm-card::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--tm-a),
+    transparent 0 52%,
+    rgba(62, 157, 158, 0.9) 68%,
+    var(--rose-magenta) 82%,
+    var(--jaune-dore) 93%,
+    #fff3c4 97%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease);
+  animation: tmBeam 3.2s linear infinite;
+  animation-play-state: paused;
+}
+
+.tm-card::before {
+  inset: 0;
+  z-index: 1;
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+.tm-card::after {
+  inset: -2px;
+  z-index: -1;
+  filter: blur(calc(14 * var(--t)));
+}
+
+@keyframes tmBeam {
+  to { --tm-a: 360deg; }
+}
+
+.tm-slide:hover .tm-card::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.tm-slide:hover .tm-card::after {
+  opacity: 0.55;
+  animation-play-state: running;
+}
+
+/* trait très fin au repos, qui s'éclaire au survol */
+.tm-card {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.tm-card > * { position: absolute; }
+
+.tm-slide:hover .tm-card {
+  background: #1d1b1b;
+}
+
+.tm-quote {
+  left: calc(25 * var(--t));
+  top: calc(28 * var(--t));
+  width: calc(22 * var(--t));
+  height: calc(16 * var(--t));
+  fill: var(--jaune-dore);
+}
+
+.tm-text {
+  left: calc(24 * var(--t));
+  top: calc(61 * var(--t));
+  width: calc(327 * var(--t));
+  font-size: calc(10 * var(--t));
+  line-height: calc(18 * var(--t));
+  letter-spacing: -0.04em;
+}
+
+.tm-who {
+  left: calc(24 * var(--t));
+  top: calc(288 * var(--t));
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--t));
+}
+
+.tm-who img {
+  width: calc(32 * var(--t));
+  height: calc(32 * var(--t));
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.tm-who cite {
+  font-size: calc(17 * var(--t));
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.tm-meta {
+  left: calc(26 * var(--t));
+  right: calc(25 * var(--t));
+  top: calc(326 * var(--t));
+  height: calc(18 * var(--t));
+  display: flex;
+  align-items: center;
+}
+
+.tm-stars {
+  display: flex;
+  gap: calc(6.7 * var(--t));
+  margin: calc(-3 * var(--t)) 0 0 calc(-2 * var(--t));
+}
+
+.tm-stars svg {
+  width: calc(19.5 * var(--t));
+  height: calc(19.5 * var(--t));
+  fill: var(--jaune-dore);
+}
+
+.tm-date {
+  margin: calc(-4 * var(--t)) 0 0 auto;
+  white-space: nowrap;
+  font-size: calc(11 * var(--t));
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tm-new {
+  margin-left: calc(49 * var(--t));
+  padding: 0 calc(7 * var(--t));
+  height: calc(18 * var(--t));
+  display: grid;
+  place-items: center;
+  border-radius: calc(3 * var(--t));
+  background: var(--jaune-dore);
+  color: var(--noir-charbon);
+  font-size: calc(8 * var(--t));
+  letter-spacing: -0.02em;
+}
+
+.tm-tag {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.8s 0.35s var(--ease), transform 0.8s 0.35s var(--ease);
+}
+
+.tm.in-view .tm-title .line > span { transform: none; }
+.tm.in-view .tm-tag { opacity: 1; transform: none; }
+.tm.in-view .tm-traits { clip-path: inset(0 0 0 0); }
+.tm.in-view .tm-slide { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .tm {
+    --t: 1px;
+    height: auto;
+    padding: 72px 16px 72px;
+  }
+  .tm > * { position: relative; left: auto; top: auto; }
+  .tm-title { font-size: 36px; line-height: 40px; white-space: normal; }
+  .tm-tag { margin-top: 16px; }
+  .tm-traits { display: none; }
+  .tm-track { width: auto; height: auto; margin: 28px -16px 0; padding: 0 16px; }
+  .tm-track::before, .tm-track::after { display: none; }
+  /* mobile : cartes un peu moins larges que l'écran, la suivante dépasse */
+  .tm-list {
+    --card: min(300px, calc(100vw - 72px));
+    --gap: 16px;
+    height: auto;
+    align-items: stretch;
+  }
+  .tm-slide { height: auto; }
+  .tm-card { height: 100%; min-height: 340px; padding: 64px 24px 88px; }
+  .tm-text { position: static; width: auto; font-size: 13px; line-height: 20px; letter-spacing: -0.01em; }
+  .tm-text p + p { margin-top: 0; }
+  .tm-who { top: auto; bottom: 46px; }
+  .tm-meta { top: auto; bottom: 18px; }
+  .tm-date { font-size: 12px; }
+  .tm-new { margin-left: 12px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-card::before, .tm-card::after { animation: none; }
+  .tm-title .line > span, .tm-tag, .tm-slide { transform: none; opacity: 1; transition: none; }
+  .tm-traits { clip-path: none; transition: none; }
+}
+
+/* ============ POURQUOI TROPI'COM ============
+   Maquette ramenée à 1440 de large (×1,314) : étiquette 11 px à x 64, accroche DM Sans 400 30 px
+   à x 451, « graphic point » à x 1286 ; paquet de 3 cartes penchées (568 × 381), ligne verte → citron.
+   La scène reste épinglée sous le menu pendant que les cartes s'envolent (3 écrans de défilement). */
+.why {
+  --w: calc(100vw / 1440);
+  position: relative;
+  height: calc(3 * (100svh - var(--nav-h)));
+  background: var(--black);
+  color: var(--white);
+}
+
+.why-stage {
+  position: sticky;
+  top: var(--nav-h);
+  height: calc(100svh - var(--nav-h));
+  overflow: hidden;
+}
+
+.why-stage > * { position: absolute; }
+
+.why-line {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.why-line path {
+  fill: none;
+  stroke: url(#whyGrad);
+  stroke-width: calc(22 * var(--w));
+  vector-effect: non-scaling-stroke;
+}
+
+.why-tag {
+  left: calc(64 * var(--w));
+  top: calc(100 * var(--w));
+  display: flex;
+  align-items: center;
+  gap: calc(11 * var(--w));
+  font-size: calc(11 * var(--w));
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.why-tag .dot {
+  width: calc(9 * var(--w));
+  height: calc(9 * var(--w));
+  border-radius: calc(2 * var(--w));
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.why-title {
+  left: calc(451 * var(--w));
+  top: calc(91 * var(--w));
+  font-size: calc(30 * var(--w));
+  font-weight: 400;
+  line-height: calc(25 * var(--w));
+  letter-spacing: -0.02em;
+}
+
+.why-traits {
+  left: calc(1281 * var(--w));
+  top: calc(99 * var(--w));
+  width: calc(56 * var(--w));
+  height: auto;
+}
+
+/* paquet de cartes : centre de la carte du dessus en (697, 460) sur la maquette ramenée à 1440 */
+.why-cards {
+  left: calc(413 * var(--w));
+  top: calc(270 * var(--w));
+  width: calc(568 * var(--w));
+  height: calc(381 * var(--w));
+  list-style: none;
+  perspective: calc(1400 * var(--w));
+}
+
+.why-card {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(26 * var(--w));
+  background: #050505;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  transform: rotateY(-8deg) rotateZ(4.5deg);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+/* cartes du dessous : simple dos gris sombre (comme la maquette) */
+.why-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #161616;
+  opacity: var(--why-dim, 0);
+  pointer-events: none;
+}
+
+.why-card > * { position: absolute; }
+
+.why-card-glow {
+  left: calc(40 * var(--w));
+  top: calc(250 * var(--w));
+  width: calc(470 * var(--w));
+  height: calc(150 * var(--w));
+  border-radius: 50%;
+  background: var(--glow);
+  filter: blur(calc(60 * var(--w)));
+  transform: rotate(-12deg);
+}
+
+.why-card-img {
+  left: calc(226 * var(--w));
+  top: calc(26 * var(--w));
+  width: calc(326 * var(--w));
+  height: calc(242 * var(--w));
+  object-fit: cover;
+  border-radius: calc(16 * var(--w));
+  background: radial-gradient(120% 90% at 85% 15%, rgba(247, 194, 39, 0.22), transparent 55%), linear-gradient(160deg, #1a1a1a, #070707);
+}
+
+.why-card-title {
+  left: calc(26 * var(--w));
+  top: calc(262 * var(--w));
+  font-size: calc(30 * var(--w));
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.why-card-text {
+  left: calc(26 * var(--w));
+  top: calc(309 * var(--w));
+  width: calc(500 * var(--w));
+  font-size: calc(14.5 * var(--w));
+  line-height: calc(17 * var(--w));
+  letter-spacing: -0.02em;
+}
+
+/* apparition de l'en-tête */
+.why-tag,
+.why-title,
+.why-traits {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+
+.why-title { transition-delay: 0.1s; }
+.why-traits { transition-delay: 0.2s; }
+.why-stage.in-view .why-tag,
+.why-stage.in-view .why-title,
+.why-stage.in-view .why-traits { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .why {
+    --w: 1px;
+    height: auto;
+    padding: 72px 16px 64px;
+  }
+  .why-stage { position: relative; top: 0; height: auto; overflow: visible; }
+  .why-stage > * { position: relative; left: auto; top: auto; }
+  .why-line { position: absolute; inset: 0; opacity: 0.6; }
+  .why-traits { display: none; }
+  .why-title { margin-top: 16px; font-size: 24px; line-height: 28px; }
+  .why-title br { display: none; }
+  .why-cards { width: auto; height: auto; margin-top: 40px; perspective: none; display: grid; gap: 28px; }
+  .why-card { position: relative; inset: auto; min-height: 0; padding: 16px 16px 24px; transform: rotate(-1.5deg); }
+  .why-card:nth-child(even) { transform: rotate(1.5deg); }
+  .why-card > * { position: relative; left: auto; top: auto; }
+  .why-card-glow { position: absolute; left: 0; top: auto; bottom: 0; width: 100%; }
+  .why-card-img { width: 100%; height: auto; aspect-ratio: 4 / 3; }
+  .why-card-title { margin-top: 18px; font-size: 22px; white-space: normal; }
+  .why-card-text { width: auto; margin-top: 10px; font-size: 14px; line-height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-tag, .why-title, .why-traits { opacity: 1; transform: none; transition: none; }
 }
 
 /* ============ FOOTER ============

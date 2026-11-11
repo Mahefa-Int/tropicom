@@ -5,7 +5,7 @@ import CtaIcon from "./CtaIcon";
 import Fireflies from "./Fireflies";
 import Hummingbird from "./Hummingbird";
 
-// 25 lucioles : environ 2/3 sur la moitié gauche, 1/3 sur la droite
+// 12 lucioles : environ 2/3 sur la moitié gauche, 1/3 sur la droite
 const fireLeft = (i: number, r: (a: number, b: number) => number) => (i % 3 === 2 ? r(50, 97) : r(3, 50));
 const fireTop = (_i: number, r: (a: number, b: number) => number) => r(5, 98);
 
@@ -135,7 +135,7 @@ export default function Hero() {
     <section className="hero" id="hero" ref={heroRef}>
       {/* Colline : /images/hero-colline.png (2000 × 669), sur toute la largeur */}
       <div className="hero-hill" aria-hidden="true"></div>
-      <Fireflies className="hero-fireflies" left={fireLeft} top={fireTop} />
+      <Fireflies className="hero-fireflies" count={12} left={fireLeft} top={fireTop} />
       {/* Colibri : survole le hero et s'approche du curseur quand il s'arrête */}
       <Hummingbird />
 
