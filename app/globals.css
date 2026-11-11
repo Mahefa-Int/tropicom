@@ -2063,6 +2063,9 @@ a {
   to   { transform: scaleX(1); }
 }
 
+/* accordéon : uniquement sur mobile */
+.step-acc { display: none; }
+
 /* panneau de détail : zone vide à droite des pastilles (x 960 → 1376, même hauteur que la liste) */
 .steps-detail {
   position: absolute;
@@ -2209,19 +2212,23 @@ a {
     padding: 48px 16px 64px;
   }
   .steps-list { position: relative; left: auto; top: auto; align-items: center; }
-  .steps-link { display: none; }
-  .steps-detail {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    max-width: 398px;
-    height: auto;
-    min-height: 0;
-    margin: 0 auto;
-    display: none;
+  /* mobile : accordéon sous la pastille, pas de panneau latéral */
+  .steps-link,
+  .steps-detail,
+  .steps[data-active] .steps-detail { display: none; }
+  .step.is-active { border-radius: 28px; }
+  .step.is-active::after { display: none; }
+  .step.is-active .step-chevron { transform: rotate(180deg); }
+  .step-acc {
+    display: block;
+    margin: 0 16px 16px;
+    padding: 4px 18px 18px;
+    border-radius: 16px;
+    background: #0d0d0d;
+    animation: fadeUp 0.45s var(--ease) both;
   }
-  .steps[data-active] .steps-detail { display: block; margin-top: 32px; }
+  .step-acc .steps-detail-text { margin-top: 14px; font-size: 15px; }
+  .step-acc .steps-detail-points { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

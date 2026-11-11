@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 /**
  * Les 5 temps de la méthode : pastilles numérotées.
  * Au clic, le détail s'affiche dans un panneau à droite (même hauteur, la page ne s'allonge pas),
- * relié à la pastille active par un trait jaune.
+ * relié à la pastille active par un trait jaune. Sur mobile, il s'ouvre sous la pastille (accordéon).
  * width = largeur de la pastille noire, pill = largeur de la pastille grise (px de la maquette).
  * À COMPLÉTER : text (paragraphe) et points (liste) de chaque temps.
  */
@@ -18,6 +18,22 @@ const STEPS: Step[] = [
   { n: "04", label: "Activation", width: 345, pill: 195, text: "", points: [] },
   { n: "05", label: "Performance", width: 398, pill: 250, text: "", points: [] },
 ];
+
+/** Contenu du détail : texte + points (partagé entre le panneau ordinateur et l'accordéon mobile). */
+function StepContent({ step }: { step: Step }) {
+  return (
+    <>
+      {step.text ? <p className="steps-detail-text">{step.text}</p> : <p className="steps-detail-text is-empty">Détail à venir.</p>}
+      {step.points.length > 0 && (
+        <ul className="steps-detail-points">
+          {step.points.map((p) => (
+            <li key={p}>{p}</li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
 
 export default function Steps() {
   const [active, setActive] = useState(-1); // aucun temps ouvert au départ (comme la maquette)
@@ -63,6 +79,12 @@ export default function Steps() {
                 </svg>
               </span>
             </button>
+            {/* mobile : le détail s'ouvre sous la pastille (accordéon) */}
+            {i === active && (
+              <div className="step-acc" id={`step-acc-${s.n}`}>
+                <StepContent step={s} />
+              </div>
+            )}
           </li>
         ))}
       </ol>
@@ -92,14 +114,7 @@ export default function Steps() {
               </button>
             </div>
             <h3 className="steps-detail-title">{step.label}</h3>
-            {step.text ? <p className="steps-detail-text">{step.text}</p> : <p className="steps-detail-text is-empty">Détail à venir.</p>}
-            {step.points.length > 0 && (
-              <ul className="steps-detail-points">
-                {step.points.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
-            )}
+            <StepContent step={step} />
             <div className="steps-detail-nav">
               <button type="button" disabled={active === 0} onClick={() => setActive(active - 1)}>
                 ‹ {active > 0 ? STEPS[active - 1].label : ""}
