@@ -31,7 +31,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${dmSans.variable} ${bangers.variable}`}>
-      <body>{children}</body>
+      {/* suppressHydrationWarning : certaines extensions du navigateur ajoutent des attributs au <body> */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

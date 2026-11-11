@@ -23,14 +23,6 @@
   --nav-h: 78px;    /* hauteur de la barre de menu */
   --hero-top: 101px; /* début du hero (maquette) */
 
-  /* Échelle de la scène du hero (colline + femme).
-     --u-hero : même échelle que le texte du hero (1 = maquette 1440 × 748).
-     --s : on garde cette échelle, sauf si l'écran est trop large pour que la colline
-     (1719 px à l'échelle 1) le couvre entièrement → on l'agrandit juste assez. */
-  --u-hero: min(calc(100vw / 1440), calc((100vh - var(--hero-top)) / 748), 1.5px);
-  --s: max(var(--u-hero), calc(100vw / 1719));
-  /* Bord gauche de la colline : -117 à 1440 ; collé à 0 quand elle fait toute la largeur */
-  --scene-left: calc((100vw - 1719 * var(--s)) * 0.419);
 }
 
 body {
@@ -388,117 +380,130 @@ a {
 
 
 /* ============ HERO ============ */
+/* Maquette : 1440 × 810, fond noir.
+   Unité --u = 1 px de la maquette : le plus petit rapport largeur / hauteur d'écran,
+   pour que tout le hero tienne à l'écran sous le menu. Plafonnée à 1.5. */
 .hero {
+  --u: min(calc(100vw / 1440), calc((100vh - var(--hero-top)) / 810), 1.5px);
   position: relative;
   z-index: 1;
   isolation: isolate;
-  /* 748px sur la maquette ; suit la hauteur de l'écran */
-  height: calc(100vh - var(--hero-top));
-  height: calc(100svh - var(--hero-top));
-  /* Unité d'échelle : 1 px de la maquette (1440 × 748).
-     Prend le plus petit rapport entre largeur et hauteur d'écran → tout le hero
-     tient sur n'importe quel écran PC, sans chevauchement. Plafonné à 1.5. */
-  --u: min(calc(100vw / 1440), calc((100vh - var(--hero-top)) / 748), 1.5px);
-  min-height: 480px;
+  height: calc(810 * var(--u));
   margin-top: var(--hero-top);
-  padding: calc(86.3 * var(--u)) calc(64 * var(--u)) 0;
   background: var(--black);
   overflow: hidden;
 }
 
-/* Haut du hero : fondu du noir vers le transparent → le halo jaune ne s'arrête plus
-   sur une ligne droite sous le menu. Au-dessus des halos, sous la femme et les lucioles. */
-.hero::after {
+/* Bas du hero : fondu vers le noir → aucune ligne de séparation avec la section suivante.
+   Devant la colline et la femme, derrière les textes, la carte et les destinations. */
+.hero::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto 0;
-  z-index: -2;
-  height: calc(160 * var(--u));
-  background: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.75) 30%, rgba(0, 0, 0, 0.3) 65%, transparent 100%);
+  inset: auto 0 0 0;
+  z-index: 0;
+  height: calc(190 * var(--u));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 35%, rgba(0, 0, 0, 0.8) 70%, #000 100%);
   pointer-events: none;
 }
 
-/* Nouvelle maquette : fond dégradé rose magenta (haut droite) → orange → jaune doré (bas),
-   obtenu avec deux halos flous qui se mélangent. Tous deux sous la colline. */
-/* Halo jaune doré : centre (1200, 650), 700 × 500 */
-.hero-haze {
+/* Scène centrée (repère de la maquette 1440 × 810). Sur un écran plus large que 1440 × --u,
+   elle s'élargit jusqu'à 18 % de plus : titre et bouton calés à gauche, texte et carte à droite,
+   femme et feuille au centre ; le fond (halos, colline) continue jusqu'aux bords. */
+.hero-stage {
+  --sw: min(100%, calc(1440 * 1.18 * var(--u)));
   position: absolute;
-  z-index: -3;
-  top: calc(400 * var(--u));
-  right: calc(-110 * var(--u));
-  width: calc(700 * var(--u));
-  height: calc(500 * var(--u));
+  top: 0;
+  left: calc((100% - var(--sw)) / 2);
+  width: var(--sw);
+  height: 100%;
+}
+
+/* Halos (dégradés gaussiens mesurés sur la maquette) */
+.hero-glow {
+  position: absolute;
+  z-index: -4;
   border-radius: 50%;
-  background: var(--jaune-dore);
-  filter: blur(calc(150 * var(--u)));
-  animation: fadeIn 2s 0.4s ease both;
+  pointer-events: none;
+  animation: fadeIn 2s 0.3s ease both;
+}
+
+/* Jaune doré : centre (337, 712), écarts 248 × 178 */
+.hero-glow--jaune {
+  left: calc(-406.3 * var(--u));
+  top: calc(176.8 * var(--u));
+  width: calc(1486.2 * var(--u));
+  height: calc(1070.4 * var(--u));
+  background: radial-gradient(closest-side, rgba(246, 188, 32, 1) 0%, rgba(246, 188, 32, 0.956) 10%, rgba(246, 188, 32, 0.835) 20%, rgba(246, 188, 32, 0.667) 30%, rgba(246, 188, 32, 0.487) 40%, rgba(246, 188, 32, 0.325) 50%, rgba(246, 188, 32, 0.198) 60%, rgba(246, 188, 32, 0.11) 70%, rgba(246, 188, 32, 0.056) 80%, rgba(246, 188, 32, 0.026) 90%, rgba(246, 188, 32, 0) 100%);
+}
+
+/* Bleu canard : centre (962, 623), écarts 227 × 283 ; s'ajoute au jaune */
+.hero-glow--bleu {
+  left: calc(50% - 438.5 * var(--u));
+  top: calc(-227.1 * var(--u));
+  width: calc(1360.2 * var(--u));
+  height: calc(1700.4 * var(--u));
+  background: radial-gradient(closest-side, rgba(62, 163, 166, 1) 0%, rgba(62, 163, 166, 0.956) 10%, rgba(62, 163, 166, 0.835) 20%, rgba(62, 163, 166, 0.667) 30%, rgba(62, 163, 166, 0.487) 40%, rgba(62, 163, 166, 0.325) 50%, rgba(62, 163, 166, 0.198) 60%, rgba(62, 163, 166, 0.11) 70%, rgba(62, 163, 166, 0.056) 80%, rgba(62, 163, 166, 0.026) 90%, rgba(62, 163, 166, 0) 100%);
+  mix-blend-mode: plus-lighter;
+  animation: fadeIn 2s 0.5s ease both, breathe 8s 2.6s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
 }
 
-/* Image de fond (colline + TV), 3772 × 1668.
-   Maquette (1440 de large) : 1719 px de large, bord gauche à -117, descend 105 px sous le hero.
-   Échelle --s (voir :root) → même taille que le texte, et toujours toute la largeur couverte ;
-   sa suite sous le hero (.intro::before) reste parfaitement alignée. */
-.hero-bg {
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.8; }
+}
+
+/* Feuille de monstera (image entière 1300 × 1327) : 590,6 × 602,9, centre (1110,6 ; 324), tournée de 19,68° */
+.hero-leaf-wrap {
+  position: absolute;
+  z-index: -3;
+  left: calc(50% + 95.3 * var(--u));
+  top: calc(22.55 * var(--u));
+  width: calc(590.6 * var(--u));
+  height: calc(602.9 * var(--u));
+  transition: translate 1.2s var(--ease);
+  pointer-events: none;
+}
+
+.hero-leaf {
+  width: 100%;
+  height: 100%;
+  background: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  transform: rotate(19.68deg);
+  animation: leafIn 1.6s 0.6s var(--ease) both, leafSway 7s 2.4s ease-in-out infinite;
+}
+
+@keyframes leafIn {
+  from { opacity: 0; scale: 0.85; }
+}
+
+@keyframes leafSway {
+  0%, 100% { rotate: 0deg; }
+  50%      { rotate: -2deg; }
+}
+
+/* Colline : 1489 px de large, bord gauche à -33 et haut à 380 sur la maquette (descend sous le hero).
+   Couvre toujours toute la largeur ; calée pour que le bas du hero coupe l'image au même endroit. */
+.hero-hill {
+  --hw: max(calc(1489 * var(--u)), 103vw);
   position: absolute;
   z-index: -2;
-  left: var(--scene-left);              /* -117 à 1440 */
-  bottom: calc(-105 * var(--s));        /* descend 105 px sous le hero */
-  width: calc(1719 * var(--s));
-  aspect-ratio: 3772 / 1668;
-  background: url("/images/colline-tv.png") center / 100% 100% no-repeat;
+  left: calc(50% - var(--hw) * 0.50571);
+  top: calc(100% - var(--hw) * 0.28878);
+  width: var(--hw);
+  aspect-ratio: 2000 / 669;
+  background: url("/images/hero-colline.png") center / 100% 100% no-repeat;
+  transform-origin: 50% 86.5%;
   animation: bgIn 2.2s 0.3s var(--ease) both;
+  pointer-events: none;
 }
 
-/* Écran de la TV : lueur jaune diffuse (comme un tube cathodique qui chauffe), sans bords nets.
-   Calée sur la vitre de l'écran de image 55.png (x 1818–2028, y 802–968 sur 3772 × 1668) :
-   centre lumineux, coins plus sombres (vignettage) et bords flous → elle se fond dans la TV.
-   ::after = lumière qui déborde doucement sur le cadre et l'herbe. */
-.tv-screen {
-  position: absolute;
-  left: 48.2%;
-  top: 48.08%;
-  width: 5.567%;
-  height: 9.952%;
-  border-radius: 22% / 26%;
-  background: radial-gradient(ellipse 60% 60% at 50% 48%,
-    rgba(255, 252, 240, 0.95) 0%,   /* blanc chaud au centre */
-    rgba(255, 236, 185, 0.75) 45%,  /* entre blanc et jaune */
-    rgba(252, 220, 140, 0.25) 80%,
-    rgba(252, 220, 140, 0) 100%);
-  filter: blur(calc(2 * var(--s)));
-  mix-blend-mode: screen;
-  opacity: 0;
-  animation: tvBoot 6.5s 2.6s steps(1, end) infinite;
-}
-
-.tv-screen::after {
-  content: "";
-  position: absolute;
-  inset: -60% -70%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 232, 170, 0.3), rgba(255, 232, 170, 0));
-  filter: blur(calc(10 * var(--s)));
-}
-
-@keyframes tvBoot {
-  0%   { opacity: 0; }
-  52%  { opacity: 0.8; }
-  53%  { opacity: 0; }
-  56%  { opacity: 0.5; }
-  57%  { opacity: 0.1; }
-  58%  { opacity: 0.85; }
-  60%  { opacity: 0; }
-  66%  { opacity: 0.35; }
-  67%  { opacity: 0.95; }
-  69%  { opacity: 0.5; }
-  70%  { opacity: 0.9; }
-  74%  { opacity: 0.25; }
-  76%  { opacity: 0; }
-  100% { opacity: 0; }
+@keyframes bgIn {
+  from { opacity: 0; transform: scale(1.12); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes fadeInFx {
@@ -534,28 +539,94 @@ a {
   100% { opacity: 0;   transform: translate(calc(var(--dx, 20px) * -0.5), -80px); }
 }
 
-@keyframes bgIn {
-  from { opacity: 0; transform: scale(1.12); }
-  to   { opacity: 1; transform: scale(1); }
+/* Oiseau 3D (components/Hummingbird.tsx) : canevas three.js carré, déplacé en JS */
+.colibri {
+  --bs: max(110px, calc(170 * var(--u)));
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: var(--bs);
+  height: var(--bs);
+  margin: calc(var(--bs) * -0.5) 0 0 calc(var(--bs) * -0.5); /* repère = centre de l'oiseau */
+  pointer-events: none;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 1s 2.4s ease;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.35));
 }
 
-/* Femme au casque VR (images/profile.png 1156 × 1360), retournée en miroir.
-   Maquette (1440) : x 640, 682 px de large, son bas descend 48 px sous le hero.
-   Même échelle et même repère que la colline → elle reste posée au même endroit. */
+.colibri[data-ready] {
+  opacity: 1;
+}
+
+.colibri canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Femme au casque VR (1156 × 1360, images déjà retournées en miroir).
+   730 px de large (un peu plus grande que la maquette), x 320, y 14 ; le bas se fond dans le noir.
+   Deux calques strictement superposés : noir et blanc dessous, couleur dessus,
+   visible seulement dans le cercle qui suit la souris (--wx, --wy, rayon --reveal). */
+@property --reveal {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+.hero-stage {
+  --reveal: 0px;
+  transition: --reveal 0.5s var(--ease);
+}
+
+.hero-stage[data-reveal] {
+  --reveal: calc(105 * var(--u));
+}
+
 .hero-woman {
   position: absolute;
   z-index: -1;
-  left: calc(var(--scene-left) + 757 * var(--s));   /* x 640 à 1440 */
-  bottom: calc(-48 * var(--s));
-  width: calc(682 * var(--s));
+  left: calc(50% - 400 * var(--u));
+  top: calc(14 * var(--u));
+  width: calc(730 * var(--u));
   aspect-ratio: 1156 / 1360;
-  background: url("/images/hero-femme-casque-vr.png") center / 100% 100% no-repeat;
-  transform: scaleX(-1);
   pointer-events: none;
-  /* le pull s'efface juste avant la coupure du hero → la colline continue sous la section noire */
-  -webkit-mask-image: linear-gradient(to top, transparent calc(48 * var(--s)), #000 calc(48 * var(--s) + 70px));
-  mask-image: linear-gradient(to top, transparent calc(48 * var(--s)), #000 calc(48 * var(--s) + 70px));
   animation: womanIn 1.6s 0.8s var(--ease) both;
+}
+
+.hero-woman > div {
+  position: absolute;
+  inset: 0;
+  background: url("/images/hero-femme-noir.webp") center / 100% 100% no-repeat;
+}
+
+.hero-woman > .hero-woman-color {
+  background-image: url("/images/hero-femme-couleur.webp");
+  -webkit-mask-image: radial-gradient(circle at var(--wx, -999px) var(--wy, -999px), #000 calc(var(--reveal) - 1px), transparent var(--reveal));
+  mask-image: radial-gradient(circle at var(--wx, -999px) var(--wy, -999px), #000 calc(var(--reveal) - 1px), transparent var(--reveal));
+}
+
+/* Anneau blanc autour du curseur, même centre et même rayon que la zone colorée */
+.hero-ring {
+  position: absolute;
+  z-index: 2;
+  left: var(--sx, -999px);
+  top: var(--sy, -999px);
+  width: calc(var(--reveal) * 2);
+  height: calc(var(--reveal) * 2);
+  translate: -50% -50%;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 calc(18 * var(--u)) rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+
+.hero-stage[data-reveal] .hero-ring {
+  opacity: 1;
 }
 
 @keyframes womanIn {
@@ -563,39 +634,17 @@ a {
   to   { opacity: 1; translate: 0 0; }
 }
 
-/* Halo rose magenta : centre (1500, 300), 640 × 600 */
-.hero-glow {
-  position: absolute;
-  z-index: -3;
-  top: 0;
-  right: calc(-380 * var(--u));
-  width: calc(640 * var(--u));
-  height: calc(600 * var(--u));
-  border-radius: 50%;
-  background: var(--rose-magenta);
-  filter: blur(calc(150 * var(--u)));
-  transition: translate 1.2s var(--ease);
-  animation: glowIn 2s 0.6s ease both, breathe 7s 2.6s ease-in-out infinite;
-}
-
-@keyframes glowIn {
-  from { opacity: 0; transform: scale(0.7); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes breathe {
-  0%, 100% { opacity: 1;   transform: scale(1); }
-  50%      { opacity: 0.75; transform: scale(1.08); }
-}
-
-/* Titre */
-/* Maquette : DM Sans 600, 68 / 64, -3 %, sur 3 lignes */
+/* Titre : DM Sans 600, 65 / 60, -4 %, sur 4 lignes (2 blanches, 2 grises) */
 .hero-title {
-  font-size: calc(68 * var(--u));
+  position: absolute;
+  left: calc(64 * var(--u));
+  top: calc(45.3 * var(--u));
+  font-size: calc(65 * var(--u));
   font-weight: 600;
-  line-height: calc(64 * var(--u));
-  letter-spacing: -0.03em;
+  line-height: calc(60 * var(--u));
+  letter-spacing: -0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .hero-title .line {
@@ -610,28 +659,11 @@ a {
 
 .hero-title .line:nth-child(1) > span { animation-delay: 1s; }
 .hero-title .line:nth-child(2) > span { animation-delay: 1.1s; }
-.hero-title .line:nth-child(3) > span { animation-delay: 1.2s, 2.35s; } /* apparition, puis couleur */
+.hero-title .line:nth-child(3) > span { animation-delay: 1.2s; }
+.hero-title .line:nth-child(4) > span { animation-delay: 1.3s; }
 
 .hero-title .line-muted {
-  color: #6f6f6f;
-}
-
-/* « commission de 20% » : passe du gris à la couleur après son apparition
-   (même dégradé que « est exceptionnel. ») */
-.hero-title .line-muted > span {
-  color: transparent;
-  background:
-    linear-gradient(90deg, var(--bleu-ca) 0%, var(--rose-magenta) 100%) left / 0% 100% no-repeat,
-    linear-gradient(#6f6f6f, #6f6f6f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation:
-    reveal 1.1s 1.15s var(--ease) both,
-    colorIn 1.6s 2.3s cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-
-@keyframes colorIn {
-  to { background-size: 100% 100%, auto; }
+  color: var(--gris);
 }
 
 @keyframes reveal {
@@ -639,29 +671,62 @@ a {
   to   { transform: none; }
 }
 
-/* Bouton */
+/* Bouton : 176 × 48, en (64, 589) */
 .hero-cta {
-  margin-top: calc(67 * var(--u));
+  position: absolute;
+  left: calc(64 * var(--u));
+  top: calc(589 * var(--u));
+  height: calc(48 * var(--u));
+  gap: calc(11 * var(--u));
+  padding: calc(3 * var(--u)) calc(17 * var(--u)) calc(3 * var(--u)) calc(3 * var(--u));
+  border-radius: calc(12 * var(--u));
+  font-size: calc(13 * var(--u));
   animation: fadeUp 0.8s 1.5s var(--ease) both;
 }
 
-/* Paragraphe */
+.hero-cta::before {
+  top: calc(3 * var(--u));
+  left: calc(3 * var(--u));
+  width: calc(42 * var(--u));
+  height: calc(42 * var(--u));
+  border-radius: calc(9 * var(--u));
+}
+
+.hero-cta:hover::before {
+  width: calc(100% - 6 * var(--u));
+}
+
+.hero-cta .cta-icon {
+  width: calc(42 * var(--u));
+  height: calc(42 * var(--u));
+}
+
+.hero-cta .cta-icon svg {
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+}
+
+/* Paragraphe : DM Sans 14 / 20, taille optique 9 (comme Figma), en haut à droite (x 998) */
 .hero-text {
-  max-width: calc(330 * var(--u));
-  margin-top: calc(65 * var(--u));
-  font-size: max(12px, calc(14 * var(--u)));
+  position: absolute;
+  left: calc(100% - 442 * var(--u));
+  top: calc(44 * var(--u));
+  font-size: calc(14 * var(--u));
+  font-variation-settings: "opsz" 9;
   line-height: calc(20 * var(--u));
+  white-space: nowrap;
   animation: fadeUp 0.9s 1.65s var(--ease) both;
 }
 
-/* Carte "Réponse sous 48 H" */
+/* Carte "Réponse sous 48 H" : en (998, 576) */
 .response-card {
   position: absolute;
-  top: calc(577 * var(--u)); /* maquette : en bas à droite, sur le pull */
-  right: calc(64 * var(--u));
+  left: calc(100% - 442 * var(--u));
+  top: calc(576 * var(--u));
   display: flex;
-  gap: calc(30 * var(--u));
-  padding: calc(10 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)) calc(22 * var(--u));
+  justify-content: space-between;
+  width: calc(378 * var(--u));
+  padding: calc(9 * var(--u)) calc(9 * var(--u)) calc(9 * var(--u)) calc(22 * var(--u));
   background: var(--noir);
   border-radius: calc(24 * var(--u));
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
@@ -678,23 +743,25 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: calc(12 * var(--u)) 0 calc(10 * var(--u));
+  padding: calc(8 * var(--u)) 0 calc(10 * var(--u));
 }
 
 .response-info p {
-  font-size: max(12px, calc(14 * var(--u)));
+  font-size: calc(14 * var(--u));
+  font-variation-settings: "opsz" 9;
 }
 
 .response-value {
   display: flex;
-  align-items: center;
-  gap: calc(14 * var(--u));
+  align-items: flex-end;
+  gap: calc(12 * var(--u));
 }
 
 .response-value strong {
-  font-size: calc(64 * var(--u));
+  margin-bottom: calc(-3 * var(--u));
+  font-size: calc(67 * var(--u));
   font-weight: 500;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -717,15 +784,16 @@ a {
   height: calc(20 * var(--u));
   fill: none;
   stroke: var(--noir);
-  stroke-width: 2;
+  stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+/* flèche circulaire : se dessine à l'apparition */
 .response-icon .tick {
-  stroke-dasharray: 12;
-  stroke-dashoffset: 12;
-  animation: tickDraw 0.6s 3s var(--ease) forwards;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: tickDraw 0.8s 3s var(--ease) forwards;
 }
 
 @keyframes tickDraw {
@@ -742,9 +810,7 @@ a {
   width: calc(140 * var(--u));
   height: calc(140 * var(--u));
   border-radius: calc(16 * var(--u));
-  background:
-    url("/images/hero-carte-reponse.png") center / cover no-repeat,
-    linear-gradient(160deg, #cfe9f5, #8fc6e6);
+  background: #fff url("/images/hero-carte-ordinateur.png") center / cover no-repeat;
   overflow: hidden;
   transition: transform 0.6s var(--ease);
 }
@@ -753,34 +819,30 @@ a {
   transform: scale(1.05) rotate(-2deg);
 }
 
-/* Destinations */
+/* Destinations : pastilles en verre dépoli, y 707,5 */
 .hero-tags {
-  position: absolute;
-  z-index: 1;
-  left: calc(64 * var(--u));
-  bottom: calc(25 * var(--u));
-  display: grid;
-  grid-template-columns: repeat(4, max-content);
-  column-gap: calc(213 * var(--u));
   list-style: none;
 }
 
 .hero-tags li {
+  position: absolute;
+  top: calc(707.5 * var(--u));
   padding: calc(5 * var(--u)) calc(10 * var(--u));
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 999px;
-  font-size: max(10px, calc(11 * var(--u)));
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(4px);
+  font-size: calc(11 * var(--u));
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   cursor: default;
   transition: background 0.3s, color 0.3s, transform 0.3s var(--ease);
   animation: fadeUp 0.7s var(--ease) both;
 }
 
-.hero-tags li:nth-child(1) { animation-delay: 1.9s; }
-.hero-tags li:nth-child(2) { animation-delay: 2.0s; }
-.hero-tags li:nth-child(3) { animation-delay: 2.1s; }
-.hero-tags li:nth-child(4) { animation-delay: 2.2s; }
+.hero-tags li:nth-child(1) { left: calc(64 * var(--u));  animation-delay: 1.9s; }
+.hero-tags li:nth-child(2) { left: calc(307 * var(--u)); animation-delay: 2.0s; }
+.hero-tags li:nth-child(3) { left: calc(50% - 30 * var(--u)); animation-delay: 2.1s; }
+.hero-tags li:nth-child(4) { left: calc(100% - 516 * var(--u)); animation-delay: 2.2s; }
 
 .hero-tags li:hover {
   background: #fff;
@@ -788,66 +850,90 @@ a {
   transform: translateY(-3px);
 }
 
-/* Responsive hero */
+/* Responsive hero : une colonne, valeurs fixes */
 @media (max-width: 900px) {
   .hero {
-    --u: 1px; /* mobile : valeurs fixes, mise en page sur une colonne */
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+    --u: 1px;
     height: auto;
     margin-top: 76px;
-    min-height: auto;
-    padding: 40px 16px 48px;
+    padding: 40px 16px 40px;
+  }
+
+  .hero-stage {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: auto;
+    margin: 0;
+  }
+
+  .hero-title,
+  .hero-cta,
+  .hero-text,
+  .response-card,
+  .hero-tags li {
+    position: relative;
+    left: auto !important;
+    top: auto;
   }
 
   .hero-title {
-    font-size: 36px;
-    line-height: 36px;
+    font-size: 40px;
+    line-height: 38px;
   }
 
-  .hero-cta { margin-top: 40px; }
-  .hero-text { margin-top: 32px; max-width: 100%; }
+  .hero-cta { margin-top: 36px; }
+
+  .hero-text {
+    margin-top: 32px;
+    max-width: 360px;
+    white-space: normal;
+  }
+
+  .hero-text br { display: none; }
 
   .response-card {
-    position: static;
-    align-self: flex-start;
+    width: auto;
+    gap: 24px;
+    margin-top: 300px;
   }
-
-  .response-value strong { font-size: 44px; }
+  .response-value strong { font-size: 48px; }
   .response-img { width: 110px; height: 110px; }
 
   .hero-tags {
-    position: static;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 120px;
+    margin-top: 24px;
   }
 
-  .hero-glow { right: -300px; }
-  .hero-haze { right: -400px; }
+  /* décor : halos, feuille et femme derrière le texte */
+  .hero-glow--jaune { left: -560px; top: auto; bottom: -480px; }
+  .hero-glow--bleu { left: auto; right: -800px; top: 0; }
 
-  /* Colline : 1100 px de large, centrée ; la femme garde sa place dessus */
-  .hero-bg {
-    left: calc(50% - 550px);
-    bottom: -67px;            /* 105 × 1100 / 1719 */
-    width: 1100px;
+  .hero-leaf-wrap {
+    left: auto;
+    right: -70px;
+    top: auto;
+    bottom: 330px;
+    width: 260px;
+    height: 266px;
   }
+
+  .hero-ring { display: none; }
 
   .hero-woman {
-    left: calc(50% - 66px);   /* -550 + 757 × 1100 / 1719 */
-    bottom: -31px;
-    width: 436px;
-    opacity: 0.55;            /* reste derrière le texte */
-    -webkit-mask-image: linear-gradient(to top, transparent 31px, #000 100px);
-    mask-image: linear-gradient(to top, transparent 31px, #000 100px);
+    left: calc(50% - 150px);
+    top: auto;
+    bottom: 150px;
+    width: 330px;
   }
 
-  .intro::before {
-    height: 67px;
-    background-size: 1100px auto;
-    background-position: center bottom;
+  .hero-hill {
+    --hw: 1100px;
+    top: auto;
+    bottom: -40px;
   }
 }
 
@@ -857,29 +943,6 @@ a {
   padding: 192px 16px 128px;
   background: var(--black);
   color: var(--white);
-}
-
-
-/* Raccord : la VRAIE suite de l'image. L'image du hero descend 71px sous sa coupure
-   (calée en bas à -51px dans .hero-bg) ; on affiche ces 71px ici, exactement alignés
-   (même largeur, même ancrage), puis ils s'éteignent dans le noir. Mêmes pixels des
-   deux côtés → aucune ligne de coupure. */
-.intro::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: calc(105 * var(--s));   /* la partie de l'image qui dépasse sous le hero */
-  background: url("/images/colline-tv.png") var(--scene-left) bottom / calc(1719 * var(--s)) auto no-repeat;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.45) 45%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.45) 45%, transparent 100%);
-  pointer-events: none;
-  animation: fadeInSeam 1s 2.5s ease both; /* après l'animation d'entrée de l'image */
-}
-
-@keyframes fadeInSeam {
-  from { opacity: 0; }
 }
 
 .intro > * {
@@ -1258,7 +1321,7 @@ a {
   to { transform: rotate(360deg); }
 }
 
-/* « Services professionnels® » : DM Sans 10,5 px, traits jaunes à gauche */
+/* « Services professionnels® » : DM Sans 10,5 px, icône « Graphic point » à gauche */
 .svc-kicker {
   left: calc(212 * var(--pv));
   top: calc(402 * var(--pv));
@@ -1271,7 +1334,7 @@ a {
 }
 
 .svc-kicker img {
-  width: calc(62 * var(--pv));
+  width: calc(60.6 * var(--pv));   /* images/graphic-point.png (64 × 32) : encre de 54 px comme la maquette */
   height: auto;
 }
 
@@ -1812,9 +1875,9 @@ a {
 }
 
 .proof-traits {
-  left: calc(1033 * var(--p));
-  top: calc(235 * var(--p));
-  width: calc(62 * var(--p));
+  left: calc(1032.3 * var(--p));
+  top: calc(234.3 * var(--p));
+  width: calc(60.6 * var(--p));    /* images/graphic-point.png (64 × 32) : encre de 54 px comme la maquette */
   height: auto;
   clip-path: inset(0 100% 0 0);    /* les traits se peignent de gauche à droite */
   transition: clip-path 0.9s 0.5s var(--ease);
@@ -1900,7 +1963,7 @@ a {
 .method .proof-title  { top: calc(80.75 * var(--p)); font-size: calc(68.7 * var(--p)); line-height: calc(64 * var(--p)); }
 .method .proof-sub    { top: calc(227.5 * var(--p)); line-height: calc(20 * var(--p)); }
 .method .proof-tag    { left: calc(792 * var(--p)); top: calc(81.5 * var(--p)); }
-.method .proof-traits { top: calc(82 * var(--p)); }
+.method .proof-traits { top: calc(81.3 * var(--p)); }
 .method .proof-corner { top: calc(79 * var(--p)); }
 
 @media (max-width: 900px) {
@@ -2339,6 +2402,54 @@ a {
 }
 
 .footer.in-view .footer-fireflies { opacity: 1; }
+
+/* Écran de la TV : lueur jaune diffuse (comme un tube cathodique qui chauffe), sans bords nets.
+   Calée sur la vitre de l'écran de image 55.png (x 1818–2028, y 802–968 sur 3772 × 1668) :
+   centre lumineux, coins plus sombres (vignettage) et bords flous → elle se fond dans la TV.
+   ::after = lumière qui déborde doucement sur le cadre et l'herbe. */
+.tv-screen {
+  position: absolute;
+  left: 48.2%;
+  top: 48.08%;
+  width: 5.567%;
+  height: 9.952%;
+  border-radius: 22% / 26%;
+  background: radial-gradient(ellipse 60% 60% at 50% 48%,
+    rgba(255, 252, 240, 0.95) 0%,   /* blanc chaud au centre */
+    rgba(255, 236, 185, 0.75) 45%,  /* entre blanc et jaune */
+    rgba(252, 220, 140, 0.25) 80%,
+    rgba(252, 220, 140, 0) 100%);
+  filter: blur(calc(2 * var(--f)));
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: tvBoot 6.5s 2.6s steps(1, end) infinite;
+}
+
+.tv-screen::after {
+  content: "";
+  position: absolute;
+  inset: -60% -70%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 232, 170, 0.3), rgba(255, 232, 170, 0));
+  filter: blur(calc(10 * var(--f)));
+}
+
+@keyframes tvBoot {
+  0%   { opacity: 0; }
+  52%  { opacity: 0.8; }
+  53%  { opacity: 0; }
+  56%  { opacity: 0.5; }
+  57%  { opacity: 0.1; }
+  58%  { opacity: 0.85; }
+  60%  { opacity: 0; }
+  66%  { opacity: 0.35; }
+  67%  { opacity: 0.95; }
+  69%  { opacity: 0.5; }
+  70%  { opacity: 0.9; }
+  74%  { opacity: 0.25; }
+  76%  { opacity: 0; }
+  100% { opacity: 0; }
+}
 
 .footer-hill .tv-screen { filter: blur(calc(2 * var(--f))); }
 .footer-hill .tv-screen::after { filter: blur(calc(10 * var(--f))); }

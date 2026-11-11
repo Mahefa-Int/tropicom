@@ -194,7 +194,7 @@ export default function Services() {
           </div>
           <p className="svc-kicker">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/traits-jaunes.png" alt="" width={62} height={28} />
+            <img src="/images/graphic-point.png" alt="" width={64} height={32} />
             <span>
               Services professionnels<sup>®</sup>
             </span>

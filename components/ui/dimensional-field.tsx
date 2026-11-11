@@ -206,11 +206,11 @@ export default function DimensionalField({
     io.observe(wrap);
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const clock = new THREE.Clock();
+    const t0 = performance.now();
     let raf = 0;
     const animate = () => {
       raf = 0;
-      const t = reduce ? 8 : clock.getElapsedTime();
+      const t = reduce ? 8 : (performance.now() - t0) / 1000;
       uniforms.u_time.value = t;
       camera.position.x += (mouseX * 0.004 - camera.position.x) * 0.05;
       camera.position.y += (-mouseY * 0.004 - camera.position.y) * 0.05;
