@@ -1631,6 +1631,7 @@ a {
   .svc-title { gap: 10px; }
   .svc-num { font-size: 44px; line-height: 44px; }
   .svc-name { font-size: 26px; line-height: 28px; }
+  .svc-card--2l .svc-title { top: auto; }
   .svc-name br { display: none; }
 
   .svc-imgs { margin-top: 20px; gap: 10px; }
@@ -1651,6 +1652,16 @@ a {
   .svc-badge .ring { animation: none; }
   .svc-tags span { opacity: 1; transform: none; transition: none; }
   .svc-tags span::after { transform: none; transition: none; }
+}
+
+/* Études de cas (pile 3D) : sur mobile, hauteur juste suffisante pour la pile */
+@media (max-width: 900px) {
+  .case-stack .cs-root {
+    height: calc(100vw * 0.94 * 666 / 1312 * 1.32 + 64px) !important;
+    min-height: 0 !important;
+  }
+  /* pas de libellés : la scène occupe toute la hauteur */
+  .case-stack .cs-stage { top: 0 !important; bottom: 0 !important; }
 }
 
 /* ============ CHIFFRES CLÉS ============
@@ -1850,7 +1861,7 @@ a {
   .proof > * { position: relative; left: auto; top: auto; }
   .proof-title { font-size: 40px; line-height: 40px; }
   .proof-sub { margin-top: 20px; line-height: 1.4; }
-  .proof-tag { margin-bottom: 20px; }
+  .proof-tag { margin: 16px 0 0; }
   .proof-traits, .proof-corner { display: none; }
 }
 
@@ -1894,6 +1905,11 @@ a {
 
 @media (max-width: 900px) {
   .proof.method { height: auto; padding: 56px 16px; }
+  /* les positions d'ordinateur ne s'appliquent pas sur mobile (sinon la page s'élargit) */
+  .method .proof-title,
+  .method .proof-sub,
+  .method .proof-tag { left: auto; top: auto; }
+  .method .proof-title { font-size: 40px; line-height: 40px; }
   .method .proof-sub br { display: none; }
 }
 

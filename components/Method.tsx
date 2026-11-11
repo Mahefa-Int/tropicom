@@ -11,9 +11,9 @@ export default function Method() {
         <span className="line"><span>IMPROVISATION.</span></span>
       </h2>
       <p className="proof-sub">
-        Une saison se prépare, elle ne se rattrape pas. Notre processus est calé sur votre
+        Une saison se prépare, elle ne se rattrape pas. Notre processus est calé sur votre{" "}
         <br />
-        calendrier commercial : nous remontons à rebours de votre haute saison pour savoir
+        calendrier commercial : nous remontons à rebours de votre haute saison pour savoir{" "}
         <br />
         quand chaque chose doit être prête.
       </p>
