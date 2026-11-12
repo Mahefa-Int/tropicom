@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import { SwipeCards } from "@/components/ui/image-stack-carousel";
 
 /**
  * « Pourquoi Tropi'Com » — après les témoignages.
  * Maquette (ramenée à 1440 de large comme les autres sections) : étiquette, phrase d'accroche,
- * icône « graphic point », ligne verte → citron qui traverse la scène, et un paquet de cartes penchées.
- * Au défilement, la scène reste épinglée : la carte du dessus s'envole le long de la ligne
- * et révèle la suivante ; la ligne se dessine en même temps.
+ * icône « graphic point », ligne verte → citron qui traverse la scène, et une pile de cartes penchées.
+ * Pile = Image Stack Carousel (components/ui/image-stack-carousel.tsx) : on tire la carte de devant
+ * (inclinaison 3D) et elle repasse sous la pile.
  * À COMPLÉTER : titres, textes et images des cartes 2 et 3 (provisoires).
  */
 type Reason = { title: string; text: string; image: string; glow: string };
@@ -35,138 +36,86 @@ const REASONS: Reason[] = [
   },
 ];
 
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const ease = (t: number) => t * t * (3 - 2 * t);
+/** Taille des cartes : 568 × 381 px de maquette (ramenée à 1440) ; sur mobile, toute la largeur. */
+function useCardSize() {
+  const [size, setSize] = useState({ w: 568, h: 381, mobile: false });
+  useEffect(() => {
+    const update = () => {
+      const vw = document.documentElement.clientWidth;
+      if (vw <= 900) setSize({ w: Math.min(420, vw - 40), h: Math.min(560, Math.round((vw - 40) * 1.35)), mobile: true });
+      else setSize({ w: Math.round((568 * vw) / 1440), h: Math.round((381 * vw) / 1440), mobile: false });
+    };
+    update();
+    addEventListener("resize", update);
+    return () => removeEventListener("resize", update);
+  }, []);
+  return size;
+}
+
+function ReasonCard({ r }: { r: Reason }) {
+  return (
+    <article className="why-card" style={{ "--glow": r.glow } as React.CSSProperties}>
+      <span className="why-card-glow" aria-hidden="true"></span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="why-card-img" src={r.image} alt="" loading="lazy" draggable={false} />
+      <h3 className="why-card-title">{r.title}</h3>
+      <p className="why-card-text">{r.text}</p>
+    </article>
+  );
+}
 
 export default function Why() {
-  const rootRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const cardRefs = useRef<(HTMLElement | null)[]>([]);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const stage = stageRef.current;
-    const path = pathRef.current;
-    if (!root || !stage || !path) return;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mobile = matchMedia("(max-width: 900px)");
-    const n = REASONS.length;
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = String(len);
-
-    const target = () => {
-      const r = root.getBoundingClientRect();
-      const run = r.height - stage.offsetHeight;
-      const top = parseFloat(getComputedStyle(stage).top) || 0;
-      return run > 0 ? clamp01((top - r.top) / run) : 0;
-    };
-    let v = target();
-
-    const place = () => {
-      if (mobile.matches) {
-        cardRefs.current.forEach((el) => el && (el.style.cssText = ""));
-        path.style.strokeDashoffset = "0";
-        return;
-      }
-      // la ligne : à moitié dessinée à l'arrivée, entière à la fin
-      path.style.strokeDashoffset = String(len * (1 - (reduce ? 1 : 0.6 + 0.4 * v)));
-      const pos = v * (n - 1); // carte au-dessus du paquet (fractionnaire pendant le passage)
-      cardRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const k = i - pos; // < 0 : déjà partie ; 0 : dessus ; > 0 : dessous
-        if (k < 0) {
-          // s'envole vers le haut à gauche, le long de la ligne, en tournant
-          const t = ease(clamp01(-k));
-          el.style.transform =
-            "translate3d(" + (-62 * t).toFixed(2) + "vw," + (-38 * t).toFixed(2) + "vh,0) rotateY(-8deg) rotateZ(" + (4.5 - 16 * t).toFixed(2) + "deg)";
-          el.style.opacity = Math.max(0, 1 - t * 1.5).toFixed(3);
-          el.style.setProperty("--why-dim", "0");
-        } else {
-          // dans le paquet : un peu décalée, plus penchée, plus petite et plus sombre
-          const d = Math.min(k, 2);
-          el.style.transform =
-            "translate3d(" + (d * -0.9).toFixed(2) + "vw," + (d * 1.2).toFixed(2) + "vh,0) rotateY(-8deg) rotateZ(" + (4.5 - d * 1.6).toFixed(2) + "deg) scale(" + (1 - d * 0.02).toFixed(3) + ")";
-          el.style.opacity = "1";
-          el.style.setProperty("--why-dim", Math.min(1, d).toFixed(3));
-        }
-        el.style.zIndex = String(10 + n - i);
-      });
-    };
-
-    let raf = 0;
-    const tick = () => {
-      raf = requestAnimationFrame(tick);
-      const t = target();
-      v += (t - v) * (reduce ? 1 : 0.14);
-      if (Math.abs(t - v) < 1e-4) v = t;
-      place();
-    };
-    place();
-    const io = new IntersectionObserver(
-      ([e]) => {
-        cancelAnimationFrame(raf);
-        if (e.isIntersecting) raf = requestAnimationFrame(tick);
-      },
-      { rootMargin: "200px 0px" }
-    );
-    io.observe(root);
-    const onMq = () => place();
-    mobile.addEventListener("change", onMq);
-    return () => {
-      cancelAnimationFrame(raf);
-      io.disconnect();
-      mobile.removeEventListener("change", onMq);
-    };
-  }, []);
+  const size = useCardSize();
 
   return (
-    <section className="why" id="pourquoi" ref={rootRef} aria-labelledby="why-title">
-      {/* data-reveal sur la scène (la section fait 3 écrans de haut) */}
-      <div className="why-stage" ref={stageRef} data-reveal>
-        {/* ligne verte → citron (derrière les cartes) */}
-        <svg className="why-line" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="whyGrad" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="760" y2="900">
-              <stop offset="0" stopColor="#5fa586" />
-              <stop offset="0.55" stopColor="#8fb06a" />
-              <stop offset="1" stopColor="#c3cf55" />
-            </linearGradient>
-          </defs>
-          <path ref={pathRef} d="M-20 154 C 190 205 330 250 520 300 C 760 365 880 480 800 600 C 770 645 750 680 715 745 C 680 810 655 860 630 900" />
-        </svg>
+    <section className="why" id="pourquoi" data-reveal aria-labelledby="why-title">
+      {/* ligne verte → citron (derrière les cartes) */}
+      <svg className="why-line" viewBox="0 0 1440 699" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="whyGrad" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="760" y2="699">
+            <stop offset="0" stopColor="#5fa586" />
+            <stop offset="0.55" stopColor="#8fb06a" />
+            <stop offset="1" stopColor="#c3cf55" />
+          </linearGradient>
+        </defs>
+        <path pathLength={1} d="M-20 154 C 190 205 330 250 520 300 C 760 365 880 480 800 600 C 785 625 770 650 745 699" />
+      </svg>
 
-        <p className="why-tag">
-          <span className="dot" aria-hidden="true"></span>Pourquoi Tropi’Com
+      <p className="why-tag">
+        <span className="dot" aria-hidden="true"></span>Pourquoi Tropi’Com
+      </p>
+      <h2 className="why-title" id="why-title">
+        Une agence qui connaît vos marchés{" "}
+        <br />
+        émetteurs autant que vos contraintes de{" "}
+        <br />
+        terrain.
+      </h2>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="why-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
+
+      {/* pile de cartes : penchée comme sur la maquette ; tirez la carte de devant */}
+      <div className="why-cards">
+        <SwipeCards
+          key={size.mobile ? "m" : "d"}
+          className="why-stack"
+          cards={REASONS.map((r, i) => ({ id: i, content: <ReasonCard r={r} /> }))}
+          settings={{
+            width: size.w,
+            height: size.h,
+            radius: size.mobile ? 22 : Math.round((26 * size.w) / 568),
+            stackRotation: size.mobile ? -4 : -3,
+            stackScale: 0.03,
+            stackOrigin: "15% 85%",
+            swipeThreshold: 110,
+            tiltStrength: 18,
+            mobileScale: 1,
+            background: "#050505",
+          }}
+        />
+        <p className="why-hint" aria-hidden="true">
+          Faites glisser la carte
         </p>
-        <h2 className="why-title" id="why-title">
-          Une agence qui connaît vos marchés{" "}
-          <br />
-          émetteurs autant que vos contraintes de{" "}
-          <br />
-          terrain.
-        </h2>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="why-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
-
-        <ol className="why-cards">
-          {REASONS.map((r, i) => (
-            <li
-              key={i}
-              className="why-card"
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              style={{ "--glow": r.glow } as React.CSSProperties}
-            >
-              <span className="why-card-glow" aria-hidden="true"></span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="why-card-img" src={r.image} alt="" loading="lazy" />
-              <h3 className="why-card-title">{r.title}</h3>
-              <p className="why-card-text">{r.text}</p>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );
