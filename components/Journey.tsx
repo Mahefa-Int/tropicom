@@ -79,7 +79,7 @@ export default function Journey({ children }: { children: React.ReactNode }) {
       </svg>
       {children}
       {/* bas de la ligne : destinations (atténuée dans le cadre, comme sur la maquette) */}
-      <svg className="journey-line journey-line--bottom" viewBox="0 3621 1440 959" preserveAspectRatio="none" aria-hidden="true">
+      <svg className="journey-line journey-line--bottom" viewBox="0 3621 1440 809" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <mask id="journeyMask" maskUnits="userSpaceOnUse" x="-100" y="3500" width="1640" height="1200">
             <rect x="-100" y="3500" width="1640" height="1200" fill="#fff" />

@@ -1,14 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import CtaIcon from "./CtaIcon";
 
-const LINKS = ["Accueil", "L'Agence", "Expertises", "Réalisations", "Ressources", "Contact"];
+// liens : seules l'accueil et « L'Agence » ont une page pour l'instant
+const LINKS = [
+  { label: "Accueil", href: "/" },
+  { label: "L'Agence", href: "/agence" },
+  { label: "Expertises", href: "#" },
+  { label: "Réalisations", href: "#" },
+  { label: "Ressources", href: "#" },
+  { label: "Contact", href: "#contact" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState(0);
+  const pathname = usePathname();
+  const [active, setActive] = useState(() => Math.max(0, LINKS.findIndex((l) => l.href === pathname)));
 
   // Barre compacte au scroll
   useEffect(() => {
@@ -28,20 +38,20 @@ export default function Navbar() {
   return (
     <header className={classes} id="navbar">
       {/* Logo */}
-      <a href="#" className="logo" aria-label="Tropi'Com - Accueil">
+      <a href="/" className="logo" aria-label="Tropi'Com - Accueil">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/logo-tropicom.svg" alt="Tropi'Com" width={110} height={60} />
       </a>
 
       <nav className="nav" id="nav">
         <ul>
-          {LINKS.map((label, i) => (
+          {LINKS.map(({ label, href }, i) => (
             <li key={label}>
               <a
-                href="#"
+                href={href}
                 className={i === active ? "active" : undefined}
                 onClick={(e) => {
-                  e.preventDefault();
+                  if (href === "#") e.preventDefault();
                   setActive(i);
                   setOpen(false);
                 }}

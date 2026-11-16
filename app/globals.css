@@ -1231,6 +1231,8 @@ a {
   --pv: min(var(--v), calc((100vh - var(--nav-h) - 40px) / 844));
   position: relative;
   height: calc(4208 * var(--v));
+  /* remontée de 100 sur le bas (vide) de « Ils nous ont fait confiance » : écart de la maquette complète */
+  margin-top: calc(-100 * var(--v));
   overflow: clip;            /* coupe la ligne qui sort à droite, sans casser le panneau sticky */
   background: var(--noir);   /* fond noir, comme le reste de la page */
   color: var(--white);
@@ -1648,6 +1650,7 @@ a {
     --v: 1px;
     --pv: 0.78px;
     height: auto;
+    margin-top: 0;
     padding: 48px 16px 64px;
   }
 
@@ -1726,7 +1729,7 @@ a {
   z-index: 1;
   display: flex;
   justify-content: space-between;
-  padding: calc(128 * var(--c)) calc(64 * var(--c));
+  padding: calc(165 * var(--c)) calc(64 * var(--c)) calc(128 * var(--c)); /* haut : maquette complète */
   background: var(--noir);
 }
 
@@ -1801,7 +1804,7 @@ a {
   height: calc(480 * var(--p));
   /* remontée sur le bas (vide) de la section services, juste sous la carte 05 ;
      fond transparent → la ligne bleu canard reste visible derrière */
-  margin-top: calc(-625 * var(--p));
+  margin-top: calc(-481 * var(--p)); /* écart carte 05 → titre relevé sur la maquette complète */
   background: transparent;
   color: var(--white);
 }
@@ -2617,7 +2620,7 @@ a {
 
 
 /* ============ PARCOURS : Pourquoi → atouts → destinations ============
-   Maquette 1440 × 4580 : Pourquoi (813,5) + atouts + destinations (809) + 150 de marge.
+   Maquette 1440 × 4580 : Pourquoi (813,5) + atouts + destinations (809) ; la marge de 150 du bas est retirée (l’Observatoire a déjà la sienne).
    La ligne (repère 1440 × 4580) est affichée en deux morceaux (haut et bas) ; la partie du milieu est
    dessinée dans la scène sticky des atouts. Elle se dessine au défilement. */
 .journey {
@@ -2625,7 +2628,6 @@ a {
   position: relative;
   isolation: isolate;
   overflow-x: clip;
-  padding-bottom: calc(150 * var(--j));
   background: var(--black);
 }
 
@@ -2637,9 +2639,9 @@ a {
   pointer-events: none;
 }
 
-/* haut : section « Pourquoi » (repère 0 → 813,5) ; bas : destinations + marge (repère 3621 → 4580) */
+/* haut : section « Pourquoi » (repère 0 → 813,5) ; bas : destinations (repère 3621 → 4430) */
 .journey-line--top { top: 0; height: calc(813.5 * var(--j)); }
-.journey-line--bottom { bottom: 0; height: calc(959 * var(--j)); }
+.journey-line--bottom { bottom: 0; height: calc(809 * var(--j)); }
 
 .journey-line path {
   fill: none;
@@ -3092,8 +3094,9 @@ a {
    (bleu canard / rose magenta / gris). Panneau du haut à (24, 24), 373 de large. Titre DM Sans 400
    30 / 30 en capitales ; pastilles 46 px de haut ; texte 11 / 16 ; point de couleur 23 px. */
 .atu {
-  /* les cartes tiennent aussi sur les écrans peu hauts (sous la barre de navigation de 72 px) */
-  --a: min(100vw / 1440, (100vh - 150px) / 522);
+  /* les cartes tiennent sur l'écran sous la barre de navigation (72 px) en laissant au moins
+     ~110 px d'écart avec la section des destinations en dessous */
+  --a: min(100vw / 1440, (100vh - 300px) / 522);
   position: relative;
   height: calc(100vh + 1500px);
   background: var(--black);
@@ -3128,7 +3131,7 @@ a {
   position: absolute;
   z-index: 2;
   left: calc(50% + (var(--dx) - 210.5) * var(--a));
-  top: calc(50% + 36px - 261 * var(--a));
+  top: calc(50% + 12px - 261 * var(--a));
   width: calc(421 * var(--a));
   height: calc(522 * var(--a));
   border-radius: calc(34 * var(--a));
@@ -3351,10 +3354,471 @@ a {
   :root[data-reduce-motion] .atu-orbit-ring, :root[data-reduce-motion] .atu-orbit-pill { animation: none; }
 
 
+/* ============ OBSERVATOIRE DU DIGITAL TOURISTIQUE ============
+   Maquette 1440 × 928, remontée de 30 px (marge du haut 120 au lieu de 150, demandé) → 1440 × 898.
+   Carte 444 × 499 en (128, 184), radius 16 (couverture du rapport) ; fond turquoise 796 × 628 en (580, 120) ;
+   titre DM Sans 400 33 / 28,5 (−4 %) en (754, 185) ; paragraphe 15,6 / 20,5 (−4 %) ; bouton 186 × 49 en (1126, 633). */
+.obs {
+  --b: calc(100vw / 1440);
+  position: relative;
+  height: calc(898 * var(--b));
+  background: var(--black);
+  color: var(--white);
+  overflow: hidden;
+}
+
+.obs > * { position: absolute; }
+
+.obs-bg {
+  left: calc(580 * var(--b));
+  top: calc(120 * var(--b));
+  width: calc(796 * var(--b));
+  height: calc(628 * var(--b));
+  pointer-events: none;
+}
+
+.obs-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  left: calc(128 * var(--b));
+  top: calc(184 * var(--b));
+  width: calc(444 * var(--b));
+  height: calc(499 * var(--b));
+  border-radius: calc(16 * var(--b));
+  overflow: hidden;
+  background: #171616;
+  transform: perspective(calc(1200 * var(--b))) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+
+.obs-card:hover { box-shadow: 0 40px 80px -30px rgba(62, 157, 158, 0.35); }
+
+.obs-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.obs-title {
+  left: calc(754 * var(--b));
+  top: calc(184.6 * var(--b));
+  font-size: calc(33 * var(--b));
+  font-weight: 400;
+  line-height: calc(28.5 * var(--b));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.obs-text {
+  left: calc(754 * var(--b));
+  top: calc(254.6 * var(--b));
+  font-size: calc(15.6 * var(--b));
+  line-height: calc(20.5 * var(--b));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.obs-cta {
+  left: calc(1126 * var(--b));
+  top: calc(633 * var(--b));
+  height: calc(49 * var(--b));
+  gap: calc(11 * var(--b));
+  padding: calc(3 * var(--b)) calc(17 * var(--b)) calc(3 * var(--b)) calc(3 * var(--b));
+  border-radius: calc(12 * var(--b));
+  font-size: calc(13.2 * var(--b));
+  letter-spacing: -0.02em;
+}
+
+.obs-cta::before {
+  top: calc(3 * var(--b));
+  left: calc(3 * var(--b));
+  width: calc(43 * var(--b));
+  height: calc(43 * var(--b));
+  border-radius: calc(9 * var(--b));
+}
+
+.obs-cta:hover::before { width: calc(100% - 6 * var(--b)); }
+.obs-cta .cta-icon { width: calc(43 * var(--b)); height: calc(43 * var(--b)); }
+.obs-cta .cta-icon svg { width: calc(20 * var(--b)); height: calc(20 * var(--b)); }
+
+/* apparition */
+.obs-bg, .obs-card, .obs-title, .obs-text, .obs-cta {
+  opacity: 0;
+  translate: 0 calc(30 * var(--b));
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease), transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+.obs-bg { translate: calc(60 * var(--b)) 0; transition-duration: 1.6s; }
+.obs-card { translate: calc(-50 * var(--b)) 0; }
+.obs-title { transition-delay: 0.1s; }
+.obs-text { transition-delay: 0.2s; }
+.obs-cta { transition-delay: 0.3s, 0.3s, 0s, 0s; }
+.obs.in-view .obs-bg, .obs.in-view .obs-card, .obs.in-view .obs-title, .obs.in-view .obs-text, .obs.in-view .obs-cta {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (max-width: 900px) {
+  .obs {
+    --b: 1px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 64px 20px 72px;
+  }
+  .obs > * { position: relative; left: auto; top: auto; }
+  .obs-bg { position: absolute; inset: auto -40% 0 auto; width: 160%; height: 70%; opacity: 0.8; }
+  .obs.in-view .obs-bg { opacity: 0.8; }
+  .obs-card { width: 100%; max-width: 444px; height: auto; aspect-ratio: 444 / 499; align-self: center; }
+  .obs-title { margin-top: 18px; font-size: 26px; line-height: 25px; white-space: normal; }
+  .obs-text { font-size: 15px; line-height: 21px; white-space: normal; }
+  .obs-title br, .obs-text br { display: none; }
+  .obs-cta { align-self: flex-start; margin-top: 8px; }
+}
+
+/* animations réduites : désactivé (voir lib/motion.ts) */
+  :root[data-reduce-motion] .obs-bg, :root[data-reduce-motion] .obs-card, :root[data-reduce-motion] .obs-title, :root[data-reduce-motion] .obs-text, :root[data-reduce-motion] .obs-cta { opacity: 1; translate: none; transition: none; }
+
+/* ============ FAQ : « On répond à vos questions. » ============
+   Maquette 1440 × 1132. Titre DM Sans 400 72 / 64 (−4 %) en (64, 100) ; étiquette 11,2 px (point 10 px
+   en 906, 103) ; « graphic point » 67 × 24 en (1317, 104,5) (découpé dans la maquette). Questions réduites à la demande
+   (maquette : 110 de haut, texte 19,6, rond 48) : pilules 1312 × 80 (radius 40, #171616) à partir de y 291,
+   12 d'écart ; texte 17 px à 44 du bord ; rond magenta 32 px à 20 du bord droit. */
+.faq {
+  --q: calc(100vw / 1440);
+  position: relative;
+  padding: calc(291 * var(--q)) calc(64 * var(--q)) calc(100 * var(--q));
+  background: var(--black);
+  color: var(--white);
+}
+
+.faq-title {
+  position: absolute;
+  left: calc(64 * var(--q));
+  top: calc(100.3 * var(--q));
+  font-size: calc(72 * var(--q));
+  font-weight: 400;
+  line-height: calc(64 * var(--q));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.faq-tag {
+  position: absolute;
+  left: calc(906.5 * var(--q));
+  top: calc(102 * var(--q));
+  display: flex;
+  align-items: center;
+  gap: calc(11 * var(--q));
+  font-size: calc(11.2 * var(--q));
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.faq-tag .dot {
+  width: calc(10 * var(--q));
+  height: calc(10 * var(--q));
+  border-radius: calc(2 * var(--q));
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.faq-traits {
+  position: absolute;
+  left: calc(1317 * var(--q));
+  top: calc(104.5 * var(--q));
+  width: calc(67 * var(--q));
+  height: calc(24 * var(--q));
+}
+
+/* liste réduite à 1000 de large (maquette : 1312), centrée */
+.faq-list {
+  width: calc(1000 * var(--q));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--q));
+  list-style: none;
+}
+
+.faq-item {
+  border-radius: calc(40 * var(--q));
+  background: var(--noir-charbon);
+  transition: background-color 0.4s var(--ease);
+}
+
+.faq-item:hover { background: #1e1d1d; }
+
+.faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(24 * var(--q));
+  width: 100%;
+  height: calc(80 * var(--q));
+  padding: 0 calc(24 * var(--q)) 0 calc(44 * var(--q));
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: calc(17 * var(--q));
+  letter-spacing: -0.03em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-q:focus-visible { outline: 2px solid var(--jaune-dore); outline-offset: -4px; border-radius: calc(40 * var(--q)); }
+
+/* rond magenta 48 px avec un « + » (14 px, trait 1,75) qui tourne en « × » à l'ouverture */
+.faq-plus {
+  position: relative;
+  flex: none;
+  width: calc(32 * var(--q));
+  height: calc(32 * var(--q));
+  border-radius: 50%;
+  background: var(--rose-magenta);
+  transition: transform 0.5s var(--ease), background-color 0.3s;
+}
+
+.faq-plus::before,
+.faq-plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(11 * var(--q));
+  height: calc(1.5 * var(--q));
+  translate: -50% -50%;
+  background: var(--noir-charbon);
+}
+
+.faq-plus::after { rotate: 90deg; }
+.faq-q:hover .faq-plus { transform: scale(1.08); }
+.faq-item[data-open] .faq-plus { transform: rotate(135deg); background: var(--jaune-dore); }
+
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease);
+}
+
+.faq-a > div { overflow: hidden; }
+
+.faq-a p {
+  max-width: calc(900 * var(--q));
+  padding: 0 calc(44 * var(--q)) calc(30 * var(--q));
+  font-size: calc(15 * var(--q));
+  line-height: calc(22 * var(--q));
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  translate: 0 calc(-8 * var(--q));
+  transition: opacity 0.4s var(--ease), translate 0.5s var(--ease);
+}
+
+.faq-item[data-open] .faq-a { grid-template-rows: 1fr; }
+.faq-item[data-open] .faq-a p { opacity: 1; translate: 0 0; transition-delay: 0.1s; }
+
+/* apparition */
+.faq-title, .faq-tag, .faq-traits, .faq-item {
+  opacity: 0;
+  translate: 0 calc(24 * var(--q));
+  transition: opacity 0.8s var(--ease), translate 0.8s var(--ease), background-color 0.4s var(--ease);
+}
+.faq-item { transition-delay: calc(0.15s + var(--k) * 0.07s), calc(0.15s + var(--k) * 0.07s), 0s; }
+.faq.in-view .faq-title, .faq.in-view .faq-tag, .faq.in-view .faq-traits, .faq.in-view .faq-item { opacity: 1; translate: 0 0; }
+
+@media (max-width: 900px) {
+  .faq { --q: 1px; padding: 72px 16px 64px; }
+  .faq-title { position: static; font-size: 40px; line-height: 38px; white-space: normal; margin: 18px 0 36px; }
+  .faq-title br { display: none; }
+  .faq-tag { position: static; }
+  .faq-traits { display: none; }
+  .faq-list { width: auto; gap: 12px; }
+  .faq-item { border-radius: 30px; }
+  .faq-q { height: auto; min-height: 76px; padding: 16px 16px 16px 24px; font-size: 16px; line-height: 21px; }
+  .faq-plus { width: 32px; height: 32px; }
+  .faq-a p { padding: 0 24px 24px; font-size: 15px; line-height: 22px; }
+}
+
+/* ============ CONTACT : « Parlons de votre prochaine saison. » ============
+   Maquette 1440 × 553, tout est centré. Étiquette 11,3 px (point 10 px) en y 130 ; titre DM Sans 580
+   70 px (−4 %), capitales de 178,5 à 227,5 ; paragraphe 15,6 / 20 (−4 %) ; bouton 196 × 50 en y 423.
+   Décor : /images/contact/decor.webp (lueur blanche à droite + deux traits jaunes flous). */
+.ctc {
+  --c: calc(100vw / 1440);
+  position: relative;
+  height: calc(553 * var(--c));
+  /* la bulle déborde vers le haut sur la FAQ : on ne coupe qu'à l'horizontale */
+  overflow-x: clip;
+  background: var(--black);
+  color: var(--white);
+  text-align: center;
+}
+
+.ctc > * { position: absolute; }
+
+.ctc-clip {
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ctc-decor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* la lueur blanche de droite apparaît en fondu (plus de bord net en haut, la bulle fait la transition) */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 calc(220 * var(--c))), linear-gradient(to right, #000 70%, transparent 82%);
+  mask-image: linear-gradient(to bottom, transparent, #000 calc(220 * var(--c))), linear-gradient(to right, #000 70%, transparent 82%);
+  transition: translate 1.2s var(--ease), opacity 1.2s var(--ease);
+}
+
+/* bulle translucide, centrée sur la jonction FAQ / contact, coupée par le bord gauche */
+.ctc-bubble {
+  left: calc(-256 * var(--c));
+  top: calc(-190 * var(--c));
+  width: calc(460 * var(--c));
+  height: calc(460 * var(--c));
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.32) 0, rgba(255, 255, 255, 0.07) 15%, transparent 32%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.04) 58%, rgba(255, 255, 255, 0.12) 70.5%, transparent 71%);
+  box-shadow:
+    inset calc(-30 * var(--c)) calc(-40 * var(--c)) calc(80 * var(--c)) rgba(255, 255, 255, 0.06),
+    0 0 calc(140 * var(--c)) rgba(255, 255, 255, 0.06);
+  /* position et déformation pilotées en JS (ContactCta) */
+  transform: translate(var(--bx, 0px), var(--by, 0px)) scale(var(--sx, 1), var(--sy, 1));
+  opacity: 0;
+  scale: 0.85;
+  transition: opacity 1.4s var(--ease), scale 1.4s var(--ease);
+  will-change: transform;
+}
+.ctc.in-view .ctc-bubble { opacity: 0.5; scale: 1; }
+
+/* film irisé aux couleurs de la charte (bleu ca → jaune doré → rose magenta), qui tourne avec --ang,
+   visible seulement sur le contour de la bulle */
+.ctc-bubble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from var(--ang, 0deg), var(--bleu-ca), var(--jaune-dore), var(--rose-magenta), var(--bleu-ca));
+  -webkit-mask-image: radial-gradient(circle, transparent 52%, #000 68%, #000 70%, transparent 71%);
+  mask-image: radial-gradient(circle, transparent 52%, #000 68%, #000 70%, transparent 71%);
+  opacity: 0.16;
+  mix-blend-mode: screen;
+}
+
+.ctc-tag {
+  left: 50%;
+  top: calc(130.4 * var(--c));
+  display: flex;
+  align-items: center;
+  gap: calc(11 * var(--c));
+  font-size: calc(11.3 * var(--c));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.ctc-tag .dot {
+  width: calc(10 * var(--c));
+  height: calc(10 * var(--c));
+  border-radius: calc(2 * var(--c));
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.ctc-title {
+  left: 50%;
+  top: calc(168.6 * var(--c));
+  font-size: calc(70 * var(--c));
+  font-weight: 580;
+  line-height: calc(70 * var(--c));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.ctc-text {
+  left: 50%;
+  top: calc(254.7 * var(--c));
+  font-size: calc(15.6 * var(--c));
+  line-height: calc(20 * var(--c));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.ctc-cta {
+  left: 50%;
+  top: calc(422 * var(--c));
+  height: calc(50 * var(--c));
+  gap: calc(11 * var(--c));
+  padding: calc(3 * var(--c)) calc(17 * var(--c)) calc(3 * var(--c)) calc(3 * var(--c));
+  border-radius: calc(12 * var(--c));
+  font-size: calc(13.3 * var(--c));
+  letter-spacing: -0.02em;
+}
+
+.ctc-cta::before {
+  top: calc(3 * var(--c));
+  left: calc(3 * var(--c));
+  width: calc(44 * var(--c));
+  height: calc(44 * var(--c));
+  border-radius: calc(9 * var(--c));
+}
+
+.ctc-cta:hover::before { width: calc(100% - 6 * var(--c)); }
+.ctc-cta .cta-icon { width: calc(44 * var(--c)); height: calc(44 * var(--c)); }
+.ctc-cta .cta-icon svg { width: calc(20 * var(--c)); height: calc(20 * var(--c)); }
+
+/* apparition (centrage par transform, la montée par translate) */
+.ctc-tag, .ctc-title, .ctc-text, .ctc-cta {
+  transform: translateX(-50%);
+  opacity: 0;
+  translate: 0 calc(24 * var(--c));
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease), box-shadow 0.4s, transform 0.4s var(--ease);
+}
+.ctc-cta:hover { transform: translateX(-50%) translateY(-2px); }
+.ctc-cta:active { transform: translateX(-50%) scale(0.97); }
+.ctc-title { transition-delay: 0.1s; }
+.ctc-text { transition-delay: 0.2s; }
+.ctc-cta { transition-delay: 0.3s, 0.3s, 0s, 0s; }
+.ctc-decor { opacity: 0; }
+.ctc.in-view .ctc-tag, .ctc.in-view .ctc-title, .ctc.in-view .ctc-text, .ctc.in-view .ctc-cta { opacity: 1; translate: 0 0; }
+.ctc.in-view .ctc-decor { opacity: 1; }
+
+@media (max-width: 900px) {
+  .ctc {
+    --c: 1px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 80px 20px;
+  }
+  .ctc > * { position: relative; left: auto; top: auto; }
+  .ctc-clip { position: absolute; inset: 0; }
+  .ctc-decor { object-fit: cover; object-position: 85% 50%; }
+  .ctc-bubble { position: absolute; left: -90px; top: -40px; width: 190px; height: 190px; }
+  .ctc-tag, .ctc-title, .ctc-text, .ctc-cta { transform: none; }
+  .ctc-cta:hover { transform: translateY(-2px); }
+  .ctc-title { font-size: 40px; line-height: 40px; white-space: normal; }
+  .ctc-text { font-size: 15px; line-height: 21px; white-space: normal; }
+  .ctc-text br { display: none; }
+  .ctc-cta { margin-top: 12px; }
+}
+
 /* ============ FOOTER ============
    Maquette : 1440 × 881. Unité --f = 1 px de la maquette.
-   Fond : noir + halo gris clair (derrière la TV) + halo jaune doré (bord droit) :
-   deux ellipses floutées ajustées sur la maquette (écart moyen 4/255). */
+   Fond : noir + halo rose magenta (derrière la feuille et la TV) + halo jaune doré (bord droit) :
+   deux ellipses floutées ajustées sur la maquette. Feuille de monstera (même image que le hero)
+   derrière le logo, comme sur la nouvelle maquette ; la colline avec la TV est conservée. */
 .footer {
   --f: calc(100vw / 1440);
   position: relative;
@@ -3365,7 +3829,7 @@ a {
   background: var(--noir);
 }
 
-/* Halo gris clair : centre (1055, 641), 550 × 504, #D6D6D6, flou 141 */
+/* Halo rose magenta : centre (1055, 641), 550 × 504, flou 141 */
 .footer::before,
 .footer::after {
   content: "";
@@ -3380,7 +3844,7 @@ a {
   top: calc(389 * var(--f));
   width: calc(550 * var(--f));
   height: calc(504 * var(--f));
-  background: #d6d6d6;
+  background: var(--rose-magenta);
   filter: blur(calc(141 * var(--f)));
 }
 
@@ -3427,6 +3891,47 @@ a {
   opacity: 0;
   transform: translateY(35%);
   transition: opacity 1.2s 0.2s var(--ease), transform 1.6s 0.2s var(--ease);
+}
+
+/* Feuille de monstera : image du hero ×0,4409, tournée de 13,67° autour de son coin haut gauche,
+   coin en (898,3 ; −29,8) — relevé sur la maquette. Derrière le logo et la colline ; elle se balance. */
+.footer-leaf {
+  position: absolute;
+  z-index: 0;
+  left: calc(898.3 * var(--f));
+  top: calc(-29.8 * var(--f));
+  width: calc(573.2 * var(--f));
+  height: calc(585.1 * var(--f));
+  transform-origin: 0 0;
+  transform: rotate(13.67deg);
+  pointer-events: none;
+}
+
+.footer-leaf span {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  opacity: 0;
+  scale: 0.85;
+  transition: opacity 1.4s 0.3s var(--ease), scale 1.6s 0.3s var(--ease);
+}
+
+/* le bas de la feuille se teinte de rose magenta (lumière du halo), comme sur la maquette */
+.footer-leaf span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(222, 11, 125, 0) 45%, rgba(222, 11, 125, 0.55) 80%, rgba(222, 11, 125, 0.75));
+  -webkit-mask: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  mask: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+}
+
+.footer.in-view .footer-leaf span {
+  opacity: 1;
+  scale: 1;
+  animation: leafSway 7s 2s ease-in-out infinite;
 }
 
 /* Colline + TV (image 55.png en miroir) : 1436 px de large, x = 8, posée en bas — devant le logo */
@@ -3826,6 +4331,16 @@ a {
     margin-left: -500px;
   }
 
+  .footer-leaf {
+    left: auto;
+    right: -40px;
+    top: auto;
+    bottom: 330px;
+    width: 250px;
+    height: 255px;
+    transform-origin: 50% 50%;
+  }
+
   .footer-news {
     max-width: 100%;
     translate: none;
@@ -3845,3 +4360,217 @@ a {
   :root[data-reduce-motion] .footer-logo, :root[data-reduce-motion] .footer-hill, :root[data-reduce-motion] .footer-col, :root[data-reduce-motion] .footer-info, :root[data-reduce-motion] .footer-news, :root[data-reduce-motion] .footer-copy, :root[data-reduce-motion] .footer-legal { transition: none; }
 
 
+
+/* ============ PAGE « L'AGENCE » : « Qui sommes-nous. » ============
+   Maquette 1440 × 1175, unité --g = 1 px de la maquette. Photo 1332 × 650 en (54, 128), coins 12 ;
+   lignes de 24 d'épaisseur derrière la photo (bleu ca en haut à droite, violet → magenta en bas à gauche) ;
+   feuille 160 × 182 en (1245,6 ; 70,9) ; pastille « Madagascar » 101 × 36 en (54, 788), fond #171616, coins 6 ;
+   titre DM Sans 500 68 px (−2 %), capitales de 959,5 à 1007 ; paragraphe 15,5 / 20 (−4 %) ;
+   étiquettes en y 1018 ; lueur blanche (ellipse 270 × 403 centrée en 1666, 684, opacité 0,45). */
+.agh {
+  --g: calc(100vw / 1440);
+  /* unité de la photo : celle de la maquette, réduite si besoin pour que la photo (+ la pastille dessous)
+     tienne dans la hauteur de l'écran ; --d = hauteur gagnée, dont tout ce qui est sous la photo remonte */
+  --ph: max(calc(0.4 * var(--g)), min(var(--g), calc((100svh - 174 * var(--g) - 24px) / 650)));
+  --d: calc(650 * var(--g) - 650 * var(--ph));
+  position: relative;
+  height: calc(1175 * var(--g) - var(--d));
+  overflow: clip;
+  background: var(--black);
+  color: var(--white);
+}
+
+.agh > * { position: absolute; margin: 0; }
+
+.agh-glow {
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse calc(540 * var(--g)) calc(806 * var(--g)) at calc(1666 * var(--g)) calc(684 * var(--g)),
+    rgba(255, 255, 255, 0.454) 0%, rgba(255, 255, 255, 0.448) 12.5%, rgba(255, 255, 255, 0.406) 25%,
+    rgba(255, 255, 255, 0.303) 37.5%, rgba(255, 255, 255, 0.167) 50%, rgba(255, 255, 255, 0.06) 62.5%,
+    rgba(255, 255, 255, 0.012) 75%, rgba(255, 255, 255, 0.0013) 87.5%, transparent 100%
+  );
+}
+
+/* repère de la maquette, mis à l'échelle de la photo et calé sur elle */
+.agh-lines {
+  left: calc(50% - 720 * var(--ph));
+  top: calc(128 * var(--g) - 128 * var(--ph));
+  width: calc(1440 * var(--ph));
+  height: calc(1175 * var(--ph));
+  overflow: visible;
+  pointer-events: none;
+}
+
+.agh-line {
+  fill: none;
+  stroke-width: 24;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease) 0.6s;
+}
+.agh-line--teal { stroke: var(--bleu-ca); }
+.agh-line--mag { stroke: url(#aghGrad); transition-delay: 0.8s; }
+.agh.in-view .agh-line { stroke-dashoffset: 0; }
+
+/* photo centrée, 1332 × 650 en unités --ph, haut toujours en 128 */
+.agh-frame {
+  left: calc(50% - 666 * var(--ph));
+  top: calc(128 * var(--g));
+  width: calc(1332 * var(--ph));
+  height: calc(650 * var(--ph));
+}
+
+.agh-photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: calc(12 * var(--g));
+  clip-path: inset(0 0 100% 0 round calc(12 * var(--g)));
+  transition: clip-path 1.3s var(--ease);
+}
+.agh.in-view .agh-photo { clip-path: inset(0 0 0 0 round calc(12 * var(--g))); }
+
+.agh-photo img,
+.agh-ink {
+  position: absolute;
+  left: 0;
+  top: -30px;
+  display: block;
+  width: 100%;
+  height: calc(100% + 60px);
+  object-fit: cover;
+  translate: 0 var(--py, 0px);
+  scale: 1.08;
+  transition: scale 1.8s var(--ease);
+}
+.agh.in-view .agh-photo img, .agh.in-view .agh-ink { scale: 1; }
+/* le canvas n'apparaît qu'une fois l'image chargée dans WebGL (sinon on garde l'image) */
+.agh-ink { opacity: 0; transition: scale 1.8s var(--ease), opacity 0.4s; }
+.agh-ink[data-ready] { opacity: 1; }
+
+.agh-leaf {
+  position: absolute;
+  left: calc(1191.6 * var(--ph));
+  top: calc(-57.1 * var(--ph));
+  width: calc(160 * var(--ph));
+  height: calc(182 * var(--ph));
+  transform-origin: 6% 97%;
+  rotate: var(--lr, 0deg);
+  opacity: 0;
+  scale: 0.4;
+  transition: opacity 0.8s var(--ease) 1.1s, scale 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.1s;
+  animation: aghLeaf 6s ease-in-out 2.2s infinite;
+}
+.agh.in-view .agh-leaf { opacity: 1; scale: 1; }
+
+@keyframes aghLeaf {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-4deg); }
+}
+
+.agh-pill {
+  left: calc(50% - 666 * var(--ph));
+  top: calc(788 * var(--g) - var(--d));
+  display: flex;
+  align-items: center;
+  gap: calc(7 * var(--g));
+  width: calc(101 * var(--g));
+  height: calc(36 * var(--g));
+  padding-left: calc(12 * var(--g));
+  border-radius: calc(6 * var(--g));
+  background: var(--noir-charbon);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: calc(11.3 * var(--g));
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.agh-pill-dot {
+  width: calc(7 * var(--g));
+  height: calc(7 * var(--g));
+  border-radius: 50%;
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.agh-title {
+  left: calc(64 * var(--g));
+  top: calc(949.8 * var(--g) - var(--d));
+  font-size: calc(68 * var(--g));
+  font-weight: 500;
+  line-height: calc(68 * var(--g));
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.agh-text {
+  left: calc(64 * var(--g));
+  top: calc(1035.7 * var(--g) - var(--d));
+  font-size: calc(15.5 * var(--g));
+  line-height: calc(20 * var(--g));
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.agh-tag,
+.agh-place {
+  top: calc(1018 * var(--g) - var(--d));
+  display: flex;
+  align-items: center;
+  font-size: calc(11.2 * var(--g));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.agh-tag { left: calc(866 * var(--g)); gap: calc(11 * var(--g)); }
+.agh-tag .dot {
+  width: calc(10 * var(--g));
+  height: calc(10 * var(--g));
+  border-radius: calc(2 * var(--g));
+  background: var(--jaune-dore);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+.agh-place { left: calc(1163 * var(--g)); gap: calc(2.5 * var(--g)); }
+.agh-place img { width: calc(67 * var(--g)); height: calc(24 * var(--g)); margin-top: calc(-9 * var(--g)); }
+
+/* apparition des textes */
+.agh-pill, .agh-title, .agh-text, .agh-tag, .agh-place {
+  opacity: 0;
+  translate: 0 calc(24 * var(--g));
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease);
+}
+.agh-pill { transition-delay: 0.7s; }
+.agh-title { transition-delay: 0.8s; }
+.agh-text { transition-delay: 0.9s; }
+.agh-tag, .agh-place { transition-delay: 1s; }
+.agh.in-view .agh-pill, .agh.in-view .agh-title, .agh.in-view .agh-text,
+.agh.in-view .agh-tag, .agh.in-view .agh-place { opacity: 1; translate: 0 0; }
+
+@media (max-width: 900px) {
+  .agh {
+    --g: 1px;
+    --ph: 1px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: calc(var(--nav-h) + 24px) 16px 64px;
+  }
+  .agh > * { position: relative; left: auto; top: auto; }
+  .agh-glow, .agh-lines { position: absolute; inset: 0; }
+  .agh-lines { display: none; }
+  .agh-frame { width: 100%; height: auto; aspect-ratio: 4 / 3; max-height: calc(100svh - var(--nav-h) - 140px); }
+  .agh-photo { border-radius: 12px; }
+  .agh-photo img { height: calc(100% + 60px); }
+  .agh-leaf { left: auto; right: -12px; top: -30px; width: 80px; height: 91px; }
+  .agh-pill { margin-top: 12px; width: auto; padding-right: 14px; }
+  .agh-title { margin-top: 48px; font-size: 44px; line-height: 44px; white-space: normal; }
+  .agh-text { margin-top: 20px; font-size: 15px; line-height: 21px; white-space: normal; }
+  .agh-text br { display: none; }
+  .agh-tag { margin-top: 32px; }
+  .agh-place { margin-top: 16px; }
+}

@@ -12,6 +12,9 @@ import Why from "@/components/Why";
 import Destinations from "@/components/Destinations";
 import Strengths from "@/components/Strengths";
 import Journey from "@/components/Journey";
+import Observatory from "@/components/Observatory";
+import Faq from "@/components/Faq";
+import ContactCta from "@/components/ContactCta";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
@@ -35,6 +38,9 @@ export default function Home() {
           <Strengths />
           <Destinations />
         </Journey>
+        <Observatory />
+        <Faq />
+        <ContactCta />
       </main>
       <Footer />
       {/* Ajoute .in-view aux sections [data-reveal] quand elles arrivent à l'écran */}

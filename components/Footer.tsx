@@ -31,6 +31,10 @@ export default function Footer() {
 
   return (
     <footer className="footer" id="contact" data-reveal>
+      {/* Feuille de monstera (même image que le hero), derrière le logo */}
+      <div className="footer-leaf" aria-hidden="true">
+        <span></span>
+      </div>
       {/* Image : /images/footer-logo-tropicom.png (3261 x 734) */}
       <div className="footer-logo" role="img" aria-label="Tropi'Com"></div>
       {/* Image : /images/colline-tv.png, retournée en miroir */}
@@ -42,9 +46,9 @@ export default function Footer() {
       <nav className="footer-col footer-nav" aria-label="Navigation du pied de page">
         <h2 className="footer-title">Navigation</h2>
         <ul>
-          <li><a href="#">Accueil</a></li>
-          <li><a href="#">L’Agence</a></li>
-          <li><a href="#">Réalisation</a></li>
+          <li><a href="/">Accueil</a></li>
+          <li><a href="/agence">L’Agence</a></li>
+          <li><a href="#">Réalisations</a></li>
           <li><a href="#">Expertises</a></li>
           <li><a href="#">Contact</a></li>
         </ul>
