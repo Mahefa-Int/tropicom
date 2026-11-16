@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useRef } from "react";
 import CtaIcon from "./CtaIcon";
 import { SERVICES } from "@/lib/services";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /** Texte avec retours à la ligne (« \n ») : <br/> précédé d'une espace pour le mobile. */
 function Lines({ text }: { text: string }) {
@@ -40,7 +41,7 @@ export default function Services() {
     const cards = [...svc.querySelectorAll<HTMLElement>(".svc-card")];
     const countCur = svc.querySelector<HTMLElement>(".svc-count .cur")!;
     const countBar = svc.querySelector<HTMLElement>(".svc-count .bar")!;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     const len = path.getTotalLength();
 
     // échantillons (longueur → y) : la ligne descend toujours, on retrouve la longueur pour un y donné

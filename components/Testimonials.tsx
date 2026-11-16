@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * « Nos clients en parlent » — avis clients (après les 5 temps).
@@ -71,7 +72,7 @@ export default function Testimonials() {
     const track = trackRef.current;
     const list = listRef.current;
     if (!sec || !track || !list) return;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
 
     // largeur d'une série d'avis (N cartes + N écarts), mesurée sur la page
     let step = 0; // carte + écart

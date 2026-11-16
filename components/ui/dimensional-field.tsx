@@ -12,6 +12,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import * as THREE from "three";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export type DimensionalFieldProps = {
   /** Couleurs de la lumière (CSS hex). Par défaut : bleu canard et rose magenta de la charte. */
@@ -205,7 +206,7 @@ export default function DimensionalField({
     });
     io.observe(wrap);
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     const t0 = performance.now();
     let raf = 0;
     const animate = () => {

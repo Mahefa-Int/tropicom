@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 const STATS = [
   { label: "clients accompagnés", value: 40 },
@@ -17,7 +18,7 @@ export default function Stats() {
     const section = ref.current;
     if (!section) return;
     const nums = [...section.querySelectorAll<HTMLElement>(".stat-num [data-value]")];
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     let raf = 0;
 
     const count = () => {

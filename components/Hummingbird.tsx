@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /**
  * Colibri en three.js qui survole la section parente (le hero).
@@ -30,7 +31,7 @@ export default function Hummingbird() {
     const bird = birdRef.current;
     const zone = bird?.parentElement;
     if (!bird || !zone) return;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
 
     // ---------- scène ----------
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });

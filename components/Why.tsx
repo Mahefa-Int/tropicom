@@ -5,8 +5,8 @@ import { SwipeCards } from "@/components/ui/image-stack-carousel";
 
 /**
  * « Pourquoi Tropi'Com » — après les témoignages.
- * Maquette (ramenée à 1440 de large comme les autres sections) : étiquette, phrase d'accroche,
- * icône « graphic point », ligne verte → citron qui traverse la scène, et une pile de cartes penchées.
+ * Maquette 1440 (haut du parcours 1440 × 4580, voir Journey.tsx) : étiquette, phrase d'accroche,
+ * icône « graphic point » et une pile de cartes penchées.
  * Pile = Image Stack Carousel (components/ui/image-stack-carousel.tsx) : on tire la carte de devant
  * (inclinaison 3D) et elle repasse sous la pile.
  * À COMPLÉTER : titres, textes et images des cartes 2 et 3 (provisoires).
@@ -69,18 +69,7 @@ export default function Why() {
 
   return (
     <section className="why" id="pourquoi" data-reveal aria-labelledby="why-title">
-      {/* ligne verte → citron (derrière les cartes) */}
-      <svg className="why-line" viewBox="0 0 1440 699" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="whyGrad" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="760" y2="699">
-            <stop offset="0" stopColor="#5fa586" />
-            <stop offset="0.55" stopColor="#8fb06a" />
-            <stop offset="1" stopColor="#c3cf55" />
-          </linearGradient>
-        </defs>
-        <path pathLength={1} d="M-20 154 C 190 205 330 250 520 300 C 760 365 880 480 800 600 C 785 625 770 650 745 699" />
-      </svg>
-
+      {/* la ligne verte → jaune est dessinée par <Journey> (elle traverse aussi les atouts et les destinations) */}
       <p className="why-tag">
         <span className="dot" aria-hidden="true"></span>Pourquoi Tropi’Com
       </p>

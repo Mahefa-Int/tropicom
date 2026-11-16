@@ -14,6 +14,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import type { CSSProperties } from "react"
 import gsap from "gsap"
+import { prefersReducedMotion } from "@/lib/motion"
 
 /** Halo de couleur posé sur la carte (en px de la maquette, repère de la carte 1312 × 666). */
 export type CaseGlow = { x: number; y: number; w: number; h: number; rot: number; blur: number; color: string }
@@ -75,7 +76,7 @@ const FACE_W = 1312
 const FACE_H = 666
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect
-const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+const reduced = () => prefersReducedMotion()
 
 /**
  * Carte d'étude de cas (maquette 1312 × 666) : photo en haut, nom, « Nos réalisations »,

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /** Apparition des sections au scroll : ajoute .in-view aux éléments [data-reveal]. */
 export default function RevealObserver() {
   useEffect(() => {
+    // règles CSS « animations réduites » (seulement si lib/motion.ts le demande)
+    if (prefersReducedMotion()) document.documentElement.dataset.reduceMotion = "";
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
