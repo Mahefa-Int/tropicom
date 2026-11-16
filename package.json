@@ -8,18 +8,23 @@
     "start": "next start"
   },
   "dependencies": {
+    "d3-geo": "^3.1.2",
     "framer-motion": "^14.6.0",
     "gsap": "^3.15.1",
     "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "three": "^0.187.0"
+    "three": "^0.187.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
+    "@types/d3-geo": "^3.1.1",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
+    "@types/topojson-client": "^3.1.5",
     "typescript": "^5.9.3"
   }
 }

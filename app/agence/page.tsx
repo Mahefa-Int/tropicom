@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import AgencyHero from "@/components/AgencyHero";
+import AgencyStory from "@/components/AgencyStory";
+import AgencyClick from "@/components/AgencyClick";
+import AgencyToday from "@/components/AgencyToday";
+import AgencyValues from "@/components/AgencyValues";
+import AgencyJoin from "@/components/AgencyJoin";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
@@ -15,6 +20,11 @@ export default function AgencePage() {
       <Navbar />
       <main>
         <AgencyHero />
+        <AgencyStory />
+        <AgencyClick />
+        <AgencyToday />
+        <AgencyValues />
+        <AgencyJoin />
       </main>
       <Footer />
       <RevealObserver />

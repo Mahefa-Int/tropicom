@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
-import InkHover from "./InkHover";
+import RippleHover from "./RippleHover";
 
 /**
  * Page « L'Agence » — première section « Qui sommes-nous. ».
@@ -71,8 +71,8 @@ export default function AgencyHero() {
           width={2664}
           height={1960}
         />
-        {/* effet « encre dans l'eau » au survol (simulation de fluide WebGL, par-dessus l'image) */}
-        <InkHover src="/images/agence/equipe.webp" className="agh-ink" />
+        {/* ondulation d'eau : survol = vaguelettes, clic = grosse goutte (simulation de vagues WebGL, par-dessus l'image) */}
+        <RippleHover src="/images/agence/equipe.webp" className="agh-ink" />
       </div>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
