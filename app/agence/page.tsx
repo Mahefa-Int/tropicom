@@ -1,33 +1,6 @@
-import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import AgencyHero from "@/components/AgencyHero";
-import AgencyStory from "@/components/AgencyStory";
-import AgencyClick from "@/components/AgencyClick";
-import AgencyToday from "@/components/AgencyToday";
-import AgencyValues from "@/components/AgencyValues";
-import AgencyJoin from "@/components/AgencyJoin";
-import Footer from "@/components/Footer";
-import RevealObserver from "@/components/RevealObserver";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "L'Agence — Tropi'Com",
-  description: "Qui sommes-nous : l'équipe Tropi'Com, agence digitale basée à Madagascar, au service de l'hôtellerie de l'Océan Indien.",
-};
-
+// « L'Agence » est un menu parent sans contenu propre : on ouvre sa première sous-page.
 export default function AgencePage() {
-  return (
-    <>
-      <Navbar />
-      <main>
-        <AgencyHero />
-        <AgencyStory />
-        <AgencyClick />
-        <AgencyToday />
-        <AgencyValues />
-        <AgencyJoin />
-      </main>
-      <Footer />
-      <RevealObserver />
-    </>
-  );
+  redirect("/agence/equipe");
 }

@@ -4,21 +4,37 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import CtaIcon from "./CtaIcon";
 
-// liens : seules l'accueil et « L'Agence » ont une page pour l'instant
-const LINKS = [
+// menu : « L'Agence » est un parent sans page, avec trois sous-pages
+type Sub = { label: string; href: string; text: string; img: string };
+type Item = { label: string; href: string; children?: Sub[] };
+const LINKS: Item[] = [
   { label: "Accueil", href: "/" },
-  { label: "L'Agence", href: "/agence" },
+  {
+    label: "L'Agence",
+    href: "/agence",
+    children: [
+      { label: "L'équipe", href: "/agence/equipe", text: "Qui sommes-nous, notre histoire, nos valeurs.", img: "/images/agence/equipe.webp" },
+      { label: "Notre histoire", href: "/agence/notre-histoire", text: "Des spécialistes, pas des polyvalents.", img: "/images/equipe/josceline.webp" },
+      { label: "Carrières", href: "/agence/carrieres", text: "Faire rayonner l'océan Indien, depuis l'océan Indien.", img: "/images/carriere/tournage.webp" },
+    ],
+  },
   { label: "Expertises", href: "#" },
   { label: "Réalisations", href: "#" },
   { label: "Ressources", href: "#" },
   { label: "Contact", href: "#contact" },
 ];
 
+const CLEAR_PAGES = ["/agence/carrieres"];
+
+/** lien actif : la page elle-même, ou le parent d'une sous-page */
+const isActive = (href: string, path: string) => (href === "/" ? path === "/" : !href.startsWith("#") && path.startsWith(href));
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const [active, setActive] = useState(() => Math.max(0, LINKS.findIndex((l) => l.href === pathname)));
+  const [sub, setSub] = useState(false); // sous-menu ouvert (au clic / au clavier ; au survol en CSS)
+  const [cur, setCur] = useState(0); // lien survolé dans le panneau (choisit la photo)
 
   // Barre compacte au scroll
   useEffect(() => {
@@ -33,7 +49,9 @@ export default function Navbar() {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  const classes = ["navbar", scrolled && "scrolled", open && "open"].filter(Boolean).join(" ");
+  // pages dont le haut de page a un halo lumineux derrière le menu : menu transparent tant qu'on n'a pas défilé
+  const clear = CLEAR_PAGES.includes(pathname);
+  const classes = ["navbar", scrolled && "scrolled", open && "open", clear && "is-clear"].filter(Boolean).join(" ");
 
   return (
     <header className={classes} id="navbar">
@@ -45,21 +63,74 @@ export default function Navbar() {
 
       <nav className="nav" id="nav">
         <ul>
-          {LINKS.map(({ label, href }, i) => (
-            <li key={label}>
-              <a
-                href={href}
-                className={i === active ? "active" : undefined}
-                onClick={(e) => {
-                  if (href === "#") e.preventDefault();
-                  setActive(i);
-                  setOpen(false);
+          {LINKS.map((item) =>
+            item.children ? (
+              <li
+                key={item.label}
+                className={"has-sub" + (sub ? " is-open" : "")}
+                onMouseLeave={() => setSub(false)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setSub(false);
                 }}
               >
-                {label}
-              </a>
-            </li>
-          ))}
+                <button
+                  type="button"
+                  className={"nav-parent" + (isActive(item.href, pathname) ? " active" : "")}
+                  aria-expanded={sub}
+                  aria-controls="nav-sub-agence"
+                  onClick={() => setSub((o) => !o)}
+                >
+                  {item.label}
+                  <svg className="nav-caret" viewBox="0 0 10 6" aria-hidden="true">
+                    <path d="M1 1l4 4 4-4" />
+                  </svg>
+                </button>
+                {/* panneau éditorial : pages numérotées à gauche, photo de la page survolée à droite */}
+                <div className="nav-sub" id="nav-sub-agence">
+                  <ol className="nav-sub-list">
+                    {item.children.map((c, k) => (
+                      <li key={c.href}>
+                        <a
+                          href={c.href}
+                          className={(pathname === c.href ? "active" : "") + (k === cur ? " is-cur" : "")}
+                          onMouseEnter={() => setCur(k)}
+                          onFocus={() => setCur(k)}
+                          onClick={() => setOpen(false)}
+                        >
+                          <span className="nav-sub-n">{String(k + 1).padStart(2, "0")}</span>
+                          <span className="nav-sub-l">{c.label}</span>
+                          <svg className="nav-sub-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M7 17 17 7" />
+                            <path d="M8 7h9v9" />
+                          </svg>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                  <div className="nav-sub-media" aria-hidden="true">
+                    {item.children.map((c, k) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={c.href} src={c.img} alt="" loading="lazy" className={k === cur ? "is-cur" : undefined} />
+                    ))}
+                    <p>{item.children[cur].text}</p>
+                  </div>
+                </div>
+              </li>
+            ) : (
+              <li key={item.label}>
+                <a
+                  href={item.href}
+                  className={isActive(item.href, pathname) ? "active" : undefined}
+                  onClick={(e) => {
+                    if (item.href === "#") e.preventDefault();
+                    setOpen(false);
+                  }}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )}
         </ul>
         <a href="#" className="cta cta-mobile">
           <CtaIcon />

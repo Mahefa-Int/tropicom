@@ -47,7 +47,7 @@ export default function Footer() {
         <h2 className="footer-title">Navigation</h2>
         <ul>
           <li><a href="/">Accueil</a></li>
-          <li><a href="/agence">L’Agence</a></li>
+          <li><a href="/agence/equipe">L’Agence</a></li>
           <li><a href="#">Réalisations</a></li>
           <li><a href="#">Expertises</a></li>
           <li><a href="#">Contact</a></li>

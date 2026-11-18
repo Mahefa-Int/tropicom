@@ -18,7 +18,7 @@ function Arrow() {
 export default function AgencyJoin() {
   return (
     <section className="agj" data-reveal aria-label="L'équipe et les carrières">
-      <a href="#" className="agj-card agj-card--team">
+      <a href="/agence/notre-histoire" className="agj-card agj-card--team">
         <span className="agj-tag">L&apos;ÉQUIPE · 18 SPÉCIALISTES</span>
         <span className="agj-faces" aria-hidden="true">
           {Array.from({ length: 5 }, (_, i) => (
@@ -35,7 +35,7 @@ export default function AgencyJoin() {
         </span>
       </a>
 
-      <a href="#" className="agj-card agj-card--jobs">
+      <a href="/agence/carrieres" className="agj-card agj-card--jobs">
         <span className="agj-tag">CARRIÈRES</span>
         <svg className="agj-sun" viewBox="1262 86 92 48" aria-hidden="true">
           <g className="agj-rays" stroke="#f7c227" strokeWidth="2" strokeLinecap="round">

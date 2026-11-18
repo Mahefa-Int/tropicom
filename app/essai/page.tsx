@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import RippleHover from "@/components/RippleHover";
 import InkHover from "@/components/InkHover";
 import HoverFx, { type HoverFxEffect } from "@/components/HoverFx";
+import MenuDemos from "@/components/MenuDemos";
 
 /** Page de test (non liée dans le menu) : comparaison des effets au survol. */
 export const metadata: Metadata = { title: "Essai effets — Tropi'Com", robots: { index: false } };
@@ -29,7 +30,9 @@ function Frame({ children }: { children: React.ReactNode }) {
 export default function EssaiPage() {
   return (
     <main className="essai">
-      <h1>Essai : effets au survol</h1>
+      <h1>Essai : sous-menu « L&apos;Agence »</h1>
+      <MenuDemos />
+      <h1 className="essai-h1-2">Essai : effets au survol</h1>
       <section>
         <h2>
           1. Ondulation d&apos;eau <small>survol = vaguelettes, clic = grosse goutte</small>
