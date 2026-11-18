@@ -23,7 +23,8 @@ export type Glow = {
   m?: number;
 };
 
-export default function GlowField({ glows, className }: { glows: Glow[]; className?: string }) {
+/** breath : amplitude de la respiration (taille, opacité, rotation), 1 = normale, 0,3 = discrète */
+export default function GlowField({ glows, className, breath = 1 }: { glows: Glow[]; className?: string; breath?: number }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,9 +51,9 @@ export default function GlowField({ glows, className }: { glows: Glow[]; classNa
         const m = b.m ?? 50;
         const dx = (Math.sin(t * sp + ph) * dxA + Math.sin(t * sp * 2.1 + ph) * dxA * 0.25 + mouse.x * m) * k;
         const dy = (Math.cos(t * sp * 0.8 + ph) * dyA + mouse.y * m) * k;
-        const s = 1 + Math.sin(t * sp * 1.3 + ph * 2) * 0.18;
-        const o = 0.7 + Math.sin(t * sp * 0.9 + ph) * 0.3;
-        const r = (b.rot ?? 0) + Math.sin(t * sp * 0.7 + ph) * 6;
+        const s = 1 + Math.sin(t * sp * 1.3 + ph * 2) * 0.18 * breath;
+        const o = 1 - (0.3 - Math.sin(t * sp * 0.9 + ph) * 0.3) * breath;
+        const r = (b.rot ?? 0) + Math.sin(t * sp * 0.7 + ph) * 6 * breath;
         el.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) rotate(${r.toFixed(2)}deg) scale(${s.toFixed(3)})`;
         el.style.opacity = o.toFixed(3);
       });
@@ -75,7 +76,7 @@ export default function GlowField({ glows, className }: { glows: Glow[]; classNa
       cancelAnimationFrame(raf);
       host.removeEventListener("pointermove", onMove);
     };
-  }, [glows]);
+  }, [glows, breath]);
 
   return (
     <div className={"glow-field" + (className ? " " + className : "")} ref={ref} aria-hidden="true">

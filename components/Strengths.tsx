@@ -94,12 +94,14 @@ export default function Strengths() {
   const secRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const tipRef = useRef<SVGCircleElement>(null);
   const gradRef = useRef<SVGLinearGradientElement>(null);
 
   useEffect(() => {
     const sec = secRef.current!;
     const stage = stageRef.current!;
     const path = pathRef.current!;
+    const tip = tipRef.current!;
     const grad = gradRef.current!;
     const svg = path.ownerSVGElement!;
     const cards = Array.from(sec.querySelectorAll<HTMLElement>(".atu-card"));
@@ -107,6 +109,7 @@ export default function Strengths() {
     const still = prefersReducedMotion();
     let samples: { l: number; y: number }[] = [];
     let total = 1;
+    let H_ = 1;
 
     /* ligne de la scène : prolonge exactement la ligne de « Pourquoi » (même point, même direction),
        passe derrière la carte du milieu, traverse l'espace entre les cartes 2 et 3,
@@ -139,6 +142,9 @@ export default function Strengths() {
           `L${f(ex + bx * 12 * j)} ${f(H + by * 12 * j)}`
       );
       path.style.strokeWidth = String(22 * j);
+      tip.setAttribute("r", String(8 * j));
+      tip.style.strokeWidth = String(6 * j);
+      H_ = H;
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
       grad.setAttribute("x2", String(W));
       total = path.getTotalLength();
@@ -155,6 +161,7 @@ export default function Strengths() {
       if (mq.matches || still) {
         cards.forEach((c) => c.style.setProperty("--t", "1"));
         path.style.strokeDashoffset = "0";
+        tip.classList.remove("on");
         return;
       }
       const vh = innerHeight;
@@ -168,6 +175,11 @@ export default function Strengths() {
       let drawn = 0;
       for (const s of samples) if (s.y <= target) drawn = s.l;
       path.style.strokeDashoffset = String(1 - drawn / total);
+      // tête ronde au bout du trait, pendant le tracé
+      const pt = path.getPointAtLength(drawn);
+      tip.setAttribute("cx", pt.x.toFixed(1));
+      tip.setAttribute("cy", pt.y.toFixed(1));
+      tip.classList.toggle("on", drawn > 0 && drawn < total - 1 && pt.y > 8 && pt.y < H_ - 8);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -199,6 +211,7 @@ export default function Strengths() {
             </linearGradient>
           </defs>
           <path ref={pathRef} pathLength={1} />
+          <circle ref={tipRef} className="line-tip line-tip--atu" r="8" cx="0" cy="0" />
         </svg>
         {CARDS.map((c) => (
           <article

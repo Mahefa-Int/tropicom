@@ -157,7 +157,7 @@ export default function Hero() {
 
         <h1 className="hero-title">
           <span className="line"><span>Vos chambre</span></span>
-          <span className="line"><span>valent q’une</span></span>
+          <span className="line"><span>valent mieux q’une</span></span>
           <span className="line line-muted"><span>commission</span></span>
           <span className="line line-muted"><span>de 20%</span></span>
         </h1>

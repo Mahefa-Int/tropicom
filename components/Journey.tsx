@@ -13,16 +13,20 @@ import { prefersReducedMotion } from "@/lib/motion";
  * La ligne se dessine au fil du défilement.
  */
 const LINE =
-  "M-24 192 C-16 194 -11.3 195.1 0 198 C27.3 205 92.6 221.9 140 235 C189.2 248.6 241 263.3 290 278 C337.6 292.3 366.5 305.4 430 322 C559.8 355.9 933.7 440 1030 448 C1060.2 450.5 1070 445.3 1090 445.5 C1110 445.7 1136.3 444.7 1150 449.5 C1158.3 452.4 1165.4 456.8 1168 462 C1170.2 466.3 1169.5 471.8 1167.5 477 C1164.6 484.3 1155.7 492.2 1147.5 500 C1137.2 509.8 1123 520.3 1109.5 530 C1095.2 540.3 1077.9 549.6 1064 560 C1051.1 569.6 1046.8 576.9 1028.5 590 C979.2 625.1 804.4 711.9 740 762 C702.6 791.1 683.7 814.4 660 842 C637.9 867.8 618.6 894.7 601.5 922 C585.1 948.1 571.6 961.3 559 1002 C526.9 1105.5 490.8 1441.5 492.5 1585 C493.5 1669.2 509.1 1720.2 520 1785 C530.4 1846.7 537.7 1888.7 556 1965 C588.7 2101.4 666.5 2374.9 714.5 2530 C748.6 2640.1 776.7 2716.8 809.5 2810 C842.4 2903.5 873 2988 911.5 3090 C958.2 3213.9 1029.7 3395 1071.5 3500 C1097.7 3565.8 1113.5 3603.7 1136.5 3660 C1162.3 3723 1187.5 3784.6 1219 3860 C1260.2 3958.5 1324.4 4107.7 1363 4200 C1389.4 4263.2 1410.1 4314.6 1429 4360 C1443 4393.7 1453.7 4418.7 1466 4448";
+  "M-24 192 C-16 194 -11.3 195.1 0 198 C27.3 205 92.6 221.9 140 235 C189.2 248.6 241 263.3 290 278 C337.6 292.3 366.5 305.4 430 322 C559.8 355.9 933.7 440 1030 448 C1100 453.8 1166 446 1167 482 C1168 522 1060 560 900 638 C820 677 781 730.2 740 762 C702.6 791.1 683.7 814.4 660 842 C637.9 867.8 618.6 894.7 601.5 922 C585.1 948.1 571.6 961.3 559 1002 C526.9 1105.5 490.8 1441.5 492.5 1585 C493.5 1669.2 509.1 1720.2 520 1785 C530.4 1846.7 537.7 1888.7 556 1965 C588.7 2101.4 666.5 2374.9 714.5 2530 C748.6 2640.1 776.7 2716.8 809.5 2810 C842.4 2903.5 873 2988 911.5 3090 C958.2 3213.9 1029.7 3395 1071.5 3500 C1097.7 3565.8 1113.5 3603.7 1136.5 3660 C1162.3 3723 1187.5 3784.6 1219 3860 C1260.2 3958.5 1324.4 4107.7 1363 4200 C1389.4 4263.2 1410.1 4314.6 1429 4360 C1443 4393.7 1453.7 4418.7 1466 4448";
 
 export default function Journey({ children }: { children: React.ReactNode }) {
   const topRef = useRef<SVGPathElement>(null);
   const botRef = useRef<SVGPathElement>(null);
+  const topTipRef = useRef<SVGCircleElement>(null);
+  const botTipRef = useRef<SVGCircleElement>(null);
 
   useEffect(() => {
     const top = topRef.current;
     const bot = botRef.current;
-    if (!top || !bot) return;
+    const topTip = topTipRef.current;
+    const botTip = botTipRef.current;
+    if (!top || !bot || !topTip || !botTip) return;
     if (prefersReducedMotion()) {
       top.style.strokeDashoffset = bot.style.strokeDashoffset = "0";
       return;
@@ -36,7 +40,9 @@ export default function Journey({ children }: { children: React.ReactNode }) {
       const l = (total * i) / N;
       samples.push({ l, y: top.getPointAtLength(l).y });
     }
-    const draw = (path: SVGPathElement, y0: number) => {
+    // tête ronde avec un point blanc au bout du trait (comme la ligne rose des expertises) :
+    // visible pendant le tracé, seulement dans la partie de la ligne affichée par ce SVG
+    const draw = (path: SVGPathElement, tip: SVGCircleElement, y0: number, y1: number) => {
       const svg = path.ownerSVGElement!;
       const rect = svg.getBoundingClientRect();
       if (!rect.width) return;
@@ -44,12 +50,16 @@ export default function Journey({ children }: { children: React.ReactNode }) {
       let drawn = 0;
       for (const s of samples) if (s.y <= target) drawn = s.l;
       path.style.strokeDashoffset = String(1 - drawn / total);
+      const p = top.getPointAtLength(drawn);
+      tip.setAttribute("cx", p.x.toFixed(1));
+      tip.setAttribute("cy", p.y.toFixed(1));
+      tip.classList.toggle("on", drawn > 0 && drawn < total - 1 && p.y > y0 + 8 && p.y < y1 - 8);
     };
     let raf = 0;
     const update = () => {
       raf = 0;
-      draw(top, 0);
-      draw(bot, 3621);
+      draw(top, topTip, 0, 813.5);
+      draw(bot, botTip, 3621, 4430);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -76,6 +86,7 @@ export default function Journey({ children }: { children: React.ReactNode }) {
           </linearGradient>
         </defs>
         <path ref={topRef} d={LINE} pathLength={1} />
+        <circle ref={topTipRef} className="line-tip" r="8" cx="0" cy="0" />
       </svg>
       {children}
       {/* bas de la ligne : destinations (atténuée dans le cadre, comme sur la maquette) */}
@@ -86,7 +97,10 @@ export default function Journey({ children }: { children: React.ReactNode }) {
             <rect x="64" y="3621" width="1312" height="809" fill="#c4c4c4" />
           </mask>
         </defs>
-        <path ref={botRef} d={LINE} pathLength={1} mask="url(#journeyMask)" />
+        <g mask="url(#journeyMask)">
+          <path ref={botRef} d={LINE} pathLength={1} />
+          <circle ref={botTipRef} className="line-tip" r="8" cx="0" cy="0" />
+        </g>
       </svg>
     </div>
   );

@@ -18,13 +18,13 @@ const LINKS: Item[] = [
       { label: "Carrières", href: "/agence/carrieres", text: "Faire rayonner l'océan Indien, depuis l'océan Indien.", img: "/images/carriere/tournage.webp" },
     ],
   },
-  { label: "Expertises", href: "#" },
+  { label: "Expertises", href: "/expertises" },
   { label: "Réalisations", href: "#" },
   { label: "Ressources", href: "#" },
   { label: "Contact", href: "#contact" },
 ];
 
-const CLEAR_PAGES = ["/agence/carrieres"];
+const CLEAR_PAGES = ["/agence/carrieres", "/expertises"];
 
 /** lien actif : la page elle-même, ou le parent d'une sous-page */
 const isActive = (href: string, path: string) => (href === "/" ? path === "/" : !href.startsWith("#") && path.startsWith(href));

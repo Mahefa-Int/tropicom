@@ -49,7 +49,7 @@ export default function Footer() {
           <li><a href="/">Accueil</a></li>
           <li><a href="/agence/equipe">L’Agence</a></li>
           <li><a href="#">Réalisations</a></li>
-          <li><a href="#">Expertises</a></li>
+          <li><a href="/expertises">Expertises</a></li>
           <li><a href="#">Contact</a></li>
         </ul>
       </nav>

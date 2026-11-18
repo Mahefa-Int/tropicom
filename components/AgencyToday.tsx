@@ -2,11 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import GlowField, { type Glow } from "./GlowField";
 
 /**
  * Page « L'Agence » — « 04 — Aujourd'hui » (suit « Le déclic »).
  * Maquette 1440 × 1135, fond noir ; bloc 1312 × 674 en (64, 380), coins 32, avec un dégradé magenta flou
- * (/images/agence/fond-magenta.webp, extrait de la maquette, texte retiré) qui dérive lentement.
+ * en CSS (halos flous animés en JS, ajustés par calcul sur l'ancienne image de la maquette).
  * Titre DM Sans 500 50 px « Tropi'Com est née de là. » (« de là. » jaune doré) ; paragraphes 19,6 / 30 ;
  * 4 pastilles penchées (39,4 de haut, texte 15,3 px 600) qui tombent à l'arrivée et qu'on peut attraper
  * (elles reviennent en place avec un ressort) ; citation 46 / 52 ; signature « Josceline » ; logo.
@@ -18,25 +19,22 @@ const PILLS = [
   { text: "Connexion internet à Nosy Be", cx: 1182, cy: 498.1, w: 260, rot: -20.06, tone: "gray" },
 ];
 
+// traînées magenta floues (repère du bloc : 1312 × 674)
+const AGT_GLOWS: Glow[] = [
+  { x: -135.0, y: 597.3, rx: 703.0, ry: 30.1, rot: 9.6, c: "222, 11, 125", a: 1.0, dx: 40, dy: 25, sp: 0.3, ph: 0, m: 20 },
+  { x: 531.6, y: 229.4, rx: 526.7, ry: 148.4, rot: -18.1, c: "222, 11, 125", a: 0.3, dx: 40, dy: 25, sp: 0.35, ph: 2, m: 20 },
+  { x: -623.7, y: 1223.8, rx: 1973.7, ry: 195.9, rot: -22.4, c: "222, 11, 125", a: 0.9, dx: 40, dy: 25, sp: 0.4, ph: 4, m: 20 },
+  { x: 993.6, y: 1361.3, rx: 90.0, ry: 230.0, rot: 10.0, c: "222, 11, 125", a: 0.3, dx: 40, dy: 25, sp: 0.45, ph: 6, m: 20 },
+  { x: -221.5, y: 704.8, rx: 903.5, ry: 210.5, rot: 324.7, c: "222, 11, 125", a: 1, dx: 40, dy: 25, sp: 0.5, ph: 8, m: 20 },
+];
+
 export default function AgencyToday() {
   const secRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const sec = secRef.current!;
-    const bg = sec.querySelector<HTMLElement>(".agt-bg img");
     const pills = Array.from(sec.querySelectorAll<HTMLElement>(".agt-pill"));
     const still = prefersReducedMotion();
-
-    // fond : léger décalage selon la souris
-    const onMove = (e: PointerEvent) => {
-      if (still || !bg || e.pointerType === "touch") return;
-      const r = sec.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      bg.style.setProperty("--mx", (x * -30).toFixed(1) + "px");
-      bg.style.setProperty("--my", (y * -20).toFixed(1) + "px");
-    };
-    sec.addEventListener("pointermove", onMove);
 
     // pastilles : on les attrape, elles reviennent en place avec un ressort (et un peu de rotation)
     const cleanups = pills.map((el) => {
@@ -106,7 +104,6 @@ export default function AgencyToday() {
     });
 
     return () => {
-      sec.removeEventListener("pointermove", onMove);
       cleanups.forEach((c) => c());
     };
   }, []);
@@ -114,8 +111,7 @@ export default function AgencyToday() {
   return (
     <section className="agt" ref={secRef} data-reveal aria-labelledby="agt-title">
       <div className="agt-bg" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/agence/fond-magenta.webp" alt="" />
+        <GlowField glows={AGT_GLOWS} breath={0.4} />
       </div>
 
       <p className="ags-label agt-label">

@@ -17,6 +17,53 @@ export default function AgencyHero() {
   const secRef = useRef<HTMLElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const leafRef = useRef<HTMLImageElement>(null);
+  const magRef = useRef<SVGSVGElement>(null);
+
+  // ligne magenta : calculée en pixels de la section. Elle part de derrière le bas gauche de la photo
+  // (même point que sur la maquette, à l'échelle de la photo) et sort par le bord gauche de l'écran
+  // AU-DESSUS du titre : sur un écran large la photo est réduite et centrée, la ligne ne doit pas traverser le texte.
+  useEffect(() => {
+    const sec = secRef.current!;
+    const svg = magRef.current!;
+    const path = svg.querySelector("path")!;
+    const grad = svg.querySelector("linearGradient")!;
+    const title = sec.querySelector<HTMLElement>(".agh-title")!;
+    const frame = sec.querySelector<HTMLElement>(".agh-frame")!;
+    const layout = () => {
+      const W = sec.clientWidth;
+      const H = sec.clientHeight;
+      const k = frame.offsetWidth / 1332; // échelle de la photo
+      const sx = frame.offsetLeft + 296 * k;
+      const sy = frame.offsetTop + 601 * k;
+      const ex = -10;
+      const ey = Math.min(title.offsetTop - 14, frame.offsetTop + 848.5 * k);
+      const dx = sx - ex;
+      const dy = ey - sy;
+      const c1x = ex + 0.37 * dx;
+      const c1y = sy + 0.196 * dy;
+      const c2x = ex + 0.065 * dx;
+      const c2y = ey - 0.18 * dy;
+      // prolongement hors écran dans la direction d'arrivée
+      const tx = ex - c2x;
+      const ty = ey - c2y;
+      const tl = Math.hypot(tx, ty) || 1;
+      const f = (v: number) => v.toFixed(1);
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      path.setAttribute(
+        "d",
+        `M${f(sx)} ${f(sy)} C${f(c1x)} ${f(c1y)} ${f(c2x)} ${f(c2y)} ${f(ex)} ${f(ey)} L${f(ex + (tx / tl) * 400)} ${f(ey + (ty / tl) * 400)}`,
+      );
+      path.style.strokeWidth = f(24 * k);
+      grad.setAttribute("x1", f(ex + 0.58 * dx));
+      grad.setAttribute("y1", f(sy + 0.21 * dy));
+      grad.setAttribute("x2", f(ex));
+      grad.setAttribute("y2", f(ey));
+    };
+    layout();
+    const ro = new ResizeObserver(layout);
+    ro.observe(sec);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const sec = secRef.current!;
@@ -51,14 +98,16 @@ export default function AgencyHero() {
 
       {/* lignes qui passent derrière la photo */}
       <svg className="agh-lines" viewBox="0 0 1440 1175" preserveAspectRatio="none" aria-hidden="true">
+        <path className="agh-line agh-line--teal" pathLength={1} d="M1103.8 146.9C1218.9 107.1 1364.7 101.8 1452.5 57.9L2300 -366" />
+      </svg>
+      <svg className="agh-mag" ref={magRef} preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id="aghGrad" gradientUnits="userSpaceOnUse" x1="202" y1="782" x2="0" y2="963">
+          <linearGradient id="aghGrad" gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="#91508c" />
             <stop offset="1" stopColor="#aa3a87" />
           </linearGradient>
         </defs>
-        <path className="agh-line agh-line--teal" pathLength={1} d="M1103.8 146.9C1218.9 107.1 1364.7 101.8 1452.5 57.9L2300 -366" />
-        <path className="agh-line agh-line--mag" pathLength={1} d="M350.5 729.1C123.4 777.6 15.9 932 -7.5 976.5L-160 1266" />
+        <path className="agh-line agh-line--mag" pathLength={1} />
       </svg>
 
       {/* photo + feuille : réduites ensemble si l'écran est bas, pour que la photo tienne dans 100vh */}

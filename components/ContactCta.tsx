@@ -8,14 +8,14 @@ import { prefersReducedMotion } from "@/lib/motion";
  * « Parlons de votre prochaine saison. » — appel au contact, juste avant le pied de page.
  * Maquette 1440 × 553 : étiquette centrée, titre DM Sans 70 px, paragraphe 15,6 / 20 sur 2 lignes,
  * bouton « Réserver un créneau » 196 × 50. Décor (lueur blanche à droite, deux traits jaunes flous) :
- * /images/contact/decor.webp, découpé dans la maquette (texte retiré) ; il suit un peu la souris.
+ * décor en CSS (lueur blanche à droite + deux traits jaunes flous animés) ; il suit un peu la souris.
  * Bulle à cheval sur la FAQ, animée en JS : reflet irisé aux couleurs de la charte (bleu ca, jaune doré,
  * rose magenta) qui tourne lentement, légère dérive vers la souris (ressort), parallaxe au défilement,
  * membrane qui « respire ». Volontairement discrète.
  * À COMPLÉTER : le lien du bouton (prise de rendez-vous).
  */
 export default function ContactCta() {
-  const decorRef = useRef<HTMLImageElement>(null);
+  const decorRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLSpanElement>(null);
 
   const onMove = (e: React.PointerEvent<HTMLElement>) => {
@@ -94,8 +94,12 @@ export default function ContactCta() {
   return (
     <section className="ctc" id="contact" data-reveal aria-labelledby="ctc-title" onPointerMove={onMove}>
       <div className="ctc-clip" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img ref={decorRef} className="ctc-decor" src="/images/contact/decor.webp" alt="" />
+        {/* décor en CSS : lueur blanche au bord droit + deux traits jaunes flous */}
+        <div ref={decorRef} className="ctc-decor">
+          <span className="ctc-glow" />
+          <span className="ctc-mark ctc-mark--a" />
+          <span className="ctc-mark ctc-mark--b" />
+        </div>
       </div>
       {/* bulle à cheval entre la FAQ et le contact (remplit le vide entre les deux sections) */}
       <span className="ctc-bubble" ref={bubbleRef} aria-hidden="true"></span>
