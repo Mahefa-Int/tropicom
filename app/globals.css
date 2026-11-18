@@ -6778,6 +6778,130 @@ a {
 :root[data-reduce-motion] .exl-tip { display: none; }
 @media (max-width: 900px) { .exl-line { display: none; } }
 
+/* ============ PAGE RÉALISATIONS : haut de page (maquette 1440 × 554, sous la barre de menu) ============ */
+.rlh {
+  --g: calc(100vw / 1440);
+  position: relative;
+  height: calc(554 * var(--g));
+  margin-top: var(--nav-h);
+  overflow: hidden;
+  background: var(--noir-charbon);
+  color: var(--white);
+  font-variation-settings: "opsz" 14;
+  letter-spacing: -0.05em;
+}
+.rlh > * { position: absolute; margin: 0; }
+.rlh * { letter-spacing: -0.05em; }
+
+.rlh-tag { left: calc(56 * var(--g)); top: calc(74 * var(--g)); display: flex; align-items: center; gap: calc(9 * var(--g)); font-size: calc(12 * var(--g)); line-height: calc(12 * var(--g)); }
+.rlh-tag i { width: calc(6 * var(--g)); height: calc(6 * var(--g)); background: var(--jaune-dore); animation: dotPulse 2s ease-in-out infinite; }
+
+/* titre : 72 / 64, DM Sans 600, -7 % */
+.rlh-title { left: calc(56 * var(--g)); top: calc(153 * var(--g)); font-size: calc(72 * var(--g)); font-weight: 600; line-height: calc(64 * var(--g)); letter-spacing: -0.07em; white-space: nowrap; }
+.rlh-title em { font-style: normal; color: var(--jaune-dore); }
+.rlh-title * { letter-spacing: inherit; }
+.rlh-l { display: block; overflow: hidden; padding: 0 0.1em calc(10 * var(--g)) 0; margin-bottom: calc(-10 * var(--g)); }
+.rlh-l > span { display: block; translate: 0 110%; transition: translate 1s var(--ease); }
+.rlh-l:nth-child(2) > span { transition-delay: 0.1s; }
+.rlh-l:nth-child(3) > span { transition-delay: 0.2s; }
+.rlh.in-view .rlh-l > span { translate: none; }
+
+.rlh-text { left: calc(56 * var(--g)); top: calc(408.2 * var(--g)); font-size: calc(20 * var(--g)); line-height: calc(30 * var(--g)); white-space: nowrap; }
+
+/* cartes penchées : 150 × 195, bord noir 4,5, coins 22 ; elles arrivent en éventail */
+.rlh-cards { inset: 0; pointer-events: none; }
+.rlh-card {
+  position: absolute;
+  left: calc((var(--cx) - 75) * var(--g));
+  top: calc((var(--cy) - 97.5) * var(--g));
+  width: calc(150 * var(--g));
+  height: calc(195 * var(--g));
+  margin: 0;
+  overflow: hidden;
+  border: calc(5 * var(--g)) solid var(--black);
+  border-radius: calc(22 * var(--g));
+  background: var(--black);
+  pointer-events: auto;
+  rotate: var(--rot);
+  translate: var(--m, 0px 0px);
+  transition: rotate 0.9s var(--ease), translate 0.9s var(--ease), scale 0.5s var(--ease), opacity 0.8s var(--ease);
+}
+.rlh-card img { display: block; width: 100%; height: 100%; object-fit: cover; scale: var(--z, 1); transition: scale 0.8s var(--ease); }
+.rlh-card:hover { z-index: 2; scale: 1.08; }
+.rlh-card:hover img { scale: calc(var(--z, 1) * 1.08); }
+.rlh:not(.in-view) .rlh-card { opacity: 0; rotate: 0deg; translate: calc((1254 - var(--cx)) * var(--g)) calc(40 * var(--g)); }
+.rlh-card:nth-child(2) { transition-delay: 0.15s; }
+.rlh-card:nth-child(3) { transition-delay: 0.3s; }
+
+/* pastille « 08 études de cas » */
+.rlh-badge {
+  left: calc(1094 * var(--g));
+  top: calc(244 * var(--g));
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: calc(112 * var(--g));
+  height: calc(112 * var(--g));
+  border-radius: 50%;
+  background: var(--jaune-dore);
+  color: var(--black);
+  transition: scale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s;
+}
+.rlh-badge > span { display: flex; flex-direction: column; align-items: center; rotate: 10deg; line-height: 1; }
+.rlh-badge b { font-size: calc(40 * var(--g)); font-weight: 500; letter-spacing: -0.06em; }
+.rlh-badge small { margin-top: calc(3 * var(--g)); font-size: calc(12 * var(--g)); letter-spacing: -0.02em; white-space: nowrap; }
+.rlh:not(.in-view) .rlh-badge { scale: 0; }
+
+/* étapes */
+.rlh-steps { left: calc(979.5 * var(--g)); top: calc(452 * var(--g)); display: flex; gap: calc(44.5 * var(--g)); padding: 0; list-style: none; }
+.rlh-steps li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: calc(45 * var(--g));
+  padding: 0 calc(16.5 * var(--g));
+  border: 1px solid #4d4d4d;
+  border-radius: calc(22.5 * var(--g));
+  font-size: calc(14 * var(--g));
+  white-space: nowrap;
+  opacity: 0;
+  translate: 0 calc(12 * var(--g));
+  transition: opacity 0.6s var(--ease), translate 0.6s var(--ease), background-color 0.4s, color 0.4s, border-color 0.4s;
+}
+.rlh-steps li + li::before {
+  content: "";
+  position: absolute;
+  right: calc(100% + 11.25 * var(--g));
+  top: 50%;
+  width: calc(22 * var(--g));
+  height: 1px;
+  background: #4d4d4d;
+}
+.rlh-steps li.is-on { border-color: var(--jaune-dore); background: var(--jaune-dore); color: var(--black); font-weight: 600; }
+.rlh.in-view .rlh-steps li { opacity: 1; translate: none; }
+.rlh-steps li:nth-child(1) { transition-delay: 0.5s, 0.5s, 0s, 0s, 0s; }
+.rlh-steps li:nth-child(2) { transition-delay: 0.6s, 0.6s, 0s, 0s, 0s; }
+.rlh-steps li:nth-child(3) { transition-delay: 0.7s, 0.7s, 0s, 0s, 0s; }
+
+:root[data-reduce-motion] .rlh-l > span, :root[data-reduce-motion] .rlh-card, :root[data-reduce-motion] .rlh-badge, :root[data-reduce-motion] .rlh-steps li { transition: none; }
+
+@media (max-width: 900px) {
+  .rlh { --g: 1px; height: auto; padding: 32px 18px 40px; display: flex; flex-direction: column; gap: 20px; }
+  .rlh > * { position: relative; left: auto; top: auto; }
+  .rlh br { display: none; }
+  .rlh-title { font-size: 38px; line-height: 38px; white-space: normal; }
+  .rlh-l { padding-bottom: 6px; margin-bottom: -6px; }
+  .rlh-text { font-size: 17px; line-height: 26px; white-space: normal; }
+  .rlh-cards { position: relative; inset: auto; height: 250px; order: 3; margin-top: 8px; }
+  .rlh-card { --g: 0.95px; left: calc(50% + (var(--cx) - 1254 - 75) * var(--g)); top: calc((var(--cy) - 122) * var(--g)); }
+  .rlh-badge { order: 3; align-self: flex-end; margin: -96px 4px 0 0; width: 84px; height: 84px; }
+  .rlh-badge b { font-size: 30px; }
+  .rlh-badge small { font-size: 10px; }
+  .rlh-steps { order: 4; flex-wrap: wrap; gap: 10px 30px; }
+  .rlh-steps li { font-size: 13px; height: 40px; }
+  .rlh-steps li + li::before { right: calc(100% + 6px); width: 18px; }
+}
+
 /* ============ PAGE D'ESSAI (/essai) : comparaison des effets au survol ============ */
 .essai { min-height: 100vh; padding: 48px 64px 96px; background: var(--black); color: var(--white); }
 .essai h1 { font-size: 40px; font-weight: 500; letter-spacing: -0.03em; margin-bottom: 40px; }

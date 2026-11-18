@@ -1,5 +1,7 @@
 # Tropi'Com — site vitrine (Next.js)
 
+> Documentation complète (site, back-office, base de données, mise en ligne) : **[DOCUMENTATION.md](DOCUMENTATION.md)**.
+
 ## Lancer le site en local
 
 ```bash

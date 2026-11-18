@@ -5,18 +5,31 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
+    "@tiptap/extension-image": "^3.34.0",
+    "@tiptap/extension-link": "^3.34.0",
+    "@tiptap/pm": "^3.34.0",
+    "@tiptap/react": "^3.34.0",
+    "@tiptap/starter-kit": "^3.34.0",
     "d3-geo": "^3.1.2",
+    "drizzle-orm": "^0.45.4",
     "framer-motion": "^14.6.0",
     "gsap": "^3.15.1",
+    "mysql2": "^3.24.6",
     "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
     "three": "^0.187.0",
     "topojson-client": "^3.1.0",
-    "world-atlas": "^2.0.2"
+    "world-atlas": "^2.0.2",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/d3-geo": "^3.1.1",
@@ -25,6 +38,7 @@
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
     "@types/topojson-client": "^3.1.5",
+    "drizzle-kit": "^0.31.11",
     "typescript": "^5.9.3"
   }
 }
