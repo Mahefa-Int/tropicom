@@ -7802,8 +7802,8 @@ a {
 .rtb { padding: calc(96 * var(--g)) calc(56 * var(--g)) calc(80 * var(--g)); }
 /* en-tête : titre 600 avec la fin en jaune doré, note à droite */
 .rtb-head-block { position: relative; display: grid; grid-template-columns: 1fr calc(380 * var(--g)); align-items: end; column-gap: calc(40 * var(--g)); }
-.rtb-title { font-size: calc(64 * var(--g)); font-weight: 600; line-height: 1; letter-spacing: -0.06em; white-space: nowrap; }
-.rtb-title em { font-style: normal; color: var(--jaune-dore); }
+.rtb-title { font-size: calc(48 * var(--g)); font-weight: 600; line-height: 1; letter-spacing: -0.05em; text-transform: uppercase; white-space: nowrap; }
+.rtb-title em { font-style: normal; }
 .rtb-note { padding-bottom: calc(6 * var(--g)); color: #a19d93; font-size: calc(16 * var(--g)); line-height: calc(24 * var(--g)); letter-spacing: -0.03em; }
 
 /* tableau posé sur le fond noir, lignes fines, rangées aérées */
@@ -7817,7 +7817,7 @@ a {
 /* survol : la ligne se remplit du gris des cartes depuis la gauche (il repart vers la droite) ; numéro et flèche en jaune */
 .rtb-row::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--noir-charbon); transform: scaleX(0); transform-origin: right; transition: transform 0.55s var(--ease); }
 .rtb-row.is-on::before, .rtb-row:focus-visible::before { transform: scaleX(1); transform-origin: left; transition-delay: 0.08s; }
-.rtb-n { position: relative; align-self: stretch; display: flex; align-items: center; color: #6f6c66; font-size: 13px; transition: color 0.3s; font-weight: 500; letter-spacing: 0; }
+.rtb-n { position: relative; align-self: stretch; display: flex; align-items: center; color: var(--jaune-dore); font-size: 13px; font-weight: 700; letter-spacing: 0; }
 .rtb-sector { color: #9b9b9b; font-weight: 400; }
 .rtb-result { position: relative; padding-right: 40px; }
 .rtb-result b { font-weight: 600; }
@@ -7845,7 +7845,7 @@ a {
   .rsp-count { right: 16px; bottom: 26px; font-size: 26px; }
   .rtb { padding: 64px 16px 56px; }
   .rtb-head-block { grid-template-columns: 1fr; row-gap: 14px; }
-  .rtb-title { font-size: 36px; white-space: normal; }
+  .rtb-title { font-size: 30px; white-space: normal; }
   .rtb-note { font-size: 15px; line-height: 22px; }
   .rtb-table { margin-top: 28px; }
   .rtb-head, .rtb-row { grid-template-columns: 48px 1fr auto; }
