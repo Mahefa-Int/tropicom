@@ -1,10 +1,15 @@
+"use client";
+
+import { useSpotlight } from "./useSpotlight";
+
 /**
  * Page « L'Agence » — « 05 — Nos valeurs » : « Quatre mots, tenus. »
  * Maquette 1440 × 580 : intitulé en (64, 83), titre DM Sans 600 50 px, traits jaunes en haut à droite ;
  * 4 cartes 244 × 254 (#171616, coins 24) en x 64 / 420 / 776 / 1132, y 246 : mot 45,5 px, texte 16,3 / 19 #a19d93,
  * numéro 001…004, icône jaune doré (trait) en bas à droite.
- * Au survol : la carte monte légèrement, l'icône s'anime.
+ * Effet « projecteur » : lumière dorée qui suit la souris sur les cartes (useSpotlight) ; au survol, l'icône s'anime.
  */
+
 const VALUES = [
   {
     word: "Exigence.",
@@ -58,6 +63,7 @@ const VALUES = [
 ];
 
 export default function AgencyValues() {
+  const spot = useSpotlight<HTMLUListElement>();
   return (
     <section className="agv" data-reveal aria-labelledby="agv-title">
       <p className="ags-label agv-label">
@@ -71,9 +77,9 @@ export default function AgencyValues() {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="agv-traits" src="/images/agence/traits-jaunes-2.webp" alt="" aria-hidden="true" width={118} height={50} />
 
-      <ul className="agv-cards">
+      <ul className="agv-cards" ref={spot}>
         {VALUES.map((v, i) => (
-          <li key={v.word} className="agv-card" style={{ "--k": i } as React.CSSProperties}>
+          <li key={v.word} className="agv-card spot" style={{ "--k": i } as React.CSSProperties}>
             <h3 className="agv-word">{v.word}</h3>
             <p className="agv-text">
               {v.text.split("\n").map((l, j, all) => (

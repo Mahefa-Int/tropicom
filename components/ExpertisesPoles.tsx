@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import GlowField, { type Glow } from "./GlowField";
+import { useSpotlight } from "./useSpotlight";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -163,6 +164,7 @@ function Pole01() {
 }
 
 function Pole02() {
+  const spot = useSpotlight<HTMLUListElement>();
   const stats: [string, string][] = [
     ["300+", "photos retouchées"],
     ["1", "film de marque"],
@@ -206,9 +208,9 @@ function Pole02() {
           un shot list par canal, une équipe photo-vidéo-drone.
         </p>
         <p className="pl-sprint-l">Livraison sous quinze jours</p>
-        <ul className="pl-stats">
+        <ul className="pl-stats" ref={spot}>
           {stats.map(([n, l]) => (
-            <li key={l}>
+            <li key={l} className="spot">
               <b>{n}</b>
               <span>{l}</span>
             </li>
@@ -283,6 +285,7 @@ function Pole03() {
 }
 
 function Pole04() {
+  const spot = useSpotlight<HTMLUListElement>();
   const mods: [string, string, string[]][] = [
     ["Réseaux sociaux", "2 jours", ["Ligne éditoriale, calendrier, formats", "verticaux, rédaction de légendes,", "community management, gestion de crise,", "publicité."]],
     ["E-mailing & base clients", "1 jour", ["Collecte conforme, segmentation, scénarios", "automatisés, rédaction d’objets, mesure."]],
@@ -325,9 +328,9 @@ function Pole04() {
       <Tag x={72} base={508}>
         Quatre modules
       </Tag>
-      <ul className="pl-a pl-mods" style={at({ x: 72, y: 527.5, w: 1296 })}>
+      <ul className="pl-a pl-mods" ref={spot} style={at({ x: 72, y: 527.5, w: 1296 })}>
         {mods.map(([t, d, lines], i) => (
-          <li key={t}>
+          <li key={t} className="spot">
             <p className="pl-mod-h">
               <span>Module {String(i + 1).padStart(2, "0")}</span>
               <b>{d}</b>
@@ -381,6 +384,7 @@ function Pole04() {
 }
 
 function Pole05() {
+  const spot = useSpotlight<HTMLUListElement>();
   const bricks: [string, string[]][] = [
     [
       "Agent conversationnel",
@@ -474,9 +478,9 @@ function Pole05() {
       <Tag x={72} base={531}>
         Quatre briques
       </Tag>
-      <ul className="pl-a pl-bricks" style={at({ x: 72, y: 550.5, w: 1296 })}>
+      <ul className="pl-a pl-bricks" ref={spot} style={at({ x: 72, y: 550.5, w: 1296 })}>
         {bricks.map(([t, d], i) => (
-          <li key={t}>
+          <li key={t} className="spot">
             <span className="pl-gn">{String(i + 1).padStart(2, "0")}</span>
             <h3>{t}</h3>
             <p>{lines(d)}</p>

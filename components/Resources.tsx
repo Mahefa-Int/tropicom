@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Inter } from "next/font/google";
 import CtaIcon from "./CtaIcon";
 import GlowField, { type Glow } from "./GlowField";
+import { useSpotlight } from "./useSpotlight";
 
 /**
  * Page « Ressources » (maquette 1440 × 2493, mise en page à partir du haut de la page, barre de menu comprise).
@@ -87,6 +88,7 @@ function Art({ kind }: { kind: Guide["art"] }) {
 
 export default function Resources() {
   const coverRef = useRef<HTMLDivElement>(null);
+  const hubs = useSpotlight<HTMLUListElement>();
 
   // couverture du rapport : légère inclinaison 3D qui suit la souris
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -135,9 +137,9 @@ export default function Resources() {
       </section>
 
       {/* ---------- trois entrées ---------- */}
-      <ul className="rs-hubs" data-reveal>
+      <ul className="rs-hubs" data-reveal ref={hubs}>
         {HUBS.map((h) => (
-          <li key={h.title} className={`rs-hub rs-hub--${h.side}`}>
+          <li key={h.title} className={`rs-hub rs-hub--${h.side} spot`}>
             <h2>{h.title}</h2>
             <p>{lines(h.text)}</p>
             <a href={h.href}>{h.link}</a>
