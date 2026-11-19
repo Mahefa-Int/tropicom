@@ -7,8 +7,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { and, eq, ne } from "drizzle-orm";
-import { unlink } from "node:fs/promises";
+import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { db, schema } from "@/lib/db";
@@ -16,6 +16,8 @@ import { requireUser } from "./dal";
 import { createSession, deleteSession, deleteUserSessions } from "./session";
 import { hashPassword, passwordProblem, verifyPassword } from "./password";
 import { slugify, type FormState } from "./util";
+import { DetailsSchema, emptyDetails, fullTitle } from "@/lib/cases";
+import { toOptimizedWebp, uploadDir } from "./images";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const optional = (v: string) => (v === "" ? null : v);
@@ -199,9 +201,22 @@ export async function createSuggestedCategories() {
 export async function saveCaseStudy(_: FormState, form: FormData): Promise<FormState> {
   await requireUser();
   const id = Number(form.get("id")) || null;
-  const title = str(form, "title");
-  if (title.length < 2) return { error: "Titre requis." };
-  const slug = slugify(str(form, "slug") || title);
+  let raw: unknown;
+  try {
+    raw = JSON.parse(String(form.get("details") ?? "{}"));
+  } catch {
+    return { error: "Contenu illisible, rechargez la page." };
+  }
+  const parsed = DetailsSchema.safeParse({ ...emptyDetails(), ...(raw as object) });
+  if (!parsed.success) return { error: "Contenu invalide." };
+  const details = parsed.data;
+  if (id && details.nextId === id) details.nextId = null;
+  const client = str(form, "client");
+  if (client.length < 2) return { error: "Nom du client requis." };
+  if (details.titleLead.trim().length < 2) return { error: "Titre requis (1re ligne)." };
+  const title = fullTitle(details).slice(0, 200);
+  const slug = slugify(str(form, "slug") || client);
+  if (!slug) return { error: "Adresse (slug) invalide." };
   const clash = await db
     .select({ id: schema.caseStudies.id })
     .from(schema.caseStudies)
@@ -212,21 +227,25 @@ export async function saveCaseStudy(_: FormState, form: FormData): Promise<FormS
   const values = {
     title,
     slug,
-    client: optional(str(form, "client")),
+    client,
     sector: optional(str(form, "sector")),
     location: optional(str(form, "location")),
     coverUrl: optional(str(form, "coverUrl")),
-    situation: optional(str(form, "situation")),
-    response: optional(str(form, "response")),
-    results: optional(str(form, "results")),
+    details: JSON.stringify(details),
     status: status as "draft" | "published",
     sortOrder: Number(form.get("sortOrder")) || 0,
     updatedAt: new Date(),
   };
   let caseId = id;
-  if (id) await db.update(schema.caseStudies).set(values).where(eq(schema.caseStudies.id, id));
-  else caseId = (await db.insert(schema.caseStudies).values(values))[0].insertId;
+  let oldSlug: string | undefined;
+  if (id) {
+    oldSlug = (await db.select({ slug: schema.caseStudies.slug }).from(schema.caseStudies).where(eq(schema.caseStudies.id, id)))[0]?.slug;
+    await db.update(schema.caseStudies).set(values).where(eq(schema.caseStudies.id, id));
+  } else caseId = (await db.insert(schema.caseStudies).values(values))[0].insertId;
   revalidatePath("/admin/realisations");
+  // la carte « Projet suivant » des autres réalisations peut afficher celle-ci : on rafraîchit toutes les pages
+  revalidatePath("/realisations/[slug]", "page");
+  if (oldSlug && oldSlug !== slug) revalidatePath(`/realisations/${oldSlug}`);
   if (!id) redirect(`/admin/realisations/${caseId}?cree=1`);
   return { ok: "Réalisation enregistrée." };
 }
@@ -235,6 +254,7 @@ export async function deleteCaseStudy(id: number) {
   await requireUser();
   await db.delete(schema.caseStudies).where(eq(schema.caseStudies.id, id));
   revalidatePath("/admin/realisations");
+  revalidatePath("/realisations/[slug]", "page");
   redirect("/admin/realisations");
 }
 
@@ -256,18 +276,126 @@ export async function deleteMessage(id: number) {
 
 /* ------------------------------------------------------------------ médias */
 
+export type MediaPick = { id: number; url: string; name: string; alt: string; width: number | null; height: number | null };
+
+/** liste pour « Choisir dans la Médiathèque » (formulaires, éditeur d'articles) */
+export async function listMedia(): Promise<MediaPick[]> {
+  await requireUser();
+  const rows = await db
+    .select({ id: schema.media.id, url: schema.media.url, name: schema.media.filename, alt: schema.media.alt, width: schema.media.width, height: schema.media.height })
+    .from(schema.media)
+    .orderBy(desc(schema.media.createdAt));
+  return rows.map((r) => ({ ...r, name: r.name ?? r.url, alt: r.alt ?? "" }));
+}
+
 export async function updateMediaAlt(id: number, alt: string) {
   await requireUser();
   await db.update(schema.media).set({ alt: alt.slice(0, 255) }).where(eq(schema.media.id, id));
   revalidatePath("/admin/medias");
 }
 
+export async function updateMediaDescription(id: number, description: string) {
+  await requireUser();
+  const clean = description.trim().slice(0, 2000);
+  await db.update(schema.media).set({ description: clean || null }).where(eq(schema.media.id, id));
+  revalidatePath("/admin/medias");
+}
+
+export type OptimizeResult = { error: string } | { before: number; after: number; already?: boolean; name: string };
+
+/** nom de fichier libre dans la médiathèque : base.ext, sinon base-2.ext, base-3.ext… */
+async function freeName(base: string, ext: string, exceptId: number) {
+  for (let i = 1; i < 500; i++) {
+    const name = `${base}${i > 1 ? "-" + i : ""}.${ext}`;
+    const taken = await db
+      .select({ id: schema.media.id })
+      .from(schema.media)
+      .where(and(eq(schema.media.filename, name), ne(schema.media.id, exceptId)))
+      .limit(1);
+    if (!taken.length && !(await stat(path.join(uploadDir(), name)).catch(() => null))) return name;
+  }
+  return `${base}-${Date.now()}.${ext}`;
+}
+
+/** remplace une adresse d'image dans tous les contenus qui l'utilisent (articles, réalisations) */
+async function replaceMediaUrl(from: string, to: string) {
+  await db.update(schema.posts).set({ content: sql`REPLACE(${schema.posts.content}, ${from}, ${to})` }).where(sql`${schema.posts.content} LIKE ${"%" + from + "%"}`);
+  await db.update(schema.posts).set({ coverUrl: to }).where(eq(schema.posts.coverUrl, from));
+  await db.update(schema.caseStudies).set({ coverUrl: to }).where(eq(schema.caseStudies.coverUrl, from));
+  await db
+    .update(schema.caseStudies)
+    .set({ details: sql`REPLACE(${schema.caseStudies.details}, ${from}, ${to})` })
+    .where(sql`${schema.caseStudies.details} LIKE ${"%" + from + "%"}`);
+  revalidatePath("/", "layout");
+}
+
+/**
+ * « Optimiser » : conversion en webp, côté le plus long ramené à 2560 px, compression sans perte visible (lib/admin/images.ts).
+ * Renommage : si le texte alternatif est rempli, le fichier prend son nom suivi de « tropicom »
+ * (« Façade de l'hôtel » → facade-de-l-hotel-tropicom.webp) ; sinon il garde son nom.
+ * L'adresse change : elle est remplacée partout où l'image est utilisée (articles, réalisations).
+ * Si la compression ne gagne pas 5 %, le fichier d'origine est gardé (seulement renommé).
+ */
+export async function optimizeMedia(id: number, alt?: string): Promise<OptimizeResult> {
+  await requireUser();
+  const m = (await db.select().from(schema.media).where(eq(schema.media.id, id)))[0];
+  if (!m) return { error: "Image introuvable." };
+  if (m.mime === "image/gif") return { error: "Les GIF animés ne sont pas optimisés (l'animation serait perdue)." };
+  // texte alternatif envoyé par la fenêtre (même s'il vient d'être tapé), sinon celui de la base
+  const altText = (alt ?? m.alt ?? "").trim().slice(0, 255);
+  const dir = uploadDir();
+  const oldName = path.basename(m.filename);
+  let input: Buffer;
+  try {
+    input = await readFile(path.join(dir, oldName));
+  } catch {
+    return { error: "Fichier introuvable sur le serveur." };
+  }
+  let out: Awaited<ReturnType<typeof toOptimizedWebp>>;
+  try {
+    out = await toOptimizedWebp(input);
+  } catch {
+    return { error: "Image illisible." };
+  }
+  const before = m.originalSize ?? input.length;
+  const keep = out.data.length >= input.length * 0.95; // gain trop faible : on garde le fichier actuel
+  const data = keep ? input : out.data;
+  const ext = keep ? path.extname(oldName).slice(1) || "webp" : "webp";
+  const oldBase = oldName.replace(/\.[^.]+$/, "");
+  const altBase = altText ? `${slugify(altText).slice(0, 80).replace(/-+$/, "")}-tropicom` : "";
+  const base = altBase && altBase !== "-tropicom" ? altBase : oldBase;
+  const newName = base === oldBase && ext === path.extname(oldName).slice(1) ? oldName : await freeName(base, ext, id);
+
+  if (newName !== oldName || !keep) {
+    const tmp = path.join(dir, newName + ".tmp");
+    await writeFile(tmp, data);
+    await rename(tmp, path.join(dir, newName));
+  }
+  const url = `/media/${newName}`;
+  await db
+    .update(schema.media)
+    .set({
+      filename: newName,
+      url,
+      alt: altText || null,
+      ...(keep ? {} : { mime: "image/webp", size: out.data.length, width: out.width, height: out.height }),
+      originalSize: before,
+      optimizedAt: new Date(),
+    })
+    .where(eq(schema.media.id, id));
+  if (newName !== oldName) {
+    await unlink(path.join(dir, oldName)).catch(() => {});
+    await replaceMediaUrl(m.url, url);
+  }
+  revalidatePath("/admin/medias");
+  return { before, after: data.length, already: keep, name: newName };
+}
+
 export async function deleteMedia(id: number) {
   await requireUser();
   const m = (await db.select().from(schema.media).where(eq(schema.media.id, id)))[0];
   if (!m) return;
-  const dir = path.resolve(process.env.UPLOAD_DIR || "./uploads");
-  await unlink(path.join(dir, path.basename(m.filename))).catch(() => {});
+  await unlink(path.join(uploadDir(), path.basename(m.filename))).catch(() => {});
   await db.delete(schema.media).where(eq(schema.media.id, id));
   revalidatePath("/admin/medias");
 }

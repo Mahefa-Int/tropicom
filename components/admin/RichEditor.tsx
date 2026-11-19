@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEditor, EditorContent, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { Placeholder } from "@tiptap/extensions";
 import { uploadImage } from "./upload";
+import MediaPicker from "./MediaPicker";
 
 /**
  * Éditeur de texte riche (Tiptap) : titres, gras, italique, listes, citation, liens, images (envoyées dans la médiathèque).
@@ -13,6 +14,7 @@ import { uploadImage } from "./upload";
  */
 export default function RichEditor({ name, initial }: { name: string; initial: string }) {
   const [html, setHtml] = useState(initial);
+  const [picking, setPicking] = useState(false);
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -25,7 +27,7 @@ export default function RichEditor({ name, initial }: { name: string; initial: s
     onUpdate: ({ editor }) => setHtml(editor.getHTML()),
   });
 
-  const s = useEditorState({
+  const st = useEditorState({
     editor,
     selector: ({ editor: e }) =>
       e
@@ -42,8 +44,8 @@ export default function RichEditor({ name, initial }: { name: string; initial: s
           }
         : null,
   });
-
-  useEffect(() => () => editor?.destroy(), [editor]);
+  // l'état peut rester vide jusqu'à la première modification : barre affichée quand même, boutons « inactifs »
+  const s = st ?? { h2: false, h3: false, bold: false, italic: false, underline: false, bullet: false, ordered: false, quote: false, link: false };
 
   const run = (fn: () => void) => (ev: React.MouseEvent) => {
     ev.preventDefault();
@@ -58,7 +60,7 @@ export default function RichEditor({ name, initial }: { name: string; initial: s
 
   return (
     <div className="adm-editor">
-      {editor && s && (
+      {editor && (
         <div className="adm-toolbar">
           <B on={s.h2} label="H2" title="Titre" onClick={() => c().toggleHeading({ level: 2 }).run()} />
           <B on={s.h3} label="H3" title="Sous-titre" onClick={() => c().toggleHeading({ level: 3 }).run()} />
@@ -100,12 +102,14 @@ export default function RichEditor({ name, initial }: { name: string; initial: s
               input.click();
             }}
           />
+          <B label="Médiathèque" title="Insérer une image de la Médiathèque" onClick={() => setPicking(true)} />
           <i />
           <B label="↶" title="Annuler" onClick={() => c().undo().run()} />
           <B label="↷" title="Rétablir" onClick={() => c().redo().run()} />
         </div>
       )}
       <EditorContent editor={editor} />
+      {picking && <MediaPicker onClose={() => setPicking(false)} onPick={(m) => c().setImage({ src: m.url, alt: m.alt }).run()} />}
       <input type="hidden" name={name} value={html} />
     </div>
   );

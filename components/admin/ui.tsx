@@ -19,7 +19,7 @@ export function PageHead({ title, text, crumb, children }: { title: string; text
 }
 
 export function StatusBadge({ status }: { status: "draft" | "published" }) {
-  return status === "published" ? <span className="adm-badge adm-badge--green">Publié</span> : <span className="adm-badge adm-badge--yellow">Brouillon</span>;
+  return status === "published" ? <span className="adm-status adm-status--pub">Publié</span> : <span className="adm-status adm-status--draft">Brouillon</span>;
 }
 
 export function Empty({ title, text, children }: { title: string; text?: string; children?: React.ReactNode }) {

@@ -1,0 +1,1 @@
+ALTER TABLE `case_studies` ADD `details` longtext;

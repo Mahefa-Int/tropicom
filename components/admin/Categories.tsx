@@ -96,6 +96,8 @@ export function CategoryRow({ id, name, slug, count }: { id: number; name: strin
             <button
               type="button"
               className="adm-btn adm-btn--danger adm-btn--sm"
+              aria-label="Supprimer"
+              data-tip="Supprimer"
               disabled={pending}
               onClick={() => {
                 const msg = count

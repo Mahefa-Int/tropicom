@@ -101,7 +101,7 @@ app/
   page.tsx                  Accueil
   agence/                   L'Agence : equipe/, notre-histoire/, carrieres/ (+ redirection /agence → /agence/equipe)
   expertises/               Page Expertises
-  realisations/             Page Nos réalisations
+  realisations/             Page Nos réalisations ; [slug]/ : page d'une étude de cas (contenu de l'admin)
   essai/                    Page de test (effets, menus) — non liée au menu, non indexée
   notre-histoire/, carrieres/  Anciennes adresses, redirigées vers /agence/…
   admin/                    Back-office (voir plus bas)
@@ -135,6 +135,7 @@ uploads/                    Images envoyées depuis l'admin — NON versionné
 | `/agence/carrieres` | Carrières |
 | `/expertises` | Expertises (ancres `#pole-01` à `#pole-05`, défilement animé) |
 | `/realisations` | Nos réalisations |
+| `/realisations/[adresse]` | Étude de cas (ex. `/realisations/grand-hotel-diego`), gérée dans l'admin ; brouillons visibles seulement par un administrateur connecté |
 
 Le menu « L'Agence » n'a pas de page propre : il ouvre un sous-menu (L'équipe, Notre histoire, Carrières).
 
@@ -162,9 +163,9 @@ Adresse : `/admin` (connexion : `/admin/connexion`). Un seul compte : l'administ
 | Statistiques | Données Google Search Console (clics, impressions, taux de clic, position) sur 7, 28 ou 90 jours |
 | Articles | Blog : éditeur riche, image de couverture, catégorie (avec création rapide), adresse, brouillon / publié, titre et description pour Google ; filtres par statut et par catégorie |
 | Catégories | Depuis Articles (bouton « Catégories ») : ajout, renommage, suppression (les articles restent, sans catégorie) ; catégories suggérées d'un clic |
-| Réalisations | Études de cas en trois temps : Situation, Réponse, Résultats ; client, secteur, lieu, visuel, ordre d'affichage |
+| Réalisations | Toute la page d'une étude de cas : titre, tableau d'infos, photo (légende, chiffre clé), Contexte, L'enjeu, Notre réponse et ses leviers, visuels, Résultats (chiffres, bandeau), Verbatim, choix du « Projet suivant » (sa carte reprend la photo, le chiffre clé, le titre et les expertises de la réalisation visée), référencement. Une section laissée vide est masquée. Le bloc « Un enjeu comparable ? » est identique partout (dans le code). Contenu détaillé rangé en JSON (colonne `details`, voir `lib/cases.ts`). `npm run db:seed-cas` ajoute les études de cas de départ |
 | Messages | Demandes reçues par les formulaires du site (non lus, lecture, réponse par e-mail, suppression) |
-| Médiathèque | Envoi d'images (converties en webp), texte alternatif, copie de l'adresse, suppression |
+| Médiathèque | Images envoyées depuis les formulaires, gardées telles quelles à l'envoi (HEIC, TIFF, SVG convertis directement). Bouton « Optimiser » : webp, 2560 px max, qualité 80, gain affiché ; renommage d'après le texte alternatif + « -tropicom » (ex. facade-de-l-hotel-tropicom.webp, numéroté si le nom existe déjà ; texte alternatif vide = nom inchangé) ; l'adresse est remplacée partout où l'image est utilisée (articles, réalisations). Grille d'images, détail au clic : texte alternatif, description, ouverture en grand, suppression. Chaque champ image et l'éditeur d'articles ont « Choisir dans la Médiathèque » pour réutiliser une image déjà envoyée. Réglages : `lib/admin/images.ts` |
 | Mon compte | Nom, e-mail de connexion, mot de passe |
 
 Fichiers principaux :
@@ -270,7 +271,7 @@ Search Console (enregistrement TXT dans la zone DNS).
 
 ## Prochaines étapes
 
-1. **Relier le site au back-office** : pages `/blog` et `/blog/[adresse]`, réalisations dynamiques,
+1. **Relier le site au back-office** : pages `/blog` et `/blog/[adresse]`, liste des réalisations (`/realisations`) depuis la base,
    formulaires (contact, diagnostic, rapport) enregistrés dans `messages`.
 2. **Search Console** : compte de service Google, synchronisation quotidienne vers `gsc_daily`.
 3. **Référencement** : `robots.txt` (autoriser le site, exclure `/admin/`) et `sitemap.xml`.

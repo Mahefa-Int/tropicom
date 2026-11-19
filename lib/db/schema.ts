@@ -71,7 +71,7 @@ export const posts = mysqlTable(
   (t) => [uniqueIndex("posts_slug_uq").on(t.slug), index("posts_status_idx").on(t.status), index("posts_category_idx").on(t.categoryId)],
 );
 
-/** études de cas (page Réalisations) : situation → réponse → résultats */
+/** études de cas (pages /realisations/[slug]) : colonnes de base + contenu détaillé en JSON */
 export const caseStudies = mysqlTable(
   "case_studies",
   {
@@ -82,9 +82,12 @@ export const caseStudies = mysqlTable(
     sector: varchar("sector", { length: 120 }),
     location: varchar("location", { length: 120 }),
     coverUrl: varchar("cover_url", { length: 255 }),
+    /** anciennes colonnes, plus utilisées (remplacées par « details ») */
     situation: text("situation"),
     response: text("response"),
     results: text("results"),
+    /** contenu détaillé de la page (JSON, voir lib/cases.ts) */
+    details: longtext("details"),
     status: mysqlEnum("status", ["draft", "published"]).notNull().default("draft"),
     sortOrder: int("sort_order").notNull().default(0),
     createdAt: datetime("created_at").notNull().default(now()),
@@ -119,9 +122,15 @@ export const media = mysqlTable("media", {
   url: varchar("url", { length: 255 }).notNull(),
   mime: varchar("mime", { length: 60 }).notNull(),
   size: int("size").notNull(),
+  /** poids du fichier envoyé, avant optimisation (pour afficher le gain) */
+  originalSize: int("original_size"),
+  /** date de l'optimisation (webp + compression) ; vide = image d'origine */
+  optimizedAt: datetime("optimized_at"),
   width: int("width"),
   height: int("height"),
   alt: varchar("alt", { length: 255 }),
+  /** description libre de l'image (contexte, crédit photo, usage…) */
+  description: text("description"),
   uploadedBy: int("uploaded_by"),
   createdAt: datetime("created_at").notNull().default(now()),
 });

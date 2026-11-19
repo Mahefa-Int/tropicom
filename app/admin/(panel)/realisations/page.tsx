@@ -13,7 +13,7 @@ export default async function CasesPage() {
   const items = await db.select().from(schema.caseStudies).orderBy(asc(schema.caseStudies.sortOrder), desc(schema.caseStudies.updatedAt));
   return (
     <>
-      <PageHead title="Réalisations" text="Les études de cas : situation, réponse, résultats.">
+      <PageHead title="Réalisations" text="Les études de cas : chaque réalisation a sa page /realisations/adresse.">
         <Link href="/admin/realisations/nouvelle" className="adm-btn adm-btn--primary">
           {Icons.plus}
           Nouvelle réalisation
@@ -41,8 +41,8 @@ export default async function CasesPage() {
                     {c.coverUrl ? <img className="adm-thumb" src={c.coverUrl} alt="" /> : <span className="adm-thumb" style={{ display: "block" }} />}
                   </td>
                   <td>
-                    <Link href={`/admin/realisations/${c.id}`} className="adm-strong">{c.title}</Link>
-                    <span className="adm-sub">{[c.client, c.location].filter(Boolean).join(" · ") || "—"}</span>
+                    <Link href={`/admin/realisations/${c.id}`} className="adm-strong">{c.client || c.title}</Link>
+                    <span className="adm-sub">{c.title}</span>
                   </td>
                   <td>{c.sector ?? "—"}</td>
                   <td>{c.sortOrder}</td>
@@ -50,6 +50,7 @@ export default async function CasesPage() {
                   <td>{formatDate(c.updatedAt)}</td>
                   <td>
                     <div className="adm-actions">
+                      <a href={`/realisations/${c.slug}`} target="_blank" rel="noreferrer" className="adm-btn adm-btn--ghost adm-btn--sm">Voir</a>
                       <Link href={`/admin/realisations/${c.id}`} className="adm-btn adm-btn--sm">{Icons.edit}Modifier</Link>
                     </div>
                   </td>

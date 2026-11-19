@@ -3,13 +3,28 @@
 import { useRef, useState } from "react";
 import { Icons } from "./icons";
 import { uploadImage } from "./upload";
+import MediaPicker from "./MediaPicker";
 
 /** image de couverture : clic ou glisser-déposer, envoi immédiat, l'adresse est gardée dans un champ caché */
-export default function ImageField({ name, initial, label = "Image de couverture" }: { name: string; initial?: string | null; label?: string }) {
+export default function ImageField({
+  name,
+  initial,
+  label = "Image de couverture",
+  hint = "À optimiser ensuite depuis la Médiathèque (webp, poids réduit).",
+  onChange,
+}: {
+  name?: string;
+  initial?: string | null;
+  label?: string;
+  hint?: string;
+  /** appelé à chaque envoi / retrait (adresse, largeur, hauteur) */
+  onChange?: (url: string, w?: number, h?: number) => void;
+}) {
   const [url, setUrl] = useState(initial ?? "");
   const [busy, setBusy] = useState(false);
   const [drag, setDrag] = useState(false);
   const [error, setError] = useState("");
+  const [picking, setPicking] = useState(false);
   const input = useRef<HTMLInputElement>(null);
 
   const send = async (f?: File | null) => {
@@ -18,8 +33,10 @@ export default function ImageField({ name, initial, label = "Image de couverture
     setError("");
     const r = await uploadImage(f);
     setBusy(false);
-    if ("url" in r) setUrl(r.url);
-    else setError(r.error);
+    if ("url" in r) {
+      setUrl(r.url);
+      onChange?.(r.url, r.width, r.height);
+    } else setError(r.error);
   };
 
   return (
@@ -53,19 +70,38 @@ export default function ImageField({ name, initial, label = "Image de couverture
         )}
         <input ref={input} type="file" accept="image/*" onChange={(e) => send(e.target.files?.[0])} />
       </div>
-      {url && (
-        <div className="adm-image-tools">
+      <div className="adm-image-tools">
+        {url && (
           <button type="button" className="adm-btn adm-btn--sm" onClick={() => input.current?.click()} disabled={busy}>
             {busy ? "Envoi…" : "Remplacer"}
           </button>
-          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setUrl("")}>
+        )}
+        <button type="button" className="adm-btn adm-btn--sm" onClick={() => setPicking(true)}>
+          Choisir dans la Médiathèque
+        </button>
+        {url && (
+          
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => {
+              setUrl("");
+              onChange?.("");
+            }}>
             Retirer
           </button>
-        </div>
+        )}
+      </div>
+      {picking && (
+        <MediaPicker
+          onClose={() => setPicking(false)}
+          onPick={(m) => {
+            setUrl(m.url);
+            setError("");
+            onChange?.(m.url, m.width ?? undefined, m.height ?? undefined);
+          }}
+        />
       )}
       {error && <small style={{ color: "#ff9b9e" }}>{error}</small>}
-      <small>Converti en webp automatiquement (2000 px max).</small>
-      <input type="hidden" name={name} value={url} />
+      {hint && <small>{hint}</small>}
+      {name && <input type="hidden" name={name} value={url} />}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { asc, eq, ne } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireUser } from "@/lib/admin/dal";
 import { deleteCaseStudy } from "@/lib/admin/actions";
@@ -16,15 +16,19 @@ export default async function EditCase({ params, searchParams }: { params: Promi
   const { cree } = await searchParams;
   const item = (await db.select().from(schema.caseStudies).where(eq(schema.caseStudies.id, Number(id))).limit(1))[0];
   if (!item) notFound();
+  const others = await db
+    .select({ id: schema.caseStudies.id, client: schema.caseStudies.client, title: schema.caseStudies.title, status: schema.caseStudies.status })
+    .from(schema.caseStudies)
+    .where(ne(schema.caseStudies.id, item.id))
+    .orderBy(asc(schema.caseStudies.sortOrder));
   return (
     <>
-      <PageHead title={item.title} crumb={{ href: "/admin/realisations", label: "Réalisations" }}>
-        <ConfirmButton action={deleteCaseStudy.bind(null, item.id)} confirm="Supprimer définitivement cette réalisation ?">
+      <PageHead title={item.client || item.title} crumb={{ href: "/admin/realisations", label: "Réalisations" }}>
+        <ConfirmButton action={deleteCaseStudy.bind(null, item.id)} confirm="Supprimer définitivement cette réalisation ?" className="adm-btn adm-btn--danger" label="Supprimer">
           {Icons.trash}
-          Supprimer
         </ConfirmButton>
       </PageHead>
-      <CaseForm item={item} created={!!cree} />
+      <CaseForm item={item} others={others} created={!!cree} />
     </>
   );
 }

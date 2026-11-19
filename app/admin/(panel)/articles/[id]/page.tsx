@@ -23,9 +23,8 @@ export default async function EditPost({ params, searchParams }: { params: Promi
   return (
     <>
       <PageHead title={post.title} crumb={{ href: "/admin/articles", label: "Articles" }}>
-        <ConfirmButton action={deletePost.bind(null, post.id)} confirm="Supprimer définitivement cet article ?">
+        <ConfirmButton action={deletePost.bind(null, post.id)} confirm="Supprimer définitivement cet article ?" className="adm-btn adm-btn--danger" label="Supprimer">
           {Icons.trash}
-          Supprimer
         </ConfirmButton>
       </PageHead>
       <PostForm post={post} created={!!cree} categories={categories} />

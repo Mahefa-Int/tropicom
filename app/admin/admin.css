@@ -90,8 +90,12 @@
 .adm-btn svg { width: 16px; height: 16px; }
 .adm-btn--primary { border-color: var(--a-yellow); background: var(--a-yellow); color: #000; }
 .adm-btn--primary:hover { border-color: #ffd34d; background: #ffd34d; }
-.adm-btn--danger { border-color: #4a2224; background: #2a1517; color: #ff8a8d; }
-.adm-btn--danger:hover { border-color: var(--a-red); background: #3a1a1c; }
+/* suppression : corbeille seule, sans fond ; rouge au survol, info-bulle « Supprimer » */
+.adm-btn--danger { position: relative; width: 36px; padding: 0; justify-content: center; border-color: transparent; background: none; color: var(--a-muted); }
+.adm-btn--danger.adm-btn--sm { width: 30px; padding: 0; }
+.adm-btn--danger:hover { border-color: transparent; background: none; color: #ff6b70; }
+.adm-btn--danger[data-tip]::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; translate: -50% 4px; padding: 4px 8px; border-radius: 6px; background: #000; color: #fff; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, translate 0.2s; }
+.adm-btn--danger[data-tip]:hover::after, .adm-btn--danger[data-tip]:focus-visible::after { opacity: 1; translate: -50% 0; }
 .adm-btn--ghost { border-color: transparent; background: none; color: var(--a-muted); }
 .adm-btn--ghost:hover { background: var(--a-panel-2); color: #fff; }
 .adm-btn--sm { height: 30px; padding: 0 11px; font-size: 13px; }
@@ -123,12 +127,18 @@
 .adm-empty { padding: 40px 20px; color: var(--a-muted); text-align: center; }
 .adm-empty b { display: block; margin-bottom: 6px; color: #fff; font-size: 15px; font-weight: 500; }
 
-.adm-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; background: #262525; color: #cfcfcf; font-size: 12px; white-space: nowrap; }
-.adm-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.adm-badge--green { background: rgba(70, 167, 88, 0.14); color: #7fd18f; }
-.adm-badge--yellow { background: rgba(247, 194, 39, 0.14); color: var(--a-yellow); }
-.adm-badge--teal { background: rgba(62, 157, 158, 0.16); color: #6fd0d1; }
-.adm-badge--red { background: rgba(229, 72, 77, 0.14); color: #ff8a8d; }
+/* statut d'un contenu : carré de marque + texte coloré, sans fond (vert = publié, jaune doré = brouillon) */
+.adm-status { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.adm-status::before { content: ""; width: 6px; height: 6px; background: currentColor; }
+.adm-status--pub { color: #6fd184; }
+.adm-status--draft { color: var(--a-yellow); }
+/* étiquettes (source d'un message, nombre d'articles…) : même style que les statuts, carré + texte coloré, sans fond */
+.adm-badge { display: inline-flex; align-items: center; gap: 8px; color: #cfcfcf; font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.adm-badge::before { content: ""; width: 6px; height: 6px; background: currentColor; }
+.adm-badge--green { color: #6fd184; }
+.adm-badge--yellow { color: var(--a-yellow); }
+.adm-badge--teal { color: #5fc4c5; }
+.adm-badge--red { color: #ff8a8d; }
 
 /* ---------- formulaires ---------- */
 .adm-form { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
@@ -190,11 +200,35 @@
 .adm-prose p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; height: 0; color: #5d5d5d; pointer-events: none; }
 
 /* médiathèque */
-.adm-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
-.adm-media figure { margin: 0; overflow: hidden; border: 1px solid var(--a-line); border-radius: 12px; background: var(--a-panel); }
-.adm-media img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #222; }
-.adm-media figcaption { display: flex; flex-direction: column; gap: 6px; padding: 10px; font-size: 12px; color: var(--a-muted); }
-.adm-media figcaption .adm-input { padding: 6px 8px; font-size: 12px; }
+/* médiathèque : grille d'images seules (5 colonnes), détail dans une fenêtre */
+.adm-media { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+@media (max-width: 1500px) { .adm-media { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 1100px) { .adm-media { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px) { .adm-media { grid-template-columns: repeat(2, 1fr); } }
+.adm-tile { position: relative; display: block; aspect-ratio: 1; padding: 0; overflow: hidden; border: 0; border-radius: 12px; background: #1c1b1b; cursor: pointer; }
+.adm-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.adm-tile:focus-visible { outline: 2px solid var(--a-yellow); outline-offset: 2px; }
+.adm-tile-flag { position: absolute; top: 8px; left: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, 0.7); color: var(--a-yellow); font-size: 11px; font-weight: 500; }
+.adm-tile-flag::before { content: ""; width: 5px; height: 5px; background: currentColor; }
+
+/* fenêtre de détail */
+.adm-modal { margin: auto; width: min(1040px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; overflow: hidden; border: 1px solid var(--a-line); border-radius: 16px; background: var(--a-panel); color: var(--a-text); }
+.adm-modal::backdrop { background: rgba(0, 0, 0, 0.7); }
+.adm-modal-body { display: grid; grid-template-columns: 1fr 340px; max-height: calc(100vh - 48px); }
+.adm-modal-preview { display: grid; place-items: center; min-height: 360px; padding: 20px; background: repeating-conic-gradient(#151515 0 25%, #1b1b1b 0 50%) 0 0 / 20px 20px; }
+.adm-modal-preview img { max-width: 100%; max-height: calc(100vh - 88px); object-fit: contain; border-radius: 6px; }
+.adm-modal-side { display: flex; flex-direction: column; gap: 16px; padding: 20px; overflow-y: auto; border-left: 1px solid var(--a-line); }
+.adm-modal-head { display: flex; gap: 12px; align-items: flex-start; }
+.adm-modal-head h2 { overflow: hidden; margin: 0; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.adm-modal-head p { margin: 4px 0 0; color: var(--a-muted); font-size: 12px; }
+.adm-modal-x { flex: none; width: 30px; height: 30px; margin-left: auto; border: 0; border-radius: 8px; background: none; color: var(--a-muted); cursor: pointer; }
+.adm-modal-x:hover { background: var(--a-panel-2); color: #fff; }
+.adm-modal-actions { display: flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--a-line); }
+@media (max-width: 800px) {
+  .adm-modal-body { grid-template-columns: 1fr; overflow-y: auto; }
+  .adm-modal-preview { min-height: 220px; }
+  .adm-modal-side { border-left: 0; border-top: 1px solid var(--a-line); overflow: visible; }
+}
 
 /* messages */
 .adm-msg-unread td:first-child { box-shadow: inset 3px 0 0 var(--a-yellow); }
@@ -248,3 +282,47 @@
   .adm-row { grid-template-columns: 1fr; }
   .adm-table { display: block; overflow-x: auto; }
 }
+
+/* ---------- formulaire étude de cas : piles, listes répétables ---------- */
+.adm-card-text { margin: -6px 0 14px; color: var(--a-muted); font-size: 13px; line-height: 1.5; }
+.adm-stack { display: flex; flex-direction: column; gap: 14px; }
+.adm-stack--tight { gap: 8px; }
+.adm-hint { margin-top: -6px; color: var(--a-muted); font-size: 12px; }
+.adm-row--tight { gap: 8px; }
+.adm-row--3 { grid-template-columns: 0.7fr 1.3fr 1.3fr; gap: 8px; }
+.adm-row--media { grid-template-columns: 240px 1fr; }
+.adm-rep { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.adm-rep-item { display: flex; gap: 8px; align-items: center; width: 100%; padding: 10px; border: 1px solid var(--a-line); border-radius: 12px; background: rgba(255, 255, 255, 0.015); }
+.adm-rep-body { flex: 1; min-width: 0; }
+.adm-rep-tools { display: flex; gap: 2px; }
+.adm-rep-tools .adm-btn { width: 30px; height: 30px; padding: 0; justify-content: center; }
+@media (max-width: 900px) {
+  .adm-row--3, .adm-row--media { grid-template-columns: 1fr; }
+}
+
+/* ---------- mot de passe : afficher / générer (icônes dans le champ) ---------- */
+.adm-pw { position: relative; }
+.adm-pw .adm-input { width: 100%; padding-right: 76px; }
+.adm-pw-tools { position: absolute; top: 50%; right: 6px; display: flex; gap: 2px; translate: 0 -50%; }
+.adm-pw-btn { position: relative; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: none; color: var(--a-muted); cursor: pointer; transition: color 0.2s, background-color 0.2s; }
+.adm-pw-btn:hover { background: var(--a-panel-2); color: var(--a-yellow); }
+.adm-pw-btn svg { width: 17px; height: 17px; }
+.adm-pw-btn::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; translate: -50% 4px; padding: 4px 8px; border-radius: 6px; background: #000; color: #fff; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s, translate 0.2s; }
+.adm-pw-btn:hover::after, .adm-pw-btn:focus-visible::after { opacity: 1; translate: -50% 0; }
+
+/* médiathèque : optimisation */
+.adm-optim { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 30px; font-size: 12px; }
+.adm-optim b { color: #6fd184; font-weight: 600; }
+.adm-optim-btn { align-self: flex-start; }
+.adm-optim-btn svg { width: 14px; height: 14px; }
+
+/* « Choisir dans la Médiathèque » */
+.adm-picker { width: min(960px, calc(100vw - 32px)); }
+.adm-picker-head { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--a-line); }
+.adm-picker-head h2 { margin: 0; font-size: 15px; }
+.adm-picker-head .adm-input { max-width: 260px; margin-left: auto; }
+.adm-picker-head .adm-modal-x { margin-left: 0; }
+.adm-picker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-height: calc(100vh - 140px); padding: 20px; overflow-y: auto; }
+.adm-picker-empty { grid-column: 1 / -1; margin: 0; padding: 30px 0; color: var(--a-muted); text-align: center; }
+@media (max-width: 800px) { .adm-picker-grid { grid-template-columns: repeat(3, 1fr); } }
+.adm-image-tools { flex-wrap: wrap; }

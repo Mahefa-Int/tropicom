@@ -8,7 +8,8 @@
     "start": "next start",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:admin": "node scripts/create-admin.mjs"
+    "db:admin": "node scripts/create-admin.mjs",
+    "db:seed-cas": "node scripts/seed-cas.mjs"
   },
   "dependencies": {
     "@tiptap/extension-image": "^3.34.0",

@@ -28,9 +28,8 @@ export default async function MessagePage({ params }: { params: Promise<{ id: st
         <ConfirmButton action={setMessageRead.bind(null, m.id, false)} confirm={false} className="adm-btn">
           Marquer non lu
         </ConfirmButton>
-        <ConfirmButton action={deleteMessage.bind(null, m.id)} confirm="Supprimer ce message ?" className="adm-btn adm-btn--danger">
+        <ConfirmButton action={deleteMessage.bind(null, m.id)} confirm="Supprimer ce message ?" className="adm-btn adm-btn--danger" label="Supprimer">
           {Icons.trash}
-          Supprimer
         </ConfirmButton>
       </PageHead>
       <div className="adm-grid adm-grid--2">
