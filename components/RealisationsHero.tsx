@@ -7,7 +7,7 @@ import { prefersReducedMotion } from "@/lib/motion";
  * Page « Nos réalisations » — haut de page (maquette 1440 × 554, fond #171616, sous la barre de menu).
  * Étiquette 12 px ; titre DM Sans 600 72 / 64, -7 % (fin en jaune doré) ; texte 20 / 30 ;
  * trois cartes penchées (150 × 195, bord noir, coins 22) : rapport d'activité (+10°), Echoes of the Forest (-1°),
- * Journeys with Lorraine (-12°, coupée par le bord droit) ; pastille jaune « 08 études de cas » ;
+ * Journeys with Lorraine (-12°, coupée par le bord droit) ; pastille jaune « 08 études de cas » (nombre de réalisations publiées) ;
  * étapes « 01 Situation — 02 Réponse — 03 Résultats » (la dernière en jaune).
  * Images : /images/realisations/*.webp (fournies).
  */
@@ -18,7 +18,7 @@ const CARDS: { src: string; cx: number; cy: number; rot: number; pos: string; zo
 ];
 const STEPS = ["Situation", "Réponse", "Résultats"];
 
-export default function RealisationsHero() {
+export default function RealisationsHero({ count = 8 }: { count?: number }) {
   const secRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -51,6 +51,8 @@ export default function RealisationsHero() {
 
   return (
     <section className="rlh" ref={secRef} aria-labelledby="rlh-title">
+      {/* conteneur 1440 : sur les grands écrans le contenu reste à sa taille de maquette, centré */}
+      <div className="rlh-in">
       <p className="rlh-tag">
         <i aria-hidden="true" />
         Nos réalisations
@@ -90,8 +92,8 @@ export default function RealisationsHero() {
       </div>
       <p className="rlh-badge">
         <span>
-          <b>08</b>
-          <small>études de cas</small>
+          <b>{String(count).padStart(2, "0")}</b>
+          <small>{count > 1 ? "études de cas" : "étude de cas"}</small>
         </span>
       </p>
 
@@ -102,6 +104,7 @@ export default function RealisationsHero() {
           </li>
         ))}
       </ol>
+      </div>
     </section>
   );
 }

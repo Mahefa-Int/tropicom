@@ -16,6 +16,8 @@ export const DetailsSchema = z.object({
   titleRest: s(400),
   meta: z.array(z.object({ label: s(60), value: s(160) })).max(8).catch([]),
   hero: z.object({ alt: s(255), caption: s(200), stat: s(30), statText: s(120) }).catch({ alt: "", caption: "", stat: "", statText: "" }),
+  /** vignette carrée pour les listes (page Réalisations, « Projet suivant ») ; vide = photo principale */
+  thumb: s(255),
   context: s(1500),
   stake: s(800),
   answerLead: s(200),
@@ -44,6 +46,7 @@ export const emptyDetails = (): CaseDetails => ({
     { label: "Période", value: "" },
   ],
   hero: { alt: "", caption: "", stat: "", statText: "" },
+  thumb: "",
   context: "",
   stake: "",
   answerLead: "",
@@ -83,10 +86,29 @@ export type CaseData = {
   next: { href: string; client: string; title: string; tags: string; stat: string; statText: string; image: string } | null;
 };
 
-/** carte « Projet suivant » : construite à partir du contenu de la réalisation visée (aucune saisie en double) */
-export function nextCard(row: { slug: string; client: string | null; title: string; coverUrl: string | null; sector: string | null }, d: CaseDetails): NonNullable<CaseData["next"]> {
+/** carte d'une réalisation (page Réalisations et « Projet suivant ») : construite à partir de son contenu, sans saisie en double */
+export type CaseCard = { href: string; client: string; title: string; tags: string; stat: string; statText: string; image: string; pill: string; sector: string; location: string };
+
+export function caseCard(
+  row: { slug: string; client: string | null; title: string; coverUrl: string | null; sector: string | null; location: string | null },
+  d: CaseDetails,
+): CaseCard {
   const promise = d.titleRest.replace(/\s+/g, " ").trim().replace(/[.:;,!]+$/, "");
   const title = promise ? promise.charAt(0).toUpperCase() + promise.slice(1) : fullTitle(d) || row.title;
-  const tags = d.meta.find((m) => /expertise/i.test(m.label))?.value || row.sector || "";
-  return { href: `/realisations/${row.slug}`, client: row.client || "", title, tags, stat: d.hero.stat, statText: d.hero.statText, image: row.coverUrl || "" };
+  const tags = d.meta.find((m) => /expertise/i.test(m.label))?.value || "";
+  return {
+    href: `/realisations/${row.slug}`,
+    client: row.client || "",
+    title,
+    tags,
+    stat: d.hero.stat,
+    statText: d.hero.statText,
+    image: d.thumb || row.coverUrl || "",
+    pill: [row.sector, row.location].filter(Boolean).join(" · "),
+    sector: row.sector || "",
+    location: row.location || "",
+  };
 }
+
+/** carte « Projet suivant » (même contenu que la carte de la page Réalisations) */
+export const nextCard = caseCard;

@@ -154,8 +154,14 @@ export default function CaseForm({ item, others, created }: { item?: CaseStudy; 
         </Card>
 
         <Card title="Photo principale" text="Grande photo sous le titre, avec sa légende (en bas à gauche) et un chiffre clé (en bas à droite).">
-          <div style={{ maxWidth: 460 }}>
+          <div className="adm-row">
             <ImageField name="coverUrl" initial={item?.coverUrl} label="Photo" hint="Format paysage, 2800 × 1240 idéalement." />
+            <ImageField
+              initial={d.thumb}
+              label="Vignette (facultative)"
+              hint="Image carrée de la carte sur la page Réalisations et dans « Projet suivant ». Vide : la photo principale."
+              onChange={(url) => set("thumb", url)}
+            />
           </div>
           {Text({ label: "Description de la photo (accessibilité)", value: d.hero.alt, onChange: (v) => sub("hero", "alt", v), ph: "ex. Façade de l’hôtel au coucher du soleil" })}
           {Text({ label: "Légende", value: d.hero.caption, onChange: (v) => sub("hero", "caption", v), ph: "ex. Photo · façade et piscine, golden hour" })}
@@ -305,7 +311,7 @@ export default function CaseForm({ item, others, created }: { item?: CaseStudy; 
                 </option>
               ))}
             </select>
-            <small>La carte reprend automatiquement la photo principale, le chiffre clé, le titre et la ligne « Expertises » de cette réalisation. Seules les réalisations publiées s’affichent. S’il n’y en a aucune autre, l’appel à l’action prend toute la largeur.</small>
+            <small>La carte reprend automatiquement la vignette (ou la photo principale), le chiffre clé, le titre et la ligne « Expertises » de cette réalisation. Seules les réalisations publiées s’affichent. S’il n’y en a aucune autre, l’appel à l’action prend toute la largeur.</small>
           </div>
         </section>
 
@@ -316,7 +322,7 @@ export default function CaseForm({ item, others, created }: { item?: CaseStudy; 
               <label htmlFor="sector">Secteur</label>
               <input id="sector" name="sector" className="adm-input" list="adm-sectors" defaultValue={item?.sector ?? ""} />
               <datalist id="adm-sectors">
-                {["Hôtel", "Lodge", "Tour-opérateur", "Restaurant", "Salon / événement", "Destination"].map((s) => (
+                {["Hôtels & lodges", "Tour-opérateur", "Restauration", "Salon / événement", "Destination"].map((s) => (
                   <option key={s} value={s} />
                 ))}
               </datalist>
@@ -324,6 +330,7 @@ export default function CaseForm({ item, others, created }: { item?: CaseStudy; 
             <div className="adm-field">
               <label htmlFor="location">Lieu</label>
               <input id="location" name="location" className="adm-input" defaultValue={item?.location ?? ""} placeholder="ex. Antsiranana, Madagascar" />
+              <small>Pastille de la carte (page Réalisations) : « Secteur · Lieu ».</small>
             </div>
             <div className="adm-field">
               <label htmlFor="sortOrder">Ordre d&apos;affichage</label>

@@ -134,7 +134,7 @@ uploads/                    Images envoyées depuis l'admin — NON versionné
 | `/agence/notre-histoire` | Notre histoire |
 | `/agence/carrieres` | Carrières |
 | `/expertises` | Expertises (ancres `#pole-01` à `#pole-05`, défilement animé) |
-| `/realisations` | Nos réalisations |
+| `/realisations` | Nos réalisations : sphère « Projets. » (vignettes des réalisations qui tournent en 3D, à faire glisser) puis tableau « Études & résultats » (N°, projet, secteur, résultat, lieu ; aperçu de l'image qui suit la souris ; clic = étude de cas), réalisations publiées dans l'ordre d'affichage ; pastille « 08 études de cas » = nombre publié |
 | `/realisations/[adresse]` | Étude de cas (ex. `/realisations/grand-hotel-diego`), gérée dans l'admin ; brouillons visibles seulement par un administrateur connecté |
 
 Le menu « L'Agence » n'a pas de page propre : il ouvre un sous-menu (L'équipe, Notre histoire, Carrières).
@@ -271,7 +271,7 @@ Search Console (enregistrement TXT dans la zone DNS).
 
 ## Prochaines étapes
 
-1. **Relier le site au back-office** : pages `/blog` et `/blog/[adresse]`, liste des réalisations (`/realisations`) depuis la base,
+1. **Relier le site au back-office** : pages `/blog` et `/blog/[adresse]`,
    formulaires (contact, diagnostic, rapport) enregistrés dans `messages`.
 2. **Search Console** : compte de service Google, synchronisation quotidienne vers `gsc_daily`.
 3. **Référencement** : `robots.txt` (autoriser le site, exclure `/admin/`) et `sitemap.xml`.

@@ -2,6 +2,7 @@
  * Ajoute les études de cas de départ (contenu des maquettes) si elles n'existent pas encore.
  *   npm run db:seed-cas
  * Ne modifie jamais une réalisation existante (même adresse) : à relancer sans risque.
+ * Images des cartes : /images/realisations/cartes/ (extraites de la maquette, à remplacer par les originaux).
  * Lit DATABASE_URL dans l'environnement, sinon dans .env.local.
  */
 import { readFileSync, existsSync } from "node:fs";
@@ -18,7 +19,7 @@ const CASES = [
   {
     slug: "grand-hotel-diego",
     client: "Grand Hôtel Diego",
-    sector: "Hôtel",
+    sector: "Hôtels & lodges",
     location: "Antsiranana, Madagascar",
     coverUrl: "/images/cas/grand-hotel-diego/hero.webp",
     status: "published",
@@ -38,6 +39,7 @@ const CASES = [
         stat: "8,8 %",
         statText: "d’engagement · vidéo piscine du 23 août",
       },
+      thumb: "/images/realisations/cartes/grand-hotel-diego.webp",
       context:
         "Un hôtel haut de gamme au cœur d’Antsiranana, dans le nord de\nMadagascar. Chambres, suites, piscine, restaurant et bien-être, pour une\nclientèle locale et internationale.",
       stake: "Moderniser l’image et renforcer la présence digitale,\npour que la communication traduise enfin le standing\nde l’hôtel.",
@@ -69,22 +71,30 @@ const CASES = [
         "Étude de cas : identité visuelle, bibliothèque de contenus, réseaux sociaux et site bilingue pour un hôtel haut de gamme d’Antsiranana, Madagascar.",
     },
   },
-  {
-    // brouillon : seuls le titre, les expertises et le chiffre clé sont remplis (contenu de la page à venir)
-    slug: "calumma-travel",
-    client: "Calumma Travel",
-    sector: "Tour-opérateur",
-    location: "Madagascar",
-    coverUrl: null,
-    status: "draft",
-    sortOrder: 2,
+  // réalisations de la maquette « Nos réalisations » : carte complète, contenu de la page à rédiger dans l'admin
+  ...[
+    ["calumma-travel", "Calumma Travel", "Tour-opérateur", "Madagascar", "structurer le parcours digital.", "Marque · Acquisition · CRM", "+152,7 %", "de vues · décembre 2025", true],
+    ["echoes-of-the-forest", "Echoes of the Forest", "Hôtels & lodges", "Andasibe", "une présence digitale dès le lancement.", "Marque · Contenu · Acquisition", "35 817", "comptes touchés · août 2026", true],
+    ["louvre-hotel-spa", "Louvre Hotel & Spa", "Hôtels & lodges", "Madagascar", "chaque moment de l’hôtel en vidéo.", "Contenu", "+152,7 %", "de vues · décembre 2025", true],
+    ["cafe-du-musee", "Café du Musée", "Restauration", "Antananarivo", "faire rayonner une adresse emblématique.", "Marque · Contenu", "1,2 M", "de vues sur Facebook", true],
+    ["veezit-2025", "Veezit 2025", "Hôtels & lodges", "Madagascar", "la communication d’un salon touristique.", "Contenu", "[KPI]", "Résultat à documenter", true],
+    ["globatlas-elssa", "Globatlas Elssa", "Restauration", "Antananarivo", "installer une marque premium dans l’océan Indien.", "Marque · Contenu · Acquisition · Événement", "2,2 M", "de vues cumulées · janv.–sept. 2025", true],
+    ["valahara-cafe", "Valahara Café", "Restauration", "Antsirabe", "une présence à la hauteur de l’expérience.", "Marque · Acquisition", "[KPI]", "Résultat à documenter", false],
+  ].map(([slug, client, sector, location, rest, expertises, stat, statText, image], i) => ({
+    slug,
+    client,
+    sector,
+    location,
+    coverUrl: image ? `/images/realisations/cartes/${slug}.webp` : null,
+    status: "published",
+    sortOrder: i + 2,
     details: {
-      titleLead: "Calumma Travel :",
-      titleRest: "structurer le parcours digital.",
-      meta: [{ label: "Expertises", value: "Marque · Acquisition · CRM" }],
-      hero: { alt: "", caption: "", stat: "+152,7 %", statText: "de vues · décembre 2025" },
+      titleLead: `${client} :`,
+      titleRest: rest,
+      meta: [{ label: "Expertises", value: expertises }],
+      hero: { alt: "", caption: "", stat, statText },
     },
-  },
+  })),
 ];
 
 const conn = await mysql.createConnection(process.env.DATABASE_URL);
