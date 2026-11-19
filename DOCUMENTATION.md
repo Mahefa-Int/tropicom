@@ -145,6 +145,11 @@ proportionnelle à la largeur de l'écran (`--g: calc(100vw / 1440)`). Sous 900 
 
 **Animations** : elles respectent le réglage « réduire les animations » du système (`lib/motion.ts`).
 
+**Avis Google** (accueil, « Nos clients en parlent ») : `components/TestimonialsSection.tsx` lit les avis de la fiche
+Google via l'API Places (New) (`lib/googleReviews.ts`), garde ceux de **4 étoiles et plus** et les relit une fois
+par jour. Variables : `GOOGLE_PLACES_API_KEY` et `GOOGLE_PLACE_ID`. Limite de Google : 5 avis au plus (les plus
+pertinents). Sans clé ou en cas d'erreur, les avis de secours (`FALLBACK_REVIEWS` dans `Testimonials.tsx`) s'affichent.
+
 ---
 
 ## Back-office
@@ -155,7 +160,8 @@ Adresse : `/admin` (connexion : `/admin/connexion`). Un seul compte : l'administ
 |---|---|
 | Tableau de bord | Chiffres clés, clics Google, derniers messages, articles récents |
 | Statistiques | Données Google Search Console (clics, impressions, taux de clic, position) sur 7, 28 ou 90 jours |
-| Articles | Blog : éditeur riche, image de couverture, catégorie, adresse, brouillon / publié, titre et description pour Google |
+| Articles | Blog : éditeur riche, image de couverture, catégorie (avec création rapide), adresse, brouillon / publié, titre et description pour Google ; filtres par statut et par catégorie |
+| Catégories | Depuis Articles (bouton « Catégories ») : ajout, renommage, suppression (les articles restent, sans catégorie) ; catégories suggérées d'un clic |
 | Réalisations | Études de cas en trois temps : Situation, Réponse, Résultats ; client, secteur, lieu, visuel, ordre d'affichage |
 | Messages | Demandes reçues par les formulaires du site (non lus, lecture, réponse par e-mail, suppression) |
 | Médiathèque | Envoi d'images (converties en webp), texte alternatif, copie de l'adresse, suppression |
@@ -169,7 +175,11 @@ Fichiers principaux :
 - `lib/admin/session.ts`, `lib/admin/password.ts` : sessions et mots de passe ;
 - `app/admin/api/upload/route.ts` : envoi des images.
 
-**Mot de passe oublié** : `npm run db:admin -- admin@tropicom-agency.com` génère un nouveau mot de passe provisoire.
+**Connexion** : la case « Se souvenir de moi » garde la session 30 jours ; sans elle, la session s'arrête à la
+fermeture du navigateur (12 h au plus).
+
+**Mot de passe** : un seul accès administrateur, défini à la livraison. Pour le changer : « Mon compte ».
+En cas de perte : `npm run db:admin -- admin@tropicom-agency.com` (sur le serveur) génère un nouveau mot de passe provisoire.
 
 ---
 
@@ -181,7 +191,8 @@ Tables (définies dans `lib/db/schema.ts`) :
 |---|---|
 | `users` | Compte administrateur (mot de passe chiffré) |
 | `sessions` | Sessions de connexion (empreinte du jeton, expiration) |
-| `posts` | Articles du blog (contenu HTML) |
+| `categories` | Catégories des articles (nom, adresse, ordre) |
+| `posts` | Articles du blog (contenu HTML, catégorie via `category_id`) |
 | `case_studies` | Études de cas (réalisations) |
 | `messages` | Messages des formulaires du site |
 | `media` | Images envoyées (nom, taille, dimensions, texte alternatif) |
@@ -209,7 +220,8 @@ Toutes les dates sont enregistrées en **UTC**.
 
 - Mots de passe chiffrés avec **scrypt** (sel aléatoire).
 - Sessions en base : le navigateur garde un jeton aléatoire dans un cookie `httpOnly` (inaccessible au JavaScript),
-  la base n'en garde que l'empreinte SHA-256. Durée : 7 jours.
+  la base n'en garde que l'empreinte SHA-256. Durée : 30 jours avec « Se souvenir de moi », sinon fin à la fermeture
+  du navigateur (12 h au plus).
 - Connexion limitée à 5 essais ratés, puis 15 minutes d'attente.
 - Chaque page et chaque action de l'admin vérifie la session côté serveur (le `proxy.ts` n'est qu'un premier filtre).
 - `/admin` n'est jamais indexé : en-tête `X-Robots-Tag: noindex, nofollow` et balise `robots`.
@@ -232,8 +244,9 @@ Panneau **N0C** → **Langages → Node.js** → Créer :
 
 Puis :
 
-1. Créer la base MySQL et son utilisateur (**Bases de données**), et renseigner `DATABASE_URL` et `UPLOAD_DIR`
-   dans les variables d'environnement de l'application.
+1. Créer la base MySQL et son utilisateur (**Bases de données**), et renseigner `DATABASE_URL`, `UPLOAD_DIR`
+   (et, pour les avis Google, `GOOGLE_PLACES_API_KEY` et `GOOGLE_PLACE_ID`) dans les variables d'environnement
+   de l'application.
 2. Envoyer le code (Git ou SSH), puis `npm install` et `npm run build`
    (si la mémoire du serveur est juste, compiler en local et n'envoyer que le résultat).
 3. `npm run db:migrate` puis `npm run db:admin -- email "Nom"`.

@@ -6,8 +6,9 @@ import { slugify } from "@/lib/admin/util";
 import type { Post } from "@/lib/db/schema";
 import RichEditor from "./RichEditor";
 import ImageField from "./ImageField";
+import { CategorySelect } from "./Categories";
 
-export default function PostForm({ post, created }: { post?: Post; created?: boolean }) {
+export default function PostForm({ post, created, categories }: { post?: Post; created?: boolean; categories: { id: number; name: string }[] }) {
   const [state, action, pending] = useActionState(savePost, created ? { ok: "Article créé." } : undefined);
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
@@ -76,15 +77,7 @@ export default function PostForm({ post, created }: { post?: Post; created?: boo
         </section>
         <section className="adm-card adm-form-side" style={{ position: "static" }}>
           <ImageField name="coverUrl" initial={post?.coverUrl} />
-          <div className="adm-field">
-            <label htmlFor="category">Catégorie</label>
-            <input id="category" name="category" className="adm-input" list="adm-cats" defaultValue={post?.category ?? ""} placeholder="ex. Marque, Contenu…" />
-            <datalist id="adm-cats">
-              {["Marque", "Contenu", "Acquisition", "Academy", "Labs", "Actualités"].map((c) => (
-                <option key={c} value={c} />
-              ))}
-            </datalist>
-          </div>
+          <CategorySelect categories={categories} initial={post?.categoryId ?? null} />
           <div className="adm-field">
             <label htmlFor="slug">Adresse</label>
             <input

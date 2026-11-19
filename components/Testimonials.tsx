@@ -9,17 +9,23 @@ import { prefersReducedMotion } from "@/lib/motion";
  * elles ralentissent jusqu'à l'arrêt au survol (le temps de lire) et se laissent glisser
  * à la souris / au doigt. Au survol, un faisceau aux couleurs de la charte
  * (jaune doré → magenta → bleu canard) tourne autour de la carte (CSS, .tm-card::before / ::after).
- * Avatars : /images/temoignages/*.png (provisoires, découpés dans la maquette).
+ * Avis : les vrais avis Google de 4 étoiles et plus (TestimonialsSection, API Google Places) ;
+ * à défaut (clé non renseignée, Google indisponible), les avis ci-dessous (FALLBACK_REVIEWS).
+ * Avatars de secours : /images/temoignages/*.png (découpés dans la maquette).
  */
-type Review = {
+export type Review = {
   author: string;
-  avatar: string;
+  authorUrl?: string;
+  avatar?: string;
+  rating?: number;
   text: string; // « \n » = nouveau paragraphe
   date: string;
   isNew?: boolean;
 };
 
-const REVIEWS: Review[] = [
+export type ReviewSummary = { rating: number; total: number; url?: string };
+
+export const FALLBACK_REVIEWS: Review[] = [
   {
     author: "ANDASIBE LEMURS LODGE",
     avatar: "/images/temoignages/andasibe-lemurs-lodge.png",
@@ -46,11 +52,11 @@ const REVIEWS: Review[] = [
   },
 ];
 
-function Stars() {
+function Stars({ rating = 5 }: { rating?: number }) {
   return (
-    <span className="tm-stars" role="img" aria-label="5 étoiles sur 5">
+    <span className="tm-stars" role="img" aria-label={`${rating} étoiles sur 5`}>
       {Array.from({ length: 5 }, (_, i) => (
-        <svg key={i} viewBox="0 0 24 24" aria-hidden="true">
+        <svg key={i} viewBox="0 0 24 24" aria-hidden="true" className={i < Math.round(rating) ? undefined : "is-off"}>
           <path d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5L7 14.3l-5.3-5 7.2-.9z" />
         </svg>
       ))}
@@ -58,11 +64,18 @@ function Stars() {
   );
 }
 
-const N = REVIEWS.length;
-const SLIDES = [...REVIEWS, ...REVIEWS, ...REVIEWS]; // 3 copies → boucle sans fin
 const SPEED = 42; // vitesse de défilement, en px de maquette par seconde
 
-export default function Testimonials() {
+/** initiale sur fond de couleur quand l'avis n'a pas de photo */
+function Avatar({ r }: { r: Review }) {
+  if (!r.avatar) return <span className="tm-initial" aria-hidden="true">{r.author.slice(0, 1).toUpperCase()}</span>;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={r.avatar} alt="" width={32} height={32} loading="lazy" draggable={false} referrerPolicy="no-referrer" />;
+}
+
+export default function Testimonials({ reviews = FALLBACK_REVIEWS, summary }: { reviews?: Review[]; summary?: ReviewSummary }) {
+  const N = reviews.length;
+  const SLIDES = [...reviews, ...reviews, ...reviews]; // 3 copies → boucle sans fin
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -175,7 +188,7 @@ export default function Testimonials() {
       track.removeEventListener("pointercancel", onUp);
       removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [N]);
 
   return (
     <section className="tm" id="temoignages" data-reveal aria-labelledby="tm-title" ref={sectionRef}>
@@ -186,6 +199,11 @@ export default function Testimonials() {
       </h2>
       <p className="tm-tag">
         <span className="dot" aria-hidden="true"></span>Témoignage
+        {summary && summary.total > 0 && (
+          <a className="tm-google" href={summary.url} target="_blank" rel="noopener">
+            Avis Google · {summary.rating.toFixed(1).replace(".", ",")} ★ · {summary.total} avis
+          </a>
+        )}
       </p>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="tm-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
@@ -209,12 +227,19 @@ export default function Testimonials() {
                   ))}
                 </blockquote>
                 <div className="tm-who">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={r.avatar} alt="" width={32} height={32} loading="lazy" draggable={false} />
-                  <cite>{r.author}</cite>
+                  <Avatar r={r} />
+                  <cite>
+                    {r.authorUrl ? (
+                      <a href={r.authorUrl} target="_blank" rel="noopener nofollow">
+                        {r.author}
+                      </a>
+                    ) : (
+                      r.author
+                    )}
+                  </cite>
                 </div>
                 <div className="tm-meta">
-                  <Stars />
+                  <Stars rating={r.rating} />
                   {r.date && <span className="tm-date">{r.date}</span>}
                   {r.isNew && <span className="tm-new">Nouveau</span>}
                 </div>

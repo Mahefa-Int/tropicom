@@ -216,11 +216,24 @@
 .adm-login::after { right: -15%; bottom: -25%; width: 50vw; height: 50vw; background: rgba(222, 11, 125, 0.28); animation-delay: -6s; }
 @keyframes admFloat { to { translate: 4vw 3vh; scale: 1.08; } }
 .adm-login-card { position: relative; z-index: 1; width: 100%; max-width: 400px; padding: 34px 30px; border: 1px solid var(--a-line); border-radius: 22px; background: rgba(23, 22, 22, 0.85); backdrop-filter: blur(14px); }
-.adm-login-card img { width: 110px; margin-bottom: 22px; }
+.adm-login-card img { display: block; width: 110px; }
+.adm-login-logo { display: block; width: fit-content; margin: 0 auto 22px; transition: opacity 0.2s, scale 0.3s; }
+/* en-tête de la carte centré (logo, titre, texte) ; les champs du formulaire restent alignés à gauche */
+.adm-login-card > h1, .adm-login-card > p { text-align: center; }
+.adm-login-logo:hover { opacity: 0.8; scale: 1.04; }
 .adm-login-card h1 { font-size: 26px; }
 .adm-login-card p { margin: 6px 0 22px; color: var(--a-muted); }
 .adm-login-card form { display: flex; flex-direction: column; gap: 14px; }
 .adm-login-card .adm-btn { height: 44px; margin-top: 6px; }
+.adm-login-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+/* case à cocher aux couleurs de l'admin */
+.adm-check { position: relative; display: inline-flex; align-items: center; gap: 9px; color: #cfcfcf; cursor: pointer; user-select: none; }
+.adm-check input { position: absolute; opacity: 0; pointer-events: none; }
+.adm-check span { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid #3a3939; border-radius: 5px; background: #121212; transition: background-color 0.2s, border-color 0.2s; }
+.adm-check span::after { content: ""; width: 9px; height: 5px; border: solid #000; border-width: 0 0 2px 2px; rotate: -45deg; translate: 0 -1px; opacity: 0; transition: opacity 0.15s; }
+.adm-check input:checked + span { border-color: var(--a-yellow); background: var(--a-yellow); }
+.adm-check input:checked + span::after { opacity: 1; }
+.adm-check input:focus-visible + span { box-shadow: 0 0 0 3px rgba(247, 194, 39, 0.25); }
 
 @media (max-width: 1100px) {
   .adm-grid--stats { grid-template-columns: repeat(2, 1fr); }

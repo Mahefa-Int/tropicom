@@ -42,7 +42,7 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   }
   attempts.delete(key);
   await db.update(schema.users).set({ lastLoginAt: new Date() }).where(eq(schema.users.id, user.id));
-  await createSession(user.id);
+  await createSession(user.id, form.get("remember") === "on");
   redirect("/admin");
 }
 
@@ -56,7 +56,7 @@ export async function logout() {
 const PostSchema = z.object({
   title: z.string().min(2, "Titre requis."),
   slug: z.string(),
-  category: z.string(),
+  categoryId: z.string(),
   excerpt: z.string(),
   content: z.string(),
   coverUrl: z.string(),
@@ -71,7 +71,7 @@ export async function savePost(_: FormState, form: FormData): Promise<FormState>
   const parsed = PostSchema.safeParse({
     title: str(form, "title"),
     slug: str(form, "slug"),
-    category: str(form, "category"),
+    categoryId: str(form, "categoryId"),
     excerpt: str(form, "excerpt"),
     content: String(form.get("content") ?? ""),
     coverUrl: str(form, "coverUrl"),
@@ -93,7 +93,7 @@ export async function savePost(_: FormState, form: FormData): Promise<FormState>
   const values = {
     title: d.title,
     slug,
-    category: optional(d.category),
+    categoryId: Number(d.categoryId) || null,
     excerpt: optional(d.excerpt),
     content: d.content,
     coverUrl: optional(d.coverUrl),
@@ -124,6 +124,74 @@ export async function deletePost(id: number) {
   await db.delete(schema.posts).where(eq(schema.posts.id, id));
   revalidatePath("/admin/articles");
   redirect("/admin/articles");
+}
+
+/* ------------------------------------------------------------------ catégories d'articles */
+
+async function categoryClash(slug: string, exceptId?: number) {
+  const rows = await db
+    .select({ id: schema.categories.id })
+    .from(schema.categories)
+    .where(exceptId ? and(eq(schema.categories.slug, slug), ne(schema.categories.id, exceptId)) : eq(schema.categories.slug, slug))
+    .limit(1);
+  return rows.length > 0;
+}
+
+/** ajout depuis la page Catégories (formulaire) */
+export async function createCategory(_: FormState, form: FormData): Promise<FormState> {
+  await requireUser();
+  const name = str(form, "name").slice(0, 80);
+  if (name.length < 2) return { error: "Nom requis (2 caractères minimum).", fields: { name } };
+  const slug = slugify(name).slice(0, 80);
+  if (await categoryClash(slug)) return { error: "Cette catégorie existe déjà.", fields: { name } };
+  await db.insert(schema.categories).values({ name, slug });
+  revalidatePath("/admin/categories");
+  return { ok: `Catégorie « ${name} » ajoutée.` };
+}
+
+/** ajout rapide depuis le formulaire d'un article : renvoie la catégorie créée (ou existante) */
+export async function quickCreateCategory(name: string): Promise<{ id: number; name: string } | { error: string }> {
+  await requireUser();
+  const clean = name.trim().slice(0, 80);
+  if (clean.length < 2) return { error: "Nom trop court." };
+  const slug = slugify(clean).slice(0, 80);
+  const existing = (await db.select().from(schema.categories).where(eq(schema.categories.slug, slug)).limit(1))[0];
+  if (existing) return { id: existing.id, name: existing.name };
+  const res = await db.insert(schema.categories).values({ name: clean, slug });
+  revalidatePath("/admin/categories");
+  return { id: res[0].insertId, name: clean };
+}
+
+export async function renameCategory(id: number, name: string): Promise<{ error?: string }> {
+  await requireUser();
+  const clean = name.trim().slice(0, 80);
+  if (clean.length < 2) return { error: "Nom trop court." };
+  const slug = slugify(clean).slice(0, 80);
+  if (await categoryClash(slug, id)) return { error: "Une autre catégorie porte déjà ce nom." };
+  await db.update(schema.categories).set({ name: clean, slug }).where(eq(schema.categories.id, id));
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/articles");
+  return {};
+}
+
+/** suppression : les articles de cette catégorie restent, sans catégorie */
+export async function deleteCategory(id: number) {
+  await requireUser();
+  await db.update(schema.posts).set({ categoryId: null }).where(eq(schema.posts.categoryId, id));
+  await db.delete(schema.categories).where(eq(schema.categories.id, id));
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/articles");
+}
+
+/** catégories suggérées (pôles de l'agence + actualités), ajoutées d'un clic quand la liste est vide */
+export async function createSuggestedCategories() {
+  await requireUser();
+  const names = ["Marque", "Contenu", "Acquisition", "Academy", "Labs", "Actualités"];
+  for (const [i, name] of names.entries()) {
+    const slug = slugify(name);
+    if (!(await categoryClash(slug))) await db.insert(schema.categories).values({ name, slug, sortOrder: i });
+  }
+  revalidatePath("/admin/categories");
 }
 
 /* ------------------------------------------------------------------ réalisations */
@@ -236,6 +304,6 @@ export async function changePassword(_: FormState, form: FormData): Promise<Form
   await db.update(schema.users).set({ passwordHash: await hashPassword(next) }).where(eq(schema.users.id, me.id));
   // toutes les autres sessions sont fermées, on reste connecté ici
   await deleteUserSessions(me.id);
-  await createSession(me.id);
+  await createSession(me.id, true);
   return { ok: "Mot de passe changé." };
 }

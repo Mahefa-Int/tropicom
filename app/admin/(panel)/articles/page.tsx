@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { desc, eq, like, or, and, type SQL } from "drizzle-orm";
+import { asc, desc, eq, isNull, like, and, type SQL } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireUser } from "@/lib/admin/dal";
 import { formatDate } from "@/lib/admin/util";
@@ -8,21 +8,40 @@ import { Icons } from "@/components/admin/icons";
 
 export const metadata = { title: "Articles" };
 
-export default async function PostsPage({ searchParams }: { searchParams: Promise<{ q?: string; statut?: string }> }) {
+export default async function PostsPage({ searchParams }: { searchParams: Promise<{ q?: string; statut?: string; categorie?: string }> }) {
   await requireUser();
-  const { q = "", statut = "" } = await searchParams;
+  const { q = "", statut = "", categorie = "" } = await searchParams;
   const where: SQL[] = [];
-  if (q) where.push(or(like(schema.posts.title, `%${q}%`), like(schema.posts.category, `%${q}%`))!);
+  if (q) where.push(like(schema.posts.title, `%${q}%`));
   if (statut === "draft" || statut === "published") where.push(eq(schema.posts.status, statut));
-  const posts = await db
-    .select()
-    .from(schema.posts)
-    .where(where.length ? and(...where) : undefined)
-    .orderBy(desc(schema.posts.updatedAt));
+  if (categorie === "aucune") where.push(isNull(schema.posts.categoryId));
+  else if (Number(categorie)) where.push(eq(schema.posts.categoryId, Number(categorie)));
+  const [posts, categories] = await Promise.all([
+    db
+      .select({
+        id: schema.posts.id,
+        title: schema.posts.title,
+        slug: schema.posts.slug,
+        coverUrl: schema.posts.coverUrl,
+        status: schema.posts.status,
+        updatedAt: schema.posts.updatedAt,
+        category: schema.categories.name,
+      })
+      .from(schema.posts)
+      .leftJoin(schema.categories, eq(schema.categories.id, schema.posts.categoryId))
+      .where(where.length ? and(...where) : undefined)
+      .orderBy(desc(schema.posts.updatedAt)),
+    db.select({ id: schema.categories.id, name: schema.categories.name }).from(schema.categories).orderBy(asc(schema.categories.sortOrder), asc(schema.categories.name)),
+  ]);
+  const filtered = !!(q || statut || categorie);
 
   return (
     <>
       <PageHead title="Articles" text="Le blog du site : actualités, conseils, études.">
+        <Link href="/admin/categories" className="adm-btn">
+          {Icons.tag}
+          Catégories
+        </Link>
         <Link href="/admin/articles/nouveau" className="adm-btn adm-btn--primary">
           {Icons.plus}
           Nouvel article
@@ -30,11 +49,20 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
       </PageHead>
       <section className="adm-card">
         <form style={{ display: "flex", gap: 10, marginBottom: 14 }}>
-          <input name="q" className="adm-input" placeholder="Rechercher un titre, une catégorie…" defaultValue={q} style={{ maxWidth: 340 }} />
+          <input name="q" className="adm-input" placeholder="Rechercher un titre…" defaultValue={q} style={{ maxWidth: 340 }} />
           <select name="statut" className="adm-select" defaultValue={statut} style={{ maxWidth: 170 }}>
             <option value="">Tous les statuts</option>
             <option value="published">Publiés</option>
             <option value="draft">Brouillons</option>
+          </select>
+          <select name="categorie" className="adm-select" defaultValue={categorie} style={{ maxWidth: 200 }}>
+            <option value="">Toutes les catégories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+            <option value="aucune">Sans catégorie</option>
           </select>
           <button className="adm-btn">Filtrer</button>
         </form>
@@ -74,7 +102,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
             </tbody>
           </table>
         ) : (
-          <Empty title={q || statut ? "Aucun article ne correspond" : "Aucun article pour l'instant"} text={q || statut ? "Essayez un autre filtre." : "Créez le premier article du blog."}>
+          <Empty title={filtered ? "Aucun article ne correspond" : "Aucun article pour l'instant"} text={filtered ? "Essayez un autre filtre." : "Créez le premier article du blog."}>
             <Link href="/admin/articles/nouveau" className="adm-btn adm-btn--primary adm-btn--sm">Nouvel article</Link>
           </Empty>
         )}

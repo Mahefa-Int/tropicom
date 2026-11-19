@@ -8,6 +8,34 @@
       "when": 1795027137105,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1795029876186,
+      "tag": "0001_password_resets",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1795075275866,
+      "tag": "0002_drop_password_resets",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1795075799946,
+      "tag": "0003_categories",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1795075817930,
+      "tag": "0004_drop_post_category_text",
+      "breakpoints": true
     }
   ]
 }

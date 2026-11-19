@@ -36,6 +36,19 @@ export const sessions = mysqlTable(
   (t) => [index("sessions_user_idx").on(t.userId)],
 );
 
+/** catégories des articles (gérées dans l'admin : ajout, renommage, suppression) */
+export const categories = mysqlTable(
+  "categories",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    name: varchar("name", { length: 80 }).notNull(),
+    slug: varchar("slug", { length: 80 }).notNull(),
+    sortOrder: int("sort_order").notNull().default(0),
+    createdAt: datetime("created_at").notNull().default(now()),
+  },
+  (t) => [uniqueIndex("categories_slug_uq").on(t.slug)],
+);
+
 /** articles du blog (contenu HTML produit par l'éditeur) */
 export const posts = mysqlTable(
   "posts",
@@ -43,7 +56,7 @@ export const posts = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     title: varchar("title", { length: 200 }).notNull(),
     slug: varchar("slug", { length: 200 }).notNull(),
-    category: varchar("category", { length: 80 }),
+    categoryId: int("category_id"),
     excerpt: text("excerpt"),
     content: longtext("content"),
     coverUrl: varchar("cover_url", { length: 255 }),
@@ -55,7 +68,7 @@ export const posts = mysqlTable(
     createdAt: datetime("created_at").notNull().default(now()),
     updatedAt: datetime("updated_at").notNull().default(now()),
   },
-  (t) => [uniqueIndex("posts_slug_uq").on(t.slug), index("posts_status_idx").on(t.status)],
+  (t) => [uniqueIndex("posts_slug_uq").on(t.slug), index("posts_status_idx").on(t.status), index("posts_category_idx").on(t.categoryId)],
 );
 
 /** études de cas (page Réalisations) : situation → réponse → résultats */
@@ -124,6 +137,7 @@ export const gscDaily = mysqlTable("gsc_daily", {
 
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
+export type Category = typeof categories.$inferSelect;
 export type CaseStudy = typeof caseStudies.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type Media = typeof media.$inferSelect;

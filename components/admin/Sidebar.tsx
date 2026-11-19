@@ -20,7 +20,11 @@ const CONTENT = [
 
 export default function Sidebar({ user, unread }: Props) {
   const path = usePathname();
-  const on = (href: string) => (href === "/admin" ? path === "/admin" : path.startsWith(href));
+  const on = (href: string) =>
+    href === "/admin"
+      ? path === "/admin"
+      : // les catégories font partie des articles : « Articles » reste actif sur /admin/categories
+        path.startsWith(href) || (href === "/admin/articles" && path.startsWith("/admin/categories"));
   const item = (l: { href: string; label: string; icon: React.ReactNode; count?: boolean }) => (
     <Link key={l.href} href={l.href} className={on(l.href) ? "is-on" : undefined}>
       {l.icon}

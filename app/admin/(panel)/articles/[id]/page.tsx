@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireUser } from "@/lib/admin/dal";
 import { deletePost } from "@/lib/admin/actions";
@@ -16,6 +16,10 @@ export default async function EditPost({ params, searchParams }: { params: Promi
   const { cree } = await searchParams;
   const post = (await db.select().from(schema.posts).where(eq(schema.posts.id, Number(id))).limit(1))[0];
   if (!post) notFound();
+  const categories = await db
+    .select({ id: schema.categories.id, name: schema.categories.name })
+    .from(schema.categories)
+    .orderBy(asc(schema.categories.sortOrder), asc(schema.categories.name));
   return (
     <>
       <PageHead title={post.title} crumb={{ href: "/admin/articles", label: "Articles" }}>
@@ -24,7 +28,7 @@ export default async function EditPost({ params, searchParams }: { params: Promi
           Supprimer
         </ConfirmButton>
       </PageHead>
-      <PostForm post={post} created={!!cree} />
+      <PostForm post={post} created={!!cree} categories={categories} />
     </>
   );
 }

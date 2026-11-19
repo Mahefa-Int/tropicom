@@ -20,7 +20,7 @@ const LINKS: Item[] = [
   },
   { label: "Expertises", href: "/expertises" },
   { label: "Réalisations", href: "/realisations" },
-  { label: "Ressources", href: "#" },
+  { label: "Ressources", href: "/ressources" },
   { label: "Contact", href: "#contact" },
 ];
 

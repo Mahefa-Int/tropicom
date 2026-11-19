@@ -7,7 +7,7 @@ import Stats from "@/components/Stats";
 import MethodBlock from "@/components/MethodBlock";
 import Proof from "@/components/Proof";
 import CaseStack from "@/components/CaseStack";
-import Testimonials from "@/components/Testimonials";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import Why from "@/components/Why";
 import Destinations from "@/components/Destinations";
 import Strengths from "@/components/Strengths";
@@ -31,7 +31,7 @@ export default function Home() {
         <CaseStack />
         <Stats />
         <MethodBlock />
-        <Testimonials />
+        <TestimonialsSection />
         {/* Pourquoi → atouts → destinations, reliés par une seule ligne */}
         <Journey>
           <Why />
