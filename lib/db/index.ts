@@ -1,5 +1,5 @@
 import "server-only";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import * as schema from "./schema";
 
@@ -23,5 +23,19 @@ function pool() {
   return g.__tcPool;
 }
 
-export const db = drizzle(pool(), { schema, mode: "default" });
+type DB = MySql2Database<typeof schema>;
+let instance: DB | undefined;
+const getDb = (): DB => (instance ??= drizzle(pool(), { schema, mode: "default" }));
+
+/**
+ * Connexion ouverte au premier usage seulement (pas au chargement du fichier) : la compilation (« next build »,
+ * Vercel…) charge toutes les routes sans base de données disponible ; elle ne doit pas échouer pour autant.
+ */
+export const db = new Proxy({} as DB, {
+  get(_, prop) {
+    const d = getDb();
+    const v = Reflect.get(d, prop, d);
+    return typeof v === "function" ? v.bind(d) : v;
+  },
+});
 export { schema };
