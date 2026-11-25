@@ -234,26 +234,62 @@ Toutes les dates sont enregistrées en **UTC**.
 
 ## Mise en ligne chez PlanetHoster
 
-Panneau **N0C** → **Langages → Node.js** → Créer :
+Hébergement **World** (panneau **N0C**), domaine `tropicomagency.com`. Le site tourne comme une application
+Node.js lancée par `server.js` (équivalent de `next start`).
+
+### 1. Base de données
+N0C → **Bases de données** → créer une base et un utilisateur (noter le nom complet, préfixé par le compte).
+Puis **phpMyAdmin** → la base → **Importer** le fichier `deploiement/tropicom.sql` (export de la base locale :
+réalisations, médiathèque, compte admin…). Sur une base vide, on peut aussi lancer `npm run db:migrate`.
+
+### 2. Code
+Par SSH (N0C → identifiants sFTP/SSH, port 5022) :
+```bash
+git clone https://github.com/Mahefa-Int/tropicom.git ~/tropicom
+mkdir -p ~/tropicom-uploads      # images envoyées depuis l'admin, hors du dossier du code
+```
+Envoyer `deploiement/uploads.tar.gz` (sFTP) puis : `tar -xzf uploads.tar.gz -C ~/tropicom-uploads`.
+
+### 3. Application Node.js
+N0C → **Langages → Node.js** → Créer :
 
 | Champ | Valeur |
 |---|---|
-| Version | **24** |
-| Répertoire d'application | dossier du projet sur le serveur |
-| Domaine | `tropicom-agency.com` |
-| Fichier de démarrage | à définir au déploiement (lancement de `next start`) |
+| Version | la plus récente proposée (**20.9 minimum** pour Next.js 16) |
+| Répertoire d'application | `tropicom` |
+| Domaine | `tropicomagency.com` |
+| Fichier de démarrage | `server.js` |
 | Mode | Production |
 
-Puis :
+Variables d'environnement de l'application :
 
-1. Créer la base MySQL et son utilisateur (**Bases de données**), et renseigner `DATABASE_URL`, `UPLOAD_DIR`
-   (et, pour les avis Google, `GOOGLE_PLACES_API_KEY` et `GOOGLE_PLACE_ID`) dans les variables d'environnement
-   de l'application.
-2. Envoyer le code (Git ou SSH), puis `npm install` et `npm run build`
-   (si la mémoire du serveur est juste, compiler en local et n'envoyer que le résultat).
-3. `npm run db:migrate` puis `npm run db:admin -- email "Nom"`.
-4. Démarrer l'application.
-5. Vérifier le certificat SSL (https) du domaine.
+| Variable | Valeur |
+|---|---|
+| `DATABASE_URL` | `mysql://utilisateur:motdepasse@localhost:3306/base` |
+| `UPLOAD_DIR` | `/home/<compte>/tropicom-uploads` |
+| `PREVIEW_CODE` | facultatif (`UPGRADE` par défaut) |
+| `MAINTENANCE` | `off` le jour de l'ouverture au public |
+
+### 4. Installation et compilation
+Copier la commande « source … activate » affichée en haut de la fiche de l'application, puis :
+```bash
+cd ~/tropicom
+npm install
+npm run build
+```
+Puis **Redémarrer** l'application dans N0C. Si la compilation manque de mémoire, la faire en local et envoyer le
+dossier `.next` par sFTP.
+
+### 5. Vérifier
+- https://tropicomagency.com affiche la page de maintenance ; le cadenas + `UPGRADE` montre le site.
+- https://tropicomagency.com/admin : connexion avec le compte admin local (importé avec la base).
+- Certificat SSL actif (N0C → **Domaines → SSL**).
+
+### Mettre à jour le site
+```bash
+cd ~/tropicom && git pull && npm install && npm run build   # + npm run db:migrate s'il y a une nouvelle migration
+```
+puis **Redémarrer** l'application dans N0C.
 
 Plus tard : **Crons** pour la synchronisation quotidienne de Search Console, et la validation du domaine dans
 Search Console (enregistrement TXT dans la zone DNS).

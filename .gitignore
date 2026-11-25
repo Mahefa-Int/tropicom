@@ -13,3 +13,6 @@ case-stack-scroll.txt
 
 # fichiers envoyés depuis l'admin (images des articles, réalisations…)
 uploads/
+
+# exports pour la mise en ligne (base, images envoyées) — ne pas versionner
+deploiement/
