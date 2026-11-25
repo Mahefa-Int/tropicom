@@ -277,3 +277,11 @@ Search Console (enregistrement TXT dans la zone DNS).
 2. **Search Console** : compte de service Google, synchronisation quotidienne vers `gsc_daily`.
 3. **Référencement** : `robots.txt` (autoriser le site, exclure `/admin/`) et `sitemap.xml`.
 4. **Déploiement** chez PlanetHoster.
+
+## Mode maintenance
+
+Tant que le site n'est pas fini, les pages publiques affichent `/maintenance` (l'adresse visitée reste la même ; l'admin reste accessible).
+
+- **Activé automatiquement en production.** Pour ouvrir le site au public : variable d'environnement `MAINTENANCE=off` sur l'hébergement, puis redémarrer. En local (`npm run dev`), il est coupé ; `MAINTENANCE=on` pour le tester.
+- **Accès à l'aperçu** : le cadenas en haut à droite de la page de maintenance demande un code d'accès statique (sans base de données) : `UPGRADE` par défaut (majuscules ou minuscules acceptées), modifiable par `PREVIEW_CODE`. Une fois le code saisi, un cookie laisse voir le site pendant 30 jours ; changer le code ferme tous les aperçus.
+- Fichiers : `proxy.ts`, `lib/preview.ts`, `app/api/preview/route.ts`, `components/Maintenance.tsx`.

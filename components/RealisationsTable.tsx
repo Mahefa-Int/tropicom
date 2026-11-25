@@ -3,7 +3,7 @@ import type { CaseCard } from "@/lib/cases";
 /**
  * Page Réalisations — « Études & résultats » : grille de cartes (2 colonnes, 1 sur mobile).
  * Carte : grande image (pastille « secteur · lieu », flèche blanche, chiffre clé) ; dessous, en deux colonnes :
- * nom du client et pastille du secteur à gauche, description (promesse) à droite. Au survol : l'image zoome légèrement, la flèche tourne, le chiffre remonte.
+ * nom du client puis description (promesse) ; le secteur est déjà sur la pastille de l'image. Au survol : l'image zoome légèrement, la flèche tourne, le chiffre remonte.
  * Apparition au défilement, les cartes de droite légèrement décalées.
  */
 export default function RealisationsTable({ cards }: { cards: CaseCard[] }) {
@@ -43,10 +43,7 @@ export default function RealisationsTable({ cards }: { cards: CaseCard[] }) {
                 )}
               </span>
               <span className="rtb-body">
-                <span className="rtb-id">
-                  <span className="rtb-client">{c.client}</span>
-                  {c.sector && <span className="rtb-sector">{c.sector}</span>}
-                </span>
+                <span className="rtb-client">{c.client}</span>
                 <span className="rtb-promise">{c.title}</span>
               </span>
             </a>
