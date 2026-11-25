@@ -271,14 +271,19 @@ Variables d'environnement de l'application :
 | `MAINTENANCE` | `off` le jour de l'ouverture au public |
 
 ### 4. Installation et compilation
-Copier la commande « source … activate » affichée en haut de la fiche de l'application, puis :
+Activer Node.js (`source ~/nodevenv/tropicom/24/bin/activate`, la ligne commence alors par `[tropicom (24)]`), puis :
 ```bash
 cd ~/tropicom
-npm install
-npm run build
+npm install --include=dev --no-audit --no-fund
+NODE_OPTIONS=--max-old-space-size=1536 npx next build --webpack
 ```
-Puis **Redémarrer** l'application dans N0C. Si la compilation manque de mémoire, la faire en local et envoyer le
-dossier `.next` par sFTP.
+Puis **Redémarrer** l'application dans N0C.
+
+- `--include=dev` : l'application est en mode Production, npm sauterait sinon TypeScript, nécessaire à la compilation.
+- `--webpack` : le serveur (glibc 2.28) est trop ancien pour Turbopack, le compilateur par défaut de Next.js 16.
+
+Les variables (`DATABASE_URL`, `UPLOAD_DIR`…) peuvent aussi être mises dans `~/tropicom/.env.production.local`
+(fichier non versionné, lu au démarrage) plutôt que dans le panneau N0C.
 
 ### 5. Vérifier
 - https://tropicomagency.com affiche la page de maintenance ; le cadenas + `UPGRADE` montre le site.
@@ -287,7 +292,7 @@ dossier `.next` par sFTP.
 
 ### Mettre à jour le site
 ```bash
-cd ~/tropicom && git pull && npm install && npm run build   # + npm run db:migrate s'il y a une nouvelle migration
+cd ~/tropicom && git pull && npm install --include=dev --no-audit --no-fund \n  && NODE_OPTIONS=--max-old-space-size=1536 npx next build --webpack   # + npm run db:migrate si nouvelle migration
 ```
 puis **Redémarrer** l'application dans N0C.
 
