@@ -1,5 +1,6 @@
 "use client";
 
+import { EXPERTISES, pad2 } from "@/lib/expertises";
 import GlowField, { type Glow } from "./GlowField";
 
 /**
@@ -16,13 +17,7 @@ const GLOWS: Glow[] = [
   { x: 1419, y: 863, rx: 401, ry: 483, c: "222, 11, 125", a: 1, dx: 110, dy: 110, sp: 0.6, ph: 4, m: -45 },
 ];
 
-const POLES = [
-  { n: "01", label: "Marque" },
-  { n: "02", label: "Contenu" },
-  { n: "03", label: "Acquisition" },
-  { n: "04", label: "Academy" },
-  { n: "05", label: "Labs" },
-];
+const POLES = EXPERTISES.map((e) => ({ n: pad2(e.n), label: e.label, slug: e.slug }));
 
 function ImageIcon() {
   return (

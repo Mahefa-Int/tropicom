@@ -4,7 +4,6 @@ import Intro from "@/components/Intro";
 import Trust from "@/components/Trust";
 import Services from "@/components/Services";
 import Stats from "@/components/Stats";
-import MethodBlock from "@/components/MethodBlock";
 import Proof from "@/components/Proof";
 import CaseStack from "@/components/CaseStack";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -26,11 +25,11 @@ export default function Home() {
         <Hero />
         <Intro />
         <Trust />
-        <Services />
+        {/* « Ce que ça change, concrètement. » : titre + les études de cas empilées */}
         <Proof />
         <CaseStack />
+        <Services />
         <Stats />
-        <MethodBlock />
         <TestimonialsSection />
         {/* Pourquoi → atouts → destinations, reliés par une seule ligne */}
         <Journey>

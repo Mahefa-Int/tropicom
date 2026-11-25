@@ -133,11 +133,12 @@ uploads/                    Images envoyées depuis l'admin — NON versionné
 | `/agence/equipe` | L'équipe (ancienne page « L'Agence ») |
 | `/agence/notre-histoire` | Notre histoire |
 | `/agence/carrieres` | Carrières |
-| `/expertises` | Expertises (ancres `#pole-01` à `#pole-05`, défilement animé) |
+| `/expertises` | Expertises : les 5 pôles sur une page (ancres `#pole-01` à `#pole-05`, défilement animé) |
+| `/expertises/marque`, `/contenu`, `/acquisition`, `/academy`, `/labs` | Une page par expertise (sous-menu « Expertises ») : ouverture plein écran (numéro du pôle, titre, photos qui suivent la souris), liste des livrables (photo au survol), rubriques du pôle (Content Sprint, indicateurs, formats, règles, étapes), autres expertises, appel à l'action. Liste dans `lib/expertises.ts`, textes dans `lib/expertises-content.ts` |
 | `/realisations` | Nos réalisations : sphère « Projets. » (vignettes des réalisations qui tournent en 3D, à faire glisser) puis tableau « Études & résultats » (N°, projet, secteur, résultat, lieu ; aperçu de l'image qui suit la souris ; clic = étude de cas), réalisations publiées dans l'ordre d'affichage ; pastille « 08 études de cas » = nombre publié |
 | `/realisations/[adresse]` | Étude de cas (ex. `/realisations/grand-hotel-diego`), gérée dans l'admin ; brouillons visibles seulement par un administrateur connecté |
 
-Le menu « L'Agence » n'a pas de page propre : il ouvre un sous-menu (L'équipe, Notre histoire, Carrières).
+Le menu « L'Agence » n'a pas de page propre : il ouvre un sous-menu (L'équipe, Notre histoire, Carrières). « Expertises » ouvre aussi un sous-menu (Marque, Contenu, Acquisition, Academy, Labs).
 
 **Mise en page** : chaque section est placée d'après la maquette (largeur de référence 1440 px), avec une unité
 proportionnelle à la largeur de l'écran (`--g: calc(100vw / 1440)`). Sous 900 px, les sections passent en colonne.

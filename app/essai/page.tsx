@@ -3,6 +3,8 @@ import RippleHover from "@/components/RippleHover";
 import InkHover from "@/components/InkHover";
 import HoverFx, { type HoverFxEffect } from "@/components/HoverFx";
 import MenuDemos from "@/components/MenuDemos";
+import MethodBlock from "@/components/MethodBlock";
+import RevealObserver from "@/components/RevealObserver";
 
 /** Page de test (non liée dans le menu) : comparaison des effets au survol. */
 export const metadata: Metadata = { title: "Essai effets — Tropi'Com", robots: { index: false } };
@@ -29,6 +31,11 @@ function Frame({ children }: { children: React.ReactNode }) {
 
 export default function EssaiPage() {
   return (
+    <>
+    <main className="essai">
+      <h1>Mis de côté : « Cinq temps. Zéro improvisation. » (retiré de l&apos;accueil)</h1>
+    </main>
+    <MethodBlock />
     <main className="essai">
       <h1>Essai : sous-menu « L&apos;Agence »</h1>
       <MenuDemos />
@@ -60,5 +67,7 @@ export default function EssaiPage() {
         </Frame>
       </section>
     </main>
+    <RevealObserver />
+    </>
   );
 }
