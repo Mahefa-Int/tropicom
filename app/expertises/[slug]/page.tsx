@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const e = EXPERTISES.find((x) => x.slug === slug);
   if (!e) return {};
-  return { title: `${e.label} — Expertises — Tropi'Com`, description: `${e.full} : ${e.promise}` };
+  return { title: `${e.label} — Expertises`, description: `${e.full} : ${e.promise}`, alternates: { canonical: `/expertises/${e.slug}` } };
 }
 
 export default async function ExpertisePage({ params }: Props) {

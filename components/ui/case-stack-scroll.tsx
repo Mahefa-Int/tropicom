@@ -46,7 +46,7 @@ const CARDS: CaseCard[] = [
   {
     title: "GRAND HOTEL DIEGO",
     category: "Nos réalisations",
-    image: "/images/cas/grand-hotel-diego.jpg",
+    image: "/images/cas/grand-hotel-diego.webp",
     glows: [
       { x: 130, y: 598, w: 840, h: 103, rot: -21.4, blur: 92, color: "rgba(53, 132, 125, 0.73)" },
     ],
@@ -54,7 +54,7 @@ const CARDS: CaseCard[] = [
   {
     title: "ECHOES OF THE FOREST",
     category: "Nos réalisations",
-    image: "/images/cas/echoes-of-the-forest.jpg",
+    image: "/images/cas/echoes-of-the-forest.webp",
     glows: [
       { x: 1063, y: 271, w: 425, h: 306, rot: -29.7, blur: 139, color: "rgba(223, 176, 28, 0.97)" },
       { x: 369, y: 599, w: 259, h: 114, rot: -22.3, blur: 44, color: "rgba(0, 0, 0, 0.66)" },
@@ -63,7 +63,7 @@ const CARDS: CaseCard[] = [
   {
     title: "CALUMMA TRAVEL MADAGASCAR",
     category: "Nos réalisations",
-    image: "/images/cas/calumma-travel-madagascar.jpg",
+    image: "/images/cas/calumma-travel-madagascar.webp",
     glows: [
       { x: 14, y: 660, w: 723, h: 119, rot: -26.3, blur: 68, color: "rgba(169, 0, 97, 0.72)" },
       { x: 608, y: 415, w: 1153, h: 232, rot: -45.5, blur: 146, color: "rgba(0, 0, 0, 0.71)" },
@@ -82,10 +82,11 @@ const reduced = () => prefersReducedMotion()
  * Carte d'étude de cas (maquette 1312 × 666) : photo en haut, nom, « Nos réalisations »,
  * bouton (optionnel) et halos de couleur (sous le texte).
  */
-function Face({ card, button }: { card: CaseCard; button: string }) {
+function Face({ card, button, near }: { card: CaseCard; button: string; near: boolean }) {
   return (
     <div className="cs-face cs-case">
-      <div className="cs-case-img" style={{ backgroundImage: "url(" + card.image + ")" }} />
+      {/* photo chargée seulement à l'approche de la section (performance du premier affichage) */}
+      <div className="cs-case-img" style={near ? { backgroundImage: "url(" + card.image + ")" } : undefined} />
       {card.glows?.map((g, i) => (
         <i
           key={i}
@@ -164,7 +165,17 @@ export default function CaseStackScroll({
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([])
   const cursorRef = useRef<HTMLDivElement>(null)
   const [hover, setHover] = useState(-1)
+  const [near, setNear] = useState(false)
   const count = cards.length
+
+  // les photos des cartes ne se chargent qu'à l'approche de la section
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root || near) return
+    const io = new IntersectionObserver((e) => e.some((x) => x.isIntersecting) && setNear(true), { rootMargin: "800px 0px" })
+    io.observe(root)
+    return () => io.disconnect()
+  }, [near])
 
   useIsoLayoutEffect(() => {
     const root = rootRef.current
@@ -315,7 +326,7 @@ export default function CaseStackScroll({
             }}
           >
             <span className="cs-card-in">
-              <Face card={c} button={cardButton} />
+              <Face card={c} button={cardButton} near={near} />
             </span>
           </button>
         ))}

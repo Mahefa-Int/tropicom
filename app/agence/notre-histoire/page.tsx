@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Notre histoire — Tropi'Com",
+  alternates: { canonical: "/agence/notre-histoire" },
+  title: "Notre histoire",
   description:
     "Des spécialistes, pas des polyvalents : stratégie, direction artistique, production, acquisition, technologie, avec un interlocuteur unique.",
 };

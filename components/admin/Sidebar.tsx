@@ -41,7 +41,7 @@ export default function Sidebar({ user, unread, upcoming }: Props) {
         {/* le logo ouvre le site public dans un nouvel onglet */}
         <a href="/" target="_blank" rel="noopener" title="Voir le site" className="adm-brand-link">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo-tropicom.svg" alt="Tropi'Com — voir le site" />
+          <img src="/images/logo-tropicom.webp" alt="Tropi'Com — voir le site" />
         </a>
         <span>Admin</span>
       </div>

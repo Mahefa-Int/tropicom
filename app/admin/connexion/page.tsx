@@ -14,7 +14,7 @@ export default async function LoginPage() {
         {/* le logo ramène au site public */}
         <a href="/" className="adm-login-logo" title="Retour au site">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo-tropicom.svg" alt="Tropi'Com — retour au site" />
+          <img src="/images/logo-tropicom.webp" alt="Tropi'Com — retour au site" />
         </a>
         <h1>Back-office</h1>
         <p>Connectez-vous pour gérer le contenu du site.</p>

@@ -10,7 +10,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Expertises — Tropi'Com",
+  alternates: { canonical: "/expertises" },
+  title: "Expertises",
   description:
     "Tout ce qui se passe entre le rêve d'un voyageur et sa réservation : marque, contenu, acquisition, academy et labs, cinq expertises qui se renforcent entre elles.",
 };

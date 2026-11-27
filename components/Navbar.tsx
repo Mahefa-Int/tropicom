@@ -63,7 +63,7 @@ export default function Navbar() {
       {/* Logo */}
       <a href="/" className="logo" aria-label="Tropi'Com - Accueil">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/logo-tropicom.svg" alt="Tropi'Com" width={110} height={60} />
+        <img src="/images/logo-tropicom.webp" alt="Tropi'Com" width={110} height={60} />
       </a>
 
       <nav className="nav" id="nav">

@@ -18,10 +18,29 @@ const bangers = Bangers({
   display: "swap",
 });
 
+/** adresse publique du site (liens absolus : aperçus de partage, sitemap, adresses canoniques) */
+const SITE_URL = process.env.SITE_URL || "https://www.tropicomagency.com";
+const DESCRIPTION =
+  "Agence de marketing digital et d'automatisation dédiée aux hôtels, lodges et tour-opérateurs de l'océan Indien : marque, contenus, réservations directes, réseaux sociaux.";
+
 export const metadata: Metadata = {
-  title: "Tropi'Com",
-  description:
-    "Agence de marketing digital et d'automatisation dédiée aux hôtels, lodges et tour-opérateurs de l'Océan Indien.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: "Tropi'Com — Agence de marketing digital pour le tourisme, océan Indien", template: "%s — Tropi'Com" },
+  description: DESCRIPTION,
+  applicationName: "Tropi'Com",
+  keywords: ["agence marketing digital Madagascar", "marketing hôtelier", "tourisme océan Indien", "réservations directes", "création de contenu", "site web hôtel", "réseaux sociaux tourisme"],
+  authors: [{ name: "Tropi'Com" }],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Tropi'Com",
+    locale: "fr_FR",
+    url: "/",
+    title: "Tropi'Com — Agence de marketing digital pour le tourisme, océan Indien",
+    description: DESCRIPTION,
+  },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {

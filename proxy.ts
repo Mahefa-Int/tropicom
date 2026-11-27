@@ -6,11 +6,17 @@ import { PREVIEW_COOKIE, maintenanceOn, previewToken } from "@/lib/preview";
  * 1. /admin : sans cookie de session, renvoi vers la page de connexion. La vraie vérification (session valide en base)
  *    est faite sur chaque page et chaque action par lib/admin/dal.ts. Toutes les pages de l'admin sont exclues
  *    des moteurs de recherche (en-tête X-Robots-Tag).
+ * 0. tropicomagency.com (sans www) redirige vers www.tropicomagency.com.
  * 2. Maintenance (lib/preview.ts) : les pages publiques affichent /maintenance (l'adresse reste la même),
  *    sauf pour qui s'est connecté à l'aperçu (cadenas de la page de maintenance).
  */
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // une seule adresse pour Google : tropicomagency.com → www.tropicomagency.com (redirection permanente)
+  if (req.headers.get("host") === "tropicomagency.com") {
+    return NextResponse.redirect(new URL(pathname + req.nextUrl.search, "https://www.tropicomagency.com"), 308);
+  }
 
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     // seule page accessible sans être connecté : la connexion

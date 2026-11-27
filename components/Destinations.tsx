@@ -152,6 +152,8 @@ export default function Destinations() {
         <img
           src="/images/destinations/carte-ocean-indien.webp"
           alt=""
+          loading="lazy"
+          decoding="async"
           style={{ transform: `translate(calc(${bgX.toFixed(1)} * var(--o)), calc(${bgY.toFixed(1)} * var(--o)))` }}
         />
       </div>
@@ -160,7 +162,7 @@ export default function Destinations() {
       <article className="dst-card" key={d.id}>
         <span className="dst-dot" aria-hidden="true"></span>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="dst-photo" src={d.image} alt={"Paysage — " + d.label} />
+        <img className="dst-photo" src={d.image} alt={"Paysage — " + d.label} loading="lazy" decoding="async" />
         <h2 className="dst-title" id="dst-title">
           {d.title.map((p, i) => (
             <span key={i} className={p.muted ? "is-muted" : undefined}>

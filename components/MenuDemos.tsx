@@ -27,7 +27,7 @@ function Bar({ children, variant }: { children: React.ReactNode; variant: string
   return (
     <div className={"md-bar md-bar--" + variant}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="md-logo" src="/images/logo-tropicom.svg" alt="" width={110} height={60} />
+      <img className="md-logo" src="/images/logo-tropicom.webp" alt="" width={110} height={60} />
       <ul className="md-links">
         <li>
           <span className="md-link">Accueil</span>

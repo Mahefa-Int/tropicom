@@ -162,7 +162,7 @@ export default function AgencyToday() {
       </div>
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="agt-logo" src="/images/logo-tropicom.svg" alt="Tropi'Com" width={110} height={60} />
+      <img className="agt-logo" src="/images/logo-tropicom.webp" alt="Tropi'Com" width={110} height={60} />
     </section>
   );
 }

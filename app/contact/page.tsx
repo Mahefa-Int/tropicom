@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Contact — Tropi'Com",
+  alternates: { canonical: "/contact" },
+  title: "Contact",
   description:
     "Et si on faisait décoller votre projet ? Écrivez-nous, appelez-nous ou passez par WhatsApp : l'équipe Tropi'Com vous répond du lundi au vendredi, de 9 h à 17 h.",
 };

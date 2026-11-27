@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Carrières — Tropi'Com",
+  alternates: { canonical: "/agence/carrieres" },
+  title: "Carrières",
   description: "Rejoindre Tropi'Com : faire rayonner l'océan Indien, depuis l'océan Indien. Postes ouverts et candidature spontanée.",
 };
 

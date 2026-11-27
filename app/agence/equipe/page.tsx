@@ -10,7 +10,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "L'équipe — Tropi'Com",
+  alternates: { canonical: "/agence/equipe" },
+  title: "L'équipe",
   description: "Qui sommes-nous : l'équipe Tropi'Com, agence digitale basée à Madagascar, au service de l'hôtellerie de l'Océan Indien.",
 };
 

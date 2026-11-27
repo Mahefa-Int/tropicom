@@ -28,7 +28,7 @@ export const SERVICES: Service[] = [
     accent: "#ffffff",
     images: [
       { src: "/images/services/01-marque-canette.jpg", alt: "Canette noire en mouvement" },
-      { src: "/images/services/01-marque-papeterie.jpg", alt: "Papeterie d’hôtel dans un plateau en rotin" },
+      { src: "/images/services/01-marque-papeterie.webp", alt: "Papeterie d’hôtel dans un plateau en rotin" },
     ],
     lead: "Une identité qui justifie votre prix",
     desc: "Plateforme de marque, identité visuelle,\ncharte, nommage, éditions print,\nsignalétique, brand book multi-\nétablissements.",
@@ -99,7 +99,7 @@ export const SERVICES: Service[] = [
     rotate: -3,
     accent: "var(--jaune-dore)",
     images: [
-      { src: "/images/services/05-labs-robot.jpg", alt: "Robot qui écrit sur un clavier", position: "center 62%" },
+      { src: "/images/services/05-labs-robot.webp", alt: "Robot qui écrit sur un clavier", position: "center 62%" },
       { src: "/images/services/05-labs-main-ia.jpg", alt: "Main robotique et main humaine autour des lettres AI" },
     ],
     lead: "Répondre à tout le monde, en quatre langues, en continu",

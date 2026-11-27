@@ -85,7 +85,8 @@ export default function Hero() {
     const AW = 289;
     const AH = 340;
     const img = new Image();
-    img.src = "/images/hero-femme-noir.webp";
+    // seulement à la souris (inutile au doigt) : l'image est déjà en cache, chargée par le CSS du hero
+    if (matchMedia("(pointer: fine)").matches) img.src = "/images/hero-femme-noir.webp";
     img.onload = () => {
       const c = document.createElement("canvas");
       c.width = AW;
@@ -133,7 +134,7 @@ export default function Hero() {
 
   return (
     <section className="hero" id="hero" ref={heroRef}>
-      {/* Colline : /images/hero-colline.png (2000 × 669), sur toute la largeur */}
+      {/* Colline : /images/hero-colline.webp (2000 × 669), sur toute la largeur */}
       <div className="hero-hill" aria-hidden="true"></div>
       <Fireflies className="hero-fireflies" count={12} left={fireLeft} top={fireTop} />
       {/* Colibri : survole le hero et s'approche du curseur quand il s'arrête */}
@@ -143,7 +144,7 @@ export default function Hero() {
         {/* Halos : jaune doré en bas à gauche, bleu canard à droite */}
         <div className="hero-glow hero-glow--jaune" aria-hidden="true"></div>
         <div className="hero-glow hero-glow--bleu" aria-hidden="true"></div>
-        {/* Feuille : /images/hero-feuille-monstera.png (inclinée de 19,7°) */}
+        {/* Feuille : /images/hero-feuille-monstera.webp (inclinée de 19,7°) */}
         <div className="hero-leaf-wrap" aria-hidden="true" ref={leafRef}>
           <div className="hero-leaf"></div>
         </div>

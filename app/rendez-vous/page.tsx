@@ -6,7 +6,7 @@ import RevealObserver from "@/components/RevealObserver";
 
 /** Prise de rendez-vous : prototype de présentation pour le client (non lié dans le menu, non indexé). */
 export const metadata: Metadata = {
-  title: "Prendre rendez-vous — Tropi'Com",
+  title: "Prendre rendez-vous",
   description: "Réservez un diagnostic offert ou un point projet avec l'équipe Tropi'Com, en visio ou par téléphone.",
   robots: { index: false },
 };

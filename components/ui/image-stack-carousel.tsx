@@ -12,9 +12,9 @@ import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import React, { useState } from "react";
 
 const defaultCards: SwipeCardItem[] = [
-  { id: 1, img: "/images/cas/grand-hotel-diego.jpg" },
-  { id: 2, img: "/images/cas/echoes-of-the-forest.jpg" },
-  { id: 3, img: "/images/cas/calumma-travel-madagascar.jpg" },
+  { id: 1, img: "/images/cas/grand-hotel-diego.webp" },
+  { id: 2, img: "/images/cas/echoes-of-the-forest.webp" },
+  { id: 3, img: "/images/cas/calumma-travel-madagascar.webp" },
 ];
 
 // Réglages de la pile (valeurs d'origine du composant)

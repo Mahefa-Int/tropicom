@@ -548,7 +548,7 @@ a {
 .hero-leaf {
   width: 100%;
   height: 100%;
-  background: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  background: url("/images/hero-feuille-monstera.webp") center / 100% 100% no-repeat;
   transform: rotate(19.68deg);
   animation: leafIn 1.6s 0.6s var(--ease) both, leafSway 7s 2.4s ease-in-out infinite;
 }
@@ -572,7 +572,7 @@ a {
   top: calc(100% - var(--hw) * 0.28878);
   width: var(--hw);
   aspect-ratio: 2000 / 669;
-  background: url("/images/hero-colline.png") center / 100% 100% no-repeat;
+  background: url("/images/hero-colline.webp") center / 100% 100% no-repeat;
   transform-origin: 50% 86.5%;
   animation: bgIn 2.2s 0.3s var(--ease) both;
   pointer-events: none;
@@ -734,10 +734,10 @@ a {
   animation: reveal 1.1s var(--ease) both;
 }
 
-.hero-title .line:nth-child(1) > span { animation-delay: 1s; }
-.hero-title .line:nth-child(2) > span { animation-delay: 1.1s; }
-.hero-title .line:nth-child(3) > span { animation-delay: 1.2s; }
-.hero-title .line:nth-child(4) > span { animation-delay: 1.3s; }
+.hero-title .line:nth-child(1) > span { animation-delay: 0.25s; }
+.hero-title .line:nth-child(2) > span { animation-delay: 0.35s; }
+.hero-title .line:nth-child(3) > span { animation-delay: 0.45s; }
+.hero-title .line:nth-child(4) > span { animation-delay: 0.55s; }
 
 .hero-title .line-muted {
   color: var(--gris);
@@ -4030,7 +4030,7 @@ a {
   top: calc(394 * var(--f));
   width: calc(1310 * var(--f));
   aspect-ratio: 3261 / 734;
-  background: url("/images/footer-logo-tropicom.png") center / 100% 100% no-repeat;
+  background: url("/images/footer-logo-tropicom.webp") center / 100% 100% no-repeat;
   opacity: 0;
   transform: translateY(35%);
   transition: opacity 1.2s 0.2s var(--ease), transform 1.6s 0.2s var(--ease);
@@ -4055,7 +4055,7 @@ a {
   display: block;
   width: 100%;
   height: 100%;
-  background: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  background: url("/images/hero-feuille-monstera.webp") center / 100% 100% no-repeat;
   opacity: 0;
   scale: 0.85;
   transition: opacity 1.4s 0.3s var(--ease), scale 1.6s 0.3s var(--ease);
@@ -4067,8 +4067,8 @@ a {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(222, 11, 125, 0) 45%, rgba(222, 11, 125, 0.55) 80%, rgba(222, 11, 125, 0.75));
-  -webkit-mask: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
-  mask: url("/images/hero-feuille-monstera.png") center / 100% 100% no-repeat;
+  -webkit-mask: url("/images/hero-feuille-monstera.webp") center / 100% 100% no-repeat;
+  mask: url("/images/hero-feuille-monstera.webp") center / 100% 100% no-repeat;
 }
 
 .footer.in-view .footer-leaf span {
@@ -4085,7 +4085,7 @@ a {
   bottom: 0;
   width: calc(1436 * var(--f));
   aspect-ratio: 3772 / 1668;
-  background: url("/images/colline-tv.png") center / 100% 100% no-repeat;
+  background: url("/images/colline-tv.webp") center / 100% 100% no-repeat;
   transform: scaleX(-1) translateY(8%);
   opacity: 0;
   transition: opacity 1.2s var(--ease), transform 1.6s var(--ease);
@@ -8054,12 +8054,12 @@ a {
 .mt > .glow-field { z-index: -1; }
 
 /* décor */
-.mt-word { position: absolute; left: 50%; bottom: calc(28 * var(--gh)); z-index: 0; width: min(88vw, calc(1100 * var(--gh))); aspect-ratio: 3261 / 734; background: url("/images/footer-logo-tropicom.png") center / contain no-repeat; opacity: 0; translate: -50% 30%; transition: opacity 1.6s 0.3s, translate 1.8s var(--ease) 0.3s; pointer-events: none; }
+.mt-word { position: absolute; left: 50%; bottom: calc(28 * var(--gh)); z-index: 0; width: min(88vw, calc(1100 * var(--gh))); aspect-ratio: 3261 / 734; background: url("/images/footer-logo-tropicom.webp") center / contain no-repeat; opacity: 0; translate: -50% 30%; transition: opacity 1.6s 0.3s, translate 1.8s var(--ease) 0.3s; pointer-events: none; }
 .mt.in-view .mt-word { opacity: 0.12; translate: -50% 0; }
-.mt-leaf { position: absolute; left: calc(-150 * var(--g)); bottom: calc(40 * var(--gh)); z-index: 0; width: calc(520 * var(--gh)); aspect-ratio: 1300 / 1327; background: url("/images/hero-feuille-monstera.png") center / contain no-repeat; opacity: 0; translate: calc(var(--mx) * -36px) calc(var(--my) * -24px); rotate: -24deg; transition: opacity 1.4s 0.2s, translate 0.9s var(--ease); animation: mtLeaf 9s ease-in-out infinite alternate; pointer-events: none; }
+.mt-leaf { position: absolute; left: calc(-150 * var(--g)); bottom: calc(40 * var(--gh)); z-index: 0; width: calc(520 * var(--gh)); aspect-ratio: 1300 / 1327; background: url("/images/hero-feuille-monstera-sm.webp") center / contain no-repeat; opacity: 0; translate: calc(var(--mx) * -36px) calc(var(--my) * -24px); rotate: -24deg; transition: opacity 1.4s 0.2s, translate 0.9s var(--ease); animation: mtLeaf 9s ease-in-out infinite alternate; pointer-events: none; }
 .mt.in-view .mt-leaf { opacity: 1; }
 @keyframes mtLeaf { from { rotate: -26deg; scale: 1; } to { rotate: -16deg; scale: 1.04; } }
-.mt-hill { position: absolute; right: calc(-40 * var(--g)); bottom: 0; z-index: 2; width: calc(820 * var(--gh)); aspect-ratio: 3772 / 1668; background: url("/images/colline-tv.png") center / 100% 100% no-repeat; transform: scaleX(-1); opacity: 0; translate: 0 12%; transition: opacity 1.2s 0.4s, translate 1.6s var(--ease) 0.4s; pointer-events: none; -webkit-mask-image: linear-gradient(to left, transparent 0, #000 32%); mask-image: linear-gradient(to left, transparent 0, #000 32%); }
+.mt-hill { position: absolute; right: calc(-40 * var(--g)); bottom: 0; z-index: 2; width: calc(820 * var(--gh)); aspect-ratio: 3772 / 1668; background: url("/images/colline-tv.webp") center / 100% 100% no-repeat; transform: scaleX(-1); opacity: 0; translate: 0 12%; transition: opacity 1.2s 0.4s, translate 1.6s var(--ease) 0.4s; pointer-events: none; -webkit-mask-image: linear-gradient(to left, transparent 0, #000 32%); mask-image: linear-gradient(to left, transparent 0, #000 32%); }
 .mt.in-view .mt-hill { opacity: 1; translate: 0 6%; }
 .mt-fireflies { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 
@@ -8096,6 +8096,21 @@ a {
 .mt-fb:hover { background: #1877f2; color: var(--white); transform: translateY(-3px) rotate(-6deg); }
 .mt.in-view :is(.mt-text, .mt-contact, .mt-social) { opacity: 1; translate: none; }
 .mt.in-view .mt-l > span { translate: none; }
+/* performance : apparitions en CSS pur, sans attendre le JavaScript (le titre s'affiche dès le chargement → meilleur LCP) */
+.mt-l > span { translate: none; animation: mtRise 1.1s var(--ease) both; }
+.mt-l:nth-child(2) > span { animation-delay: 0.1s; }
+.mt-l:nth-child(3) > span { animation-delay: 0.22s; }
+.mt-text { opacity: 1; animation: mtFade 0.9s 0.5s both; }
+.mt-contact { opacity: 1; translate: none; animation: mtUp 1s 0.6s var(--ease) both; }
+.mt-social { opacity: 1; animation: mtFade 0.9s 0.75s both; }
+.mt-word { opacity: 0.12; translate: -50% 0; animation: mtWord 1.8s 0.3s var(--ease) both; }
+.mt-hill { opacity: 1; translate: 0 6%; animation: mtHill 1.6s 0.4s var(--ease) both; }
+.mt-leaf { opacity: 1; animation: mtFade 1.4s 0.2s both, mtLeaf 9s ease-in-out infinite alternate; }
+@keyframes mtRise { from { translate: 0 110%; } }
+@keyframes mtFade { from { opacity: 0; } }
+@keyframes mtUp { from { opacity: 0; translate: 0 12px; } }
+@keyframes mtWord { from { opacity: 0; translate: -50% 30%; } }
+@keyframes mtHill { from { opacity: 0; translate: 0 12%; } }
 
 /* connexion à l'aperçu */
 .mt-dialog { width: min(400px, calc(100vw - 32px)); margin: auto; padding: 0; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; background: var(--noir-charbon); color: var(--white); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9); }
@@ -8384,3 +8399,14 @@ a.ct-line:hover .ct-arrow { border-color: var(--black); background: var(--black)
   .bkr-time { min-width: 74px; }
   .bkr-next { width: 100%; justify-content: flex-start; }
 }
+
+/* ============ PERFORMANCE : images allégées sur mobile, pied de page chargé à l'approche ============ */
+@media (max-width: 900px) {
+  .hero-leaf { background-image: url("/images/hero-feuille-monstera-sm.webp"); }
+  .hero-hill { background-image: url("/images/hero-colline-sm.webp"); }
+  .hero-woman > div { background-image: url("/images/hero-femme-noir-sm.webp"); }
+  .hero-woman > .hero-woman-color { background-image: url("/images/hero-femme-couleur-sm.webp"); }
+}
+/* pied de page : ses grandes images ne se téléchargent qu'une fois la section approchée (classe in-view) */
+.footer:not(.in-view) :is(.footer-logo, .footer-hill, .footer-leaf span) { background-image: none; }
+.footer:not(.in-view) .footer-leaf span::after { -webkit-mask: none; mask: none; }

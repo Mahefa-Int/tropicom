@@ -35,9 +35,9 @@ export default function Footer() {
       <div className="footer-leaf" aria-hidden="true">
         <span></span>
       </div>
-      {/* Image : /images/footer-logo-tropicom.png (3261 x 734) */}
+      {/* Image : /images/footer-logo-tropicom.webp (3261 x 734) */}
       <div className="footer-logo" role="img" aria-label="Tropi'Com"></div>
-      {/* Image : /images/colline-tv.png, retournée en miroir */}
+      {/* Image : /images/colline-tv.webp, retournée en miroir */}
       <div className="footer-hill" aria-hidden="true">
         <span className="tv-screen"></span>
       </div>

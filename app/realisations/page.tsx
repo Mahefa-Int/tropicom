@@ -11,7 +11,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Nos réalisations — Tropi'Com",
+  alternates: { canonical: "/realisations" },
+  title: "Nos réalisations",
   description:
     "Hôtels, lodges, tour-opérateurs, tables et salons : études de cas en trois temps, la situation de départ, notre réponse et les résultats.",
 };

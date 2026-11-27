@@ -12,7 +12,7 @@ export default function Proof() {
         <span className="dot" aria-hidden="true"></span>Preuve
       </p>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="proof-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
+      <img className="proof-traits" src="/images/graphic-point.png" alt="" width={64} height={32} loading="lazy" />
 
       {/* Coin arrondi décoratif (trait fin qui se dessine) */}
       <svg className="proof-corner" viewBox="0 0 125 125" aria-hidden="true">

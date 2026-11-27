@@ -14,9 +14,9 @@ import ImgStack, { type StackPose } from "./ui/image-stack";
  */
 const IMAGES = [
   "/images/expertises/carte-1.webp",
-  "/images/cas/grand-hotel-diego.jpg",
-  "/images/cas/echoes-of-the-forest.jpg",
-  "/images/cas/calumma-travel-madagascar.jpg",
+  "/images/cas/grand-hotel-diego.webp",
+  "/images/cas/echoes-of-the-forest.webp",
+  "/images/cas/calumma-travel-madagascar.webp",
   "/images/carriere/tournage.webp",
 ];
 

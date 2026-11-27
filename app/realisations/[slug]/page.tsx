@@ -45,13 +45,14 @@ async function nextOf(row: Row, nextId: number | null): Promise<CaseData["next"]
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const row = await getCase((await params).slug);
-  if (!row) return { title: "Réalisation introuvable — Tropi'Com" };
+  if (!row) return { title: "Réalisation introuvable" };
   const d = parseDetails(row.details);
   return {
-    title: `${d.seoTitle || fullTitle(d) || row.title} — Tropi'Com`,
+    title: d.seoTitle || fullTitle(d) || row.title,
     description: d.seoDescription || undefined,
     robots: row.status === "published" ? undefined : { index: false },
     openGraph: row.coverUrl ? { images: [row.coverUrl] } : undefined,
+    alternates: { canonical: `/realisations/${row.slug}` },
   };
 }
 

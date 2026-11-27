@@ -53,7 +53,7 @@ export default function Faq() {
         QUESTIONS.
       </h2>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="faq-traits" src="/images/faq/graphic-point.webp" alt="" width={134} height={48} />
+      <img className="faq-traits" src="/images/faq/graphic-point.webp" alt="" width={134} height={48} loading="lazy" />
 
       <ul className="faq-list">
         {FAQ.map((item, i) => {

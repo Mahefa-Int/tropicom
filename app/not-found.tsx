@@ -11,7 +11,7 @@ import NotFoundBg from "@/components/NotFoundBg";
  * grand « 404 » pâle derrière le titre, bouton de retour à l'accueil. Hauteur de l'écran.
  */
 export const metadata: Metadata = {
-  title: "Page introuvable — Tropi'Com",
+  title: "Page introuvable",
   robots: { index: false },
 };
 

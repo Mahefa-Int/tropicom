@@ -7,7 +7,7 @@ import MethodBlock from "@/components/MethodBlock";
 import RevealObserver from "@/components/RevealObserver";
 
 /** Page de test (non liée dans le menu) : comparaison des effets au survol. */
-export const metadata: Metadata = { title: "Essai effets — Tropi'Com", robots: { index: false } };
+export const metadata: Metadata = { title: "Essai effets", robots: { index: false } };
 
 const SRC = "/images/agence/equipe.webp";
 

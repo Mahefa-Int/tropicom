@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Ressources — Tropi'Com",
+  alternates: { canonical: "/ressources" },
+  title: "Ressources",
   description:
     "Études, guides pratiques et analyses pour les professionnels du tourisme de l'Océan Indien : l'Observatoire 2026 du digital touristique, guides PDF et journal.",
 };
