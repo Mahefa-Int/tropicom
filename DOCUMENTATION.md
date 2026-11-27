@@ -291,10 +291,29 @@ Les variables (`DATABASE_URL`, `UPLOAD_DIR`…) peuvent aussi être mises dans `
 - Certificat SSL actif (N0C → **Domaines → SSL**).
 
 ### Mettre à jour le site
+
+Depuis le poste de travail (clé SSH déjà enregistrée sur le serveur) :
 ```bash
-cd ~/tropicom && git pull && npm install --include=dev --no-audit --no-fund \n  && NODE_OPTIONS=--max-old-space-size=1536 npx next build --webpack   # + npm run db:migrate si nouvelle migration
+npm run deploy
 ```
-puis **Redémarrer** l'application dans N0C.
+`scripts/deploy.mjs` se connecte à l'hôte SSH `tropicom-prod` et lance : `git pull` → `npm install --include=dev` →
+compilation `--webpack` → redémarrage de l'application (`cloudlinux-selector restart`). Les nouvelles tables de base de
+données restent à créer à part (phpMyAdmin, ou `npm run db:migrate` sur le serveur).
+
+Hôte `tropicom-prod` dans `~/.ssh/config` du poste :
+```
+Host tropicom-prod
+  HostName node9-ca.n0c.com
+  Port 5022
+  User jettzxacst
+  IdentityFile ~/.ssh/tropicom_planethoster
+```
+(clé publique ajoutée dans `~/.ssh/authorized_keys` du serveur ; la retirer de ce fichier coupe l'accès).
+
+À la main, en SSH : `source ~/nodevenv/tropicom/24/bin/activate`, puis
+`cd ~/tropicom && git pull && npm install --include=dev --no-audit --no-fund && NODE_OPTIONS=--max-old-space-size=1536 npx next build --webpack`,
+puis **Redémarrer** l'application dans N0C. Ne jamais redémarrer sans recompiler après un `git pull` (et inversement :
+après une compilation, toujours redémarrer, sinon les pages réclament des fichiers supprimés).
 
 Plus tard : **Crons** pour la synchronisation quotidienne de Search Console, et la validation du domaine dans
 Search Console (enregistrement TXT dans la zone DNS).
