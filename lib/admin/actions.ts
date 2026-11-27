@@ -274,6 +274,21 @@ export async function deleteMessage(id: number) {
   redirect("/admin/messages");
 }
 
+/* ------------------------------------------------------------------ rendez-vous */
+
+/** annule un rendez-vous : le créneau redevient libre (le client n'est pas prévenu automatiquement) */
+export async function cancelAppointment(id: number) {
+  await requireUser();
+  await db.update(schema.appointments).set({ status: "cancelled" }).where(eq(schema.appointments.id, id));
+  revalidatePath("/admin/rendez-vous");
+}
+
+export async function deleteAppointment(id: number) {
+  await requireUser();
+  await db.delete(schema.appointments).where(eq(schema.appointments.id, id));
+  revalidatePath("/admin/rendez-vous");
+}
+
 /* ------------------------------------------------------------------ médias */
 
 export type MediaPick = { id: number; url: string; name: string; alt: string; width: number | null; height: number | null };

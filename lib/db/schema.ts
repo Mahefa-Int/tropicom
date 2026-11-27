@@ -135,6 +135,28 @@ export const media = mysqlTable("media", {
   createdAt: datetime("created_at").notNull().default(now()),
 });
 
+/** rendez-vous pris en ligne (fenêtre « Prendre rendez-vous » de la page Contact) ; heures en UTC */
+export const appointments = mysqlTable(
+  "appointments",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    startsAt: datetime("starts_at").notNull(),
+    endsAt: datetime("ends_at").notNull(),
+    kind: varchar("kind", { length: 80 }).notNull(),
+    name: varchar("name", { length: 160 }).notNull(),
+    company: varchar("company", { length: 160 }),
+    email: varchar("email", { length: 190 }).notNull(),
+    phone: varchar("phone", { length: 60 }),
+    mode: mysqlEnum("mode", ["visio", "tel"]).notNull().default("visio"),
+    need: text("need"),
+    /** fuseau choisi par le visiteur (pour lui écrire à son heure) */
+    timezone: varchar("timezone", { length: 60 }).notNull().default("Indian/Antananarivo"),
+    status: mysqlEnum("status", ["confirmed", "cancelled"]).notNull().default("confirmed"),
+    createdAt: datetime("created_at").notNull().default(now()),
+  },
+  (t) => [index("appointments_starts_idx").on(t.startsAt)],
+);
+
 /** statistiques Google Search Console, une ligne par jour (remplie plus tard par la synchronisation) */
 export const gscDaily = mysqlTable("gsc_daily", {
   day: date("day", { mode: "string" }).primaryKey(),
@@ -150,3 +172,4 @@ export type Category = typeof categories.$inferSelect;
 export type CaseStudy = typeof caseStudies.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type Media = typeof media.$inferSelect;
+export type Appointment = typeof appointments.$inferSelect;

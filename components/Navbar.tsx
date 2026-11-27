@@ -26,7 +26,7 @@ const LINKS: Item[] = [
   },
   { label: "Réalisations", href: "/realisations" },
   { label: "Ressources", href: "/ressources" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const CLEAR_PAGES = ["/agence/carrieres", "/expertises"];

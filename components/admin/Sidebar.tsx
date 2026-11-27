@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Icons } from "./icons";
 import { logout } from "@/lib/admin/actions";
 
-type Props = { user: { name: string; email: string; role: "admin" | "editor" }; unread: number };
+type Props = { user: { name: string; email: string; role: "admin" | "editor" }; unread: number; upcoming: number };
 
 const MAIN = [
   { href: "/admin", label: "Tableau de bord", icon: Icons.dashboard },
@@ -14,22 +14,24 @@ const MAIN = [
 const CONTENT = [
   { href: "/admin/articles", label: "Articles", icon: Icons.article },
   { href: "/admin/realisations", label: "Réalisations", icon: Icons.case },
-  { href: "/admin/messages", label: "Messages", icon: Icons.mail, count: true },
+  { href: "/admin/messages", label: "Messages", icon: Icons.mail, count: "unread" as const },
+  { href: "/admin/rendez-vous", label: "Rendez-vous", icon: Icons.calendar, count: "upcoming" as const },
   { href: "/admin/medias", label: "Médiathèque", icon: Icons.image },
 ];
 
-export default function Sidebar({ user, unread }: Props) {
+export default function Sidebar({ user, unread, upcoming }: Props) {
   const path = usePathname();
   const on = (href: string) =>
     href === "/admin"
       ? path === "/admin"
       : // les catégories font partie des articles : « Articles » reste actif sur /admin/categories
         path.startsWith(href) || (href === "/admin/articles" && path.startsWith("/admin/categories"));
-  const item = (l: { href: string; label: string; icon: React.ReactNode; count?: boolean }) => (
+  const counts = { unread, upcoming };
+  const item = (l: { href: string; label: string; icon: React.ReactNode; count?: "unread" | "upcoming" }) => (
     <Link key={l.href} href={l.href} className={on(l.href) ? "is-on" : undefined}>
       {l.icon}
       {l.label}
-      {l.count && unread > 0 && <span className="adm-count">{unread}</span>}
+      {l.count && counts[l.count] > 0 && <span className="adm-count">{counts[l.count]}</span>}
     </Link>
   );
   return (

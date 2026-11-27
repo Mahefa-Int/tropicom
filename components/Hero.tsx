@@ -162,7 +162,7 @@ export default function Hero() {
           <span className="line line-muted"><span>de 20%</span></span>
         </h1>
 
-        <a href="#" className="cta hero-cta">
+        <a href="/contact" className="cta hero-cta">
           <CtaIcon />
           <span className="cta-label">Entrer en contact</span>
         </a>

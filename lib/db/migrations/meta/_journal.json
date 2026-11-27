@@ -57,6 +57,13 @@
       "when": 1795102429682,
       "tag": "0007_media_optimize",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1795717131645,
+      "tag": "0008_appointments",
+      "breakpoints": true
     }
   ]
 }

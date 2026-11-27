@@ -326,3 +326,24 @@ Tant que le site n'est pas fini, les pages publiques affichent `/maintenance` (l
 - **Activé automatiquement en production.** Pour ouvrir le site au public : variable d'environnement `MAINTENANCE=off` sur l'hébergement, puis redémarrer. En local (`npm run dev`), il est coupé ; `MAINTENANCE=on` pour le tester.
 - **Accès à l'aperçu** : le cadenas en haut à droite de la page de maintenance demande un code d'accès statique (sans base de données) : `UPGRADE` par défaut (majuscules ou minuscules acceptées), modifiable par `PREVIEW_CODE`. Une fois le code saisi, un cookie laisse voir le site pendant 30 jours ; changer le code ferme tous les aperçus.
 - Fichiers : `proxy.ts`, `lib/preview.ts`, `app/api/preview/route.ts`, `components/Maintenance.tsx`.
+
+---
+
+## Prise de rendez-vous
+
+Page Contact → bouton « Prendre rendez-vous » : fenêtre (composant `components/Booking.tsx`, version `popup`).
+
+- **Créneaux** (`lib/booking.ts`) : du lundi au vendredi, 9 h – 12 h et 14 h – 17 h heure de Madagascar, toutes les 30 min,
+  24 h de délai minimum, 6 semaines à l'avance. Rendez-vous de 30 min. Les créneaux déjà réservés n'apparaissent plus.
+  Pour changer les horaires : `PERIODS`, `NOTICE_H`, `HORIZON_DAYS` dans `lib/booking.ts`.
+- **Réservation** (`lib/booking-actions.ts`) : le serveur revérifie que le créneau est valide et libre, puis l'enregistre
+  dans la table `appointments`.
+- **Admin → Rendez-vous** : rendez-vous à venir (heure de Madagascar), boutons « Écrire » (e-mail au client),
+  « Annuler » (le créneau redevient libre ; le client n'est pas prévenu automatiquement) et supprimer.
+- **E-mails** (`lib/mailer.ts`, facultatif) : confirmation au client avec l'invitation d'agenda (.ics) et avis à l'équipe.
+  Variables : `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TEAM` (voir `.env.example`).
+  Avec Google Workspace : `smtp.gmail.com`, port 465, et un « mot de passe d'application » du compte Google.
+  Sans ces réglages, les rendez-vous sont enregistrés mais aucun e-mail ne part (un avis l'indique dans l'admin).
+- **Pas inclus** (volontairement simple) : lien de visio automatique (à envoyer soi-même), rappel la veille,
+  déplacement ou annulation par le client (il répond à l'e-mail), synchronisation avec Google Agenda.
+- **Mise en production** : `npm run db:migrate` (crée la table `appointments`).

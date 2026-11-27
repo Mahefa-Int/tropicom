@@ -2,75 +2,32 @@
 
 import { useEffect, useMemo, useState } from "react";
 import CtaIcon from "./CtaIcon";
+import { TYPES, ZONES, buildSlots, hhmm, longDate, type BookingType, type Busy } from "@/lib/booking";
+import { bookAppointment, getBusy } from "@/lib/booking-actions";
 
 /**
- * Prise de rendez-vous — PROTOTYPE de présentation (aucune réservation n'est enregistrée).
- * Parcours : type de rendez-vous → jour → créneau (affiché dans le fuseau du visiteur) → coordonnées → confirmation
- * (ajout à Google Agenda, invitation .ics). Les disponibilités sont simulées : du lundi au vendredi,
- * 9 h – 12 h et 14 h – 17 h heure de Madagascar, 24 h de délai minimum, quelques créneaux déjà pris.
- * Version finale : disponibilités et réservations gérées dans l'admin et synchronisées avec Google Agenda.
+ * Prise de rendez-vous.
+ * Parcours : jour → créneau (affiché dans le fuseau du visiteur) → coordonnées → confirmation. Règles des créneaux : lib/booking.ts ; les créneaux déjà réservés
+ * sont masqués. La réservation est enregistrée (admin → Rendez-vous) et confirmée par e-mail si l'envoi
+ * est configuré (lib/mailer.ts).
  */
 
-const TYPES = [
-  { id: "diagnostic", name: "Diagnostic offert", dur: 30, text: "On fait le point sur votre présence digitale et vos priorités. Sans engagement.", tag: "Offert" },
-  { id: "projet", name: "Point projet", dur: 45, text: "Pour avancer sur un projet en cours, un devis ou une campagne." },
-];
-
-const ZONES = [
-  { id: "Indian/Antananarivo", label: "Madagascar" },
-  { id: "Indian/Reunion", label: "La Réunion" },
-  { id: "Indian/Mauritius", label: "Maurice" },
-  { id: "Europe/Paris", label: "France" },
-];
-
-const AGENCY_TZ_OFFSET = 3; // Madagascar = UTC+3, sans heure d'été
-const PERIODS = [
-  [9, 12],
-  [14, 17],
-];
-const STEP_MIN = 30;
-const HORIZON_DAYS = 42;
-const NOTICE_H = 24;
-
-/** quelques créneaux « déjà pris », toujours les mêmes pour une date donnée */
-function taken(t: number) {
-  let h = 2166136261;
-  for (const ch of String(t / 60000)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
-  return (h >>> 0) % 7 < 2;
-}
-
-/** tous les créneaux libres (instants UTC) sur l'horizon */
-function buildSlots(dur: number) {
-  const now = Date.now();
-  const out: number[] = [];
-  const base = new Date();
-  for (let d = 0; d < HORIZON_DAYS; d++) {
-    const day = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate() + d));
-    const dow = day.getUTCDay();
-    if (dow === 0 || dow === 6) continue;
-    for (const [a, b] of PERIODS) {
-      for (let m = a * 60; m + dur <= b * 60; m += STEP_MIN) {
-        const t = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 0, m) - AGENCY_TZ_OFFSET * 3600000;
-        if (t < now + NOTICE_H * 3600000 || taken(t)) continue;
-        out.push(t);
-      }
-    }
-  }
-  return out;
-}
-
 const dayKey = (t: number, tz: string) => new Intl.DateTimeFormat("fr-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(t); // AAAA-MM-JJ
-const hhmm = (t: number, tz: string) => new Intl.DateTimeFormat("fr-FR", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(t).replace(":", " h ");
-const longDate = (t: number, tz: string) => new Intl.DateTimeFormat("fr-FR", { timeZone: tz, weekday: "long", day: "numeric", month: "long" }).format(t);
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const DOW = ["L", "M", "M", "J", "V", "S", "D"];
 
-const icsDate = (t: number) => new Date(t).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 
-export default function Booking() {
-  const [type, setType] = useState(TYPES[0]);
-  const [tz, setTz] = useState(ZONES[0].id);
-  const [step, setStep] = useState<"choose" | "form" | "done">("choose");
+/** popup : version compacte pour la fenêtre « Prendre rendez-vous » (page Contact) — la carte seule, sans titre,
+ * sans le choix du type (rendez-vous de 30 min), ni colonne de gauche avant le choix du créneau, ni les 3 étapes */
+export default function Booking({ popup = false }: { popup?: boolean }) {
+  const [type, setType] = useState<BookingType>(TYPES[0]);
+  const [busy, setBusy] = useState<Busy[]>([]);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [mailed, setMailed] = useState(false);
+  const [tz, setTz] = useState<string>(ZONES[0].id);
+  const [step, setStep] = useState<"choose" | "form" | "sending" | "done">("choose");
+  const [phase, setPhase] = useState(0);
   const [day, setDay] = useState<string | null>(null);
   const [slot, setSlot] = useState<number | null>(null);
   const [month, setMonth] = useState<[number, number] | null>(null);
@@ -82,7 +39,11 @@ export default function Booking() {
     const local = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (ZONES.some((z) => z.id === local)) setTz(local);
   }, []);
-  useEffect(() => setSlots(buildSlots(type.dur)), [type]);
+  // créneaux déjà réservés (base) : chargés à l'ouverture
+  useEffect(() => {
+    getBusy().then(setBusy);
+  }, []);
+  useEffect(() => setSlots(buildSlots(type.dur, busy)), [type, busy]);
 
   const byDay = useMemo(() => {
     const m = new Map<string, number[]>();
@@ -115,33 +76,37 @@ export default function Booking() {
 
   const zoneLabel = ZONES.find((z) => z.id === tz)?.label ?? tz;
   const end = slot ? slot + type.dur * 60000 : 0;
-  const title = `${type.name} · Tropi'Com`;
-  const gcal = slot
-    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${icsDate(slot)}/${icsDate(end)}&details=${encodeURIComponent(
-        "Rendez-vous avec l'équipe Tropi'Com. Le lien de la visio est dans l'e-mail de confirmation.",
-      )}`
-    : "#";
-  const downloadIcs = () => {
+  // envoi : le serveur revérifie que le créneau est libre, enregistre et envoie les e-mails.
+  // Écran de chargement pendant au moins 1,8 s (vérification → enregistrement → confirmation), plus rassurant.
+  const submit = async () => {
     if (!slot) return;
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Tropi'Com//Rendez-vous//FR",
-      "BEGIN:VEVENT",
-      `UID:${slot}-${type.id}@tropicom-agency.com`,
-      `DTSTAMP:${icsDate(Date.now())}`,
-      `DTSTART:${icsDate(slot)}`,
-      `DTEND:${icsDate(end)}`,
-      `SUMMARY:${title}`,
-      "DESCRIPTION:Rendez-vous avec l'équipe Tropi'Com.",
-      "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
-    a.download = "rendez-vous-tropicom.ics";
-    a.click();
-    URL.revokeObjectURL(a.href);
+    setSending(true);
+    setError("");
+    setPhase(0);
+    setStep("sending");
+    const t1 = setTimeout(() => setPhase(1), 700);
+    const t2 = setTimeout(() => setPhase(2), 1300);
+    const [res] = await Promise.all([
+      bookAppointment({ start: slot, type: type.id, tz, ...form }).catch(() => ({ ok: false as const, error: "La réservation a échoué. Réessayez, ou écrivez-nous à admin@tropicomagency.com." })),
+      new Promise((r) => setTimeout(r, 1800)),
+    ]);
+    clearTimeout(t1);
+    clearTimeout(t2);
+    setSending(false);
+    if (res.ok) {
+      setMailed(res.mailed);
+      setStep("done");
+      getBusy().then(setBusy);
+      return;
+    }
+    setError(res.error);
+    if ("taken" in res && res.taken) {
+      getBusy().then(setBusy);
+      setSlot(null);
+      setStep("choose");
+    } else {
+      setStep("form");
+    }
   };
 
   const reset = () => {
@@ -151,19 +116,22 @@ export default function Booking() {
   };
 
   return (
-    <section className="bk">
-      <header className="bk-head" data-reveal>
-        <p className="bk-demo">Démo de présentation · aucune réservation n’est enregistrée</p>
-        <h1 className="bk-title">
-          <span className="bk-gold">Prenez rendez-vous</span> avec l’équipe.
-        </h1>
-        <p className="bk-lead">Choisissez un créneau, vous recevez aussitôt l’invitation et le lien de la visio.</p>
-      </header>
+    <section className={popup ? "bk bk--popup" : "bk"}>
+      {!popup && (
+        <header className="bk-head" data-reveal>
+          <p className="bk-demo">Démo de présentation · aucune réservation n’est enregistrée</p>
+          <h1 className="bk-title">
+            <span className="bk-gold">Prenez rendez-vous</span> avec l’équipe.
+          </h1>
+          <p className="bk-lead">Choisissez un créneau, vous recevez aussitôt l’invitation et le lien de la visio.</p>
+        </header>
+      )}
 
       {/* apparition sur un conteneur fixe : la classe de la carte change à chaque étape */}
-      <div className="bk-card-wrap" data-reveal>
+      <div className="bk-card-wrap" data-reveal={popup ? undefined : true}>
       <div className={"bk-card is-" + step}>
-        {/* ---------- colonne de gauche : le rendez-vous ---------- */}
+        {/* ---------- colonne de gauche : le rendez-vous (en fenêtre : seulement après le choix du créneau) ---------- */}
+        {!(popup && step === "choose") && (
         <aside className="bk-info">
           {step === "choose" ? (
             <>
@@ -194,7 +162,7 @@ export default function Booking() {
           ) : (
             <>
               <p className="bk-k">Votre rendez-vous</p>
-              <p className="bk-sum-type">{type.name}</p>
+              {!popup && <p className="bk-sum-type">{type.name}</p>}
               <ul className="bk-sum">
                 <li>
                   <Ico d="M3 5.5h14v11H3zM3 9h14M7 3v4M13 3v4" />
@@ -206,7 +174,7 @@ export default function Booking() {
                 </li>
                 <li>
                   <Ico d="M2.5 6.5h10v7h-10zM12.5 9l5-3v8l-5-3" />
-                  {form.mode === "visio" ? "Visio Google Meet" : "Appel téléphonique"}
+                  {form.mode === "visio" ? "Visio" : "Appel téléphonique"}
                 </li>
               </ul>
               {step === "form" && (
@@ -216,6 +184,7 @@ export default function Booking() {
               )}
             </>
           )}
+          {!popup && (
           <div className="bk-host">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/agence/equipe.webp" alt="" />
@@ -224,7 +193,9 @@ export default function Booking() {
               <small>Antananarivo · répond en français et en anglais</small>
             </span>
           </div>
+          )}
         </aside>
+        )}
 
         {/* ---------- étape 1 : calendrier + créneaux ---------- */}
         {step === "choose" && (
@@ -269,6 +240,10 @@ export default function Booking() {
                   );
                 })}
               </div>
+            </div>
+
+            <div className="bk-slots">
+              {/* fuseau horaire : en haut de la colonne des créneaux */}
               <label className="bk-tz">
                 <Ico d="M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15ZM2.5 10h15M10 2.5c2.2 2.3 2.2 12.7 0 15M10 2.5c-2.2 2.3-2.2 12.7 0 15" />
                 Heures affichées :
@@ -280,9 +255,11 @@ export default function Booking() {
                   ))}
                 </select>
               </label>
-            </div>
-
-            <div className="bk-slots">
+              {error && (
+                <p className="bk-error" role="alert" style={{ marginBottom: 16 }}>
+                  {error}
+                </p>
+              )}
               {day ? (
                 <>
                   <p className="bk-k bk-cap">{longDate(byDay.get(day)![0], tz)}</p>
@@ -296,7 +273,10 @@ export default function Booking() {
                           </button>
                         </div>
                       ) : (
-                        <button key={t} type="button" className="bk-slot" onClick={() => setSlot(t)}>
+                        <button key={t} type="button" className="bk-slot" onClick={() => {
+                          setSlot(t);
+                          setError("");
+                        }}>
                           {hhmm(t, tz)}
                         </button>
                       ),
@@ -320,7 +300,7 @@ export default function Booking() {
             className="bk-form"
             onSubmit={(e) => {
               e.preventDefault();
-              setStep("done");
+              submit();
             }}
           >
             <p className="bk-k">Vos coordonnées</p>
@@ -336,7 +316,7 @@ export default function Booking() {
               <span>Comment échanger ?</span>
               <div className="bk-seg">
                 {[
-                  ["visio", "Visio Google Meet"],
+                  ["visio", "Visio"],
                   ["tel", "Téléphone"],
                 ].map(([v, l]) => (
                   <label key={v} className={form.mode === v ? "is-on" : undefined}>
@@ -350,11 +330,32 @@ export default function Booking() {
               <span>Votre besoin, en quelques mots</span>
               <textarea rows={3} value={form.need} onChange={(e) => setForm({ ...form, need: e.target.value })} placeholder="Ex. plus de réservations directes, refonte du site, réseaux sociaux…" />
             </label>
-            <button type="submit" className="cta bk-submit">
+            {error && (
+              <p className="bk-error" role="alert">
+                {error}
+              </p>
+            )}
+            <button type="submit" className="cta bk-submit" disabled={sending}>
               <CtaIcon />
-              <span className="cta-label">Confirmer le rendez-vous</span>
+              <span className="cta-label">{sending ? "Réservation…" : "Confirmer le rendez-vous"}</span>
             </button>
           </form>
+        )}
+
+        {/* ---------- envoi en cours ---------- */}
+        {step === "sending" && (
+          <div className="bk-loading" role="status" aria-live="polite">
+            <span className="bk-spinner" aria-hidden="true" />
+            <ol className="bk-load-steps">
+              {["Vérification du créneau", "Enregistrement du rendez-vous", "Envoi de la confirmation"].map((l, i) => (
+                <li key={l} className={i < phase ? "is-done" : i === phase ? "is-on" : undefined}>
+                  <i aria-hidden="true" />
+                  {l}
+                  {i === phase && "…"}
+                </li>
+              ))}
+            </ol>
+          </div>
         )}
 
         {/* ---------- étape 3 : confirmation ---------- */}
@@ -365,18 +366,18 @@ export default function Booking() {
             </span>
             <h2>C’est réservé{form.name ? `, ${form.name.split(" ")[0]}` : ""}.</h2>
             <p>
-              Un e-mail de confirmation part à <b>{form.email || "votre adresse"}</b> avec l’invitation{form.mode === "visio" ? " et le lien Google Meet" : ""}. Rappel automatique la veille et
-              une heure avant.
+              {mailed ? (
+                <>
+                  Un e-mail de confirmation vient de partir à <b>{form.email}</b> avec l’invitation pour votre agenda.
+                </>
+              ) : (
+                <>
+                  Votre demande est bien enregistrée. Nous vous confirmons le rendez-vous à <b>{form.email}</b>.
+                </>
+              )}{" "}
+              {form.mode === "visio" ? "Le lien de la visio vous sera envoyé avant le rendez-vous." : "Nous vous appellerons à l’heure prévue."}
             </p>
-            <div className="bk-done-actions">
-              <a className="bk-btn" href={gcal} target="_blank" rel="noreferrer">
-                Ajouter à Google Agenda
-              </a>
-              <button type="button" className="bk-btn" onClick={downloadIcs}>
-                Télécharger l’invitation (.ics)
-              </button>
-            </div>
-            <p className="bk-small">Besoin de changer ? Les liens « Déplacer » et « Annuler » sont dans l’e-mail.</p>
+            <p className="bk-small">Besoin de changer ou d’annuler ? Écrivez-nous à admin@tropicomagency.com.</p>
             <button type="button" className="bk-link" onClick={reset}>
               Réserver un autre créneau
             </button>
@@ -386,10 +387,11 @@ export default function Booking() {
       </div>
 
       {/* ---------- comment ça se passe ---------- */}
+      {!popup && (
       <ol className="bk-steps" data-reveal>
         {[
-          ["Vous choisissez", "Un créneau libre, dans votre fuseau horaire. Les heures déjà prises dans notre agenda n’apparaissent pas."],
-          ["Vous recevez", "L’invitation pour votre agenda, le lien de la visio et un rappel la veille. Déplacement ou annulation en un clic."],
+          ["Vous choisissez", "Un créneau libre, dans votre fuseau horaire. Les heures déjà réservées n’apparaissent pas."],
+          ["Vous recevez", "La confirmation par e-mail avec l’invitation pour votre agenda, puis le lien de la visio avant le rendez-vous."],
           ["On échange", "30 minutes pour comprendre votre situation et repartir avec des pistes concrètes, même sans suite."],
         ].map(([t, x], i) => (
           <li key={t}>
@@ -399,6 +401,7 @@ export default function Booking() {
           </li>
         ))}
       </ol>
+      )}
     </section>
   );
 }

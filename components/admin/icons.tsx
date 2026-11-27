@@ -28,6 +28,12 @@ export const Icons = {
       <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18" />
     </svg>
   ),
+  calendar: (
+    <svg {...base}>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  ),
   mail: (
     <svg {...base}>
       <rect x="3" y="5" width="18" height="14" rx="2" />

@@ -23,6 +23,7 @@
     "gsap": "^3.15.1",
     "mysql2": "^3.24.6",
     "next": "^16.4.6",
+    "nodemailer": "^10.6.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "server-only": "^0.0.1",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/d3-geo": "^3.1.1",
     "@types/node": "^26.6.6",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
