@@ -8236,17 +8236,16 @@ a {
 .ct-lines { width: 100%; max-width: 1100px; margin: calc(24 * var(--g)) 0 0; padding: 0; list-style: none; border-top: 1px solid rgba(255, 255, 255, 0.14); opacity: 0; translate: 0 16px; transition: opacity 1s 0.45s, translate 1.1s var(--ease) 0.45s; }
 .ct.in-view .ct-lines { opacity: 1; translate: none; }
 .ct-lines > li { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
-.ct-line { position: relative; display: grid; grid-template-columns: 56px 200px 1fr 56px; align-items: center; gap: 0 16px; padding: calc(30 * var(--g)) 20px; overflow: hidden; isolation: isolate; color: var(--white); text-decoration: none; }
+.ct-line { position: relative; display: grid; grid-template-columns: 200px 1fr 56px; align-items: center; gap: 0 16px; padding: calc(30 * var(--g)) 20px; overflow: hidden; isolation: isolate; color: var(--white); text-decoration: none; }
 .ct-line::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--jaune-dore); transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
 a.ct-line:hover::before, a.ct-line:focus-visible::before { transform: scaleX(1); }
 a.ct-line:focus-visible { outline: none; }
-.ct-num { align-self: start; padding-top: 0.5em; color: var(--jaune-dore); font-size: 13px; font-weight: 600; letter-spacing: 0; transition: color 0.4s; }
 .ct-lbl { align-self: start; padding-top: 0.5em; color: #9b9b9b; font-size: 14px; letter-spacing: -0.01em; transition: color 0.4s; }
 .ct-val { display: flex; flex-direction: column; font-size: calc(40 * var(--g)); font-weight: 500; line-height: 1.12; letter-spacing: -0.055em; overflow-wrap: anywhere; transition: color 0.4s, translate 0.6s var(--ease); }
 .ct-val > span + span { margin-top: 8px; color: #c9c9c9; font-size: 0.45em; letter-spacing: -0.02em; }
 .ct-arrow { display: grid; place-items: center; justify-self: end; width: 48px; height: 48px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; transition: border-color 0.4s, background-color 0.4s, rotate 0.6s var(--ease); }
 .ct-arrow svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-a.ct-line:hover :is(.ct-num, .ct-lbl, .ct-val) { color: var(--black); }
+a.ct-line:hover :is(.ct-lbl, .ct-val) { color: var(--black); }
 a.ct-line:hover .ct-val { translate: 12px 0; }
 a.ct-line:hover .ct-arrow { border-color: var(--black); background: var(--black); color: var(--jaune-dore); rotate: 45deg; }
 
@@ -8295,12 +8294,11 @@ a.ct-line:hover .ct-arrow { border-color: var(--black); background: var(--black)
   .ct-title { font-size: clamp(38px, 10.5vw, 52px); }
   .ct-lead { font-size: 16px; }
   .ct-card { padding: 22px 18px; border-radius: 22px; }
-  .ct-line { grid-template-columns: 34px 1fr 40px; row-gap: 4px; padding: 20px 8px; }
-  .ct-num { grid-row: span 2; padding-top: 2px; }
-  .ct-lbl { grid-column: 2; padding-top: 0; font-size: 13px; }
-  .ct-val { grid-column: 2; font-size: 18px; letter-spacing: -0.04em; }
+  .ct-line { grid-template-columns: 1fr 40px; row-gap: 4px; padding: 20px 8px; }
+  .ct-lbl { grid-column: 1; padding-top: 0; font-size: 13px; }
+  .ct-val { grid-column: 1; font-size: 18px; letter-spacing: -0.04em; }
   .ct-val > span + span { font-size: 13px; }
-  .ct-arrow { grid-column: 3; grid-row: 1 / span 2; align-self: center; width: 38px; height: 38px; }
+  .ct-arrow { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 38px; height: 38px; }
   .ct-arrow svg { width: 16px; height: 16px; }
   .ct-row { grid-template-columns: 1fr; }
 }
@@ -8421,3 +8419,76 @@ a.ct-line:hover .ct-arrow { border-color: var(--black); background: var(--black)
 /* pied de page : ses grandes images ne se téléchargent qu'une fois la section approchée (classe in-view) */
 .footer:not(.in-view) :is(.footer-logo, .footer-hill, .footer-leaf span) { background-image: none; }
 .footer:not(.in-view) .footer-leaf span::after { -webkit-mask: none; mask: none; }
+
+/* ============ ESSAI : DÉFILEMENT HORIZONTAL DES ÉTUDES DE CAS (components/HorizontalCases.tsx, page /essai) ============ */
+.hz { position: relative; background: var(--black); }
+.hz-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.hz-track { display: flex; height: 100%; margin: 0; padding: 0; list-style: none; will-change: transform; }
+.hz-panel { position: relative; flex: none; display: grid; place-items: center; width: 100vw; height: 100%; overflow: hidden; color: var(--white); }
+.hz-panel.is-charbon { background: radial-gradient(60% 70% at 70% 30%, rgba(247, 194, 39, 0.22), transparent 70%), var(--noir-charbon); }
+.hz-panel.is-teal { background: radial-gradient(60% 70% at 30% 70%, rgba(0, 0, 0, 0.35), transparent 70%), var(--bleu-ca); }
+.hz-panel.is-magenta { background: radial-gradient(60% 70% at 70% 20%, rgba(247, 194, 39, 0.25), transparent 70%), var(--rose-magenta); }
+.hz-panel.is-gold { background: var(--jaune-dore); color: var(--black); }
+/* grand nom du client, qui glisse en sens inverse */
+.hz-word { position: relative; z-index: 1; margin: 0; padding-bottom: 12vh; font-size: clamp(64px, 15vw, 260px); font-weight: 600; line-height: 0.9; letter-spacing: -0.07em; text-transform: uppercase; white-space: nowrap; will-change: transform; }
+.hz-panel.is-gold .hz-word { color: var(--black); }
+/* photo centrée en bas, devant le mot */
+.hz-img { position: absolute; left: 50%; bottom: 0; z-index: 2; width: min(520px, 62vw); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 18px 18px 0 0; translate: -50% 0; box-shadow: 0 -20px 60px -20px rgba(0, 0, 0, 0.6); }
+.hz-meta { position: absolute; left: 56px; top: calc(var(--nav-h) + 32px); z-index: 3; display: flex; align-items: center; gap: 9px; margin: 0; font-size: 13px; letter-spacing: -0.01em; opacity: 0.85; }
+.hz-meta i { width: 6px; height: 6px; background: var(--jaune-dore); }
+.hz-panel.is-gold .hz-meta i { background: var(--black); }
+.hz-info { position: absolute; left: 56px; bottom: 56px; z-index: 3; max-width: 340px; }
+.hz-title { margin: 0; font-size: 22px; font-weight: 500; line-height: 1.2; letter-spacing: -0.04em; }
+.hz-stat { margin: 14px 0 0; font-size: 14px; line-height: 1.4; opacity: 0.85; }
+.hz-stat b { display: block; margin-bottom: 4px; font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -0.05em; opacity: 1; }
+.hz-panel:not(.is-gold) .hz-stat b { color: var(--jaune-dore); }
+.hz-panel.is-magenta .hz-stat b { color: var(--white); }
+.hz-link { position: absolute; right: 56px; bottom: 56px; z-index: 3; display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border: 1px solid currentColor; border-radius: 999px; color: inherit; font-size: 14px; text-decoration: none; transition: background-color 0.3s, color 0.3s; }
+.hz-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.hz-link:hover { background: var(--white); color: var(--black); }
+.hz-panel.is-gold .hz-link:hover { background: var(--black); color: var(--jaune-dore); }
+@media (max-width: 900px) {
+  .hz-word { padding-bottom: 30vh; font-size: 22vw; }
+  .hz-img { width: 82vw; }
+  .hz-meta { left: 18px; top: calc(var(--nav-h) + 16px); }
+  .hz-info { left: 18px; right: 18px; top: calc(var(--nav-h) + 48px); bottom: auto; max-width: none; }
+  .hz-title { font-size: 19px; }
+  .hz-stat b { font-size: 32px; }
+  .hz-link { right: auto; left: 18px; bottom: auto; top: 60svh; padding: 11px 18px; background: rgba(0, 0, 0, 0.25); }
+}
+
+/* ============ ESSAI : GALERIE HORIZONTALE DES ÉTUDES DE CAS (components/GalleryCases.tsx, page /essai) ============ */
+.gc { background: var(--black); color: var(--white); overflow-x: clip; }
+.gc-intro { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 50vh; padding-bottom: 40px; text-align: center; }
+.gc-tag { display: flex; align-items: center; gap: 9px; margin: 0 0 14px; color: #c9c9c9; font-size: 13px; }
+.gc-tag i { width: 6px; height: 6px; background: var(--jaune-dore); }
+.gc-intro h2 { margin: 0; font-size: clamp(36px, 6vw, 72px); font-weight: 600; line-height: 1; letter-spacing: -0.065em; }
+.gc-intro h2 em { font-style: normal; color: var(--jaune-dore); }
+.gc-scroll { position: relative; }
+/* la zone épinglée a la largeur d'une carte, centrée : la rangée part de la 1re carte centrée */
+.gc-sticky { position: sticky; top: 0; display: flex; align-items: center; width: 400px; height: 100svh; margin: 0 auto; overflow: visible; }
+.gc-row { display: flex; gap: 30px; will-change: transform; }
+.gc-item {
+  position: relative; flex: none; width: 400px; height: 500px; overflow: hidden; border-radius: 20px;
+  background: var(--img) center / cover no-repeat, var(--noir-charbon); color: var(--white); text-decoration: none;
+  transition: transform 0.5s var(--ease);
+}
+/* bas de carte teinté (couleur de la charte) pour la lisibilité */
+.gc-item::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 45%, color-mix(in srgb, var(--hue) 55%, #000) 100%); mix-blend-mode: multiply; }
+.gc-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.55)); }
+.gc-item:hover { transform: translateY(-6px); }
+.gc-content { position: absolute; left: 28px; right: 28px; bottom: 28px; z-index: 1; display: flex; flex-direction: column; }
+.gc-num { margin-bottom: 8px; color: var(--hue); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; filter: brightness(1.25); }
+.gc-name { font-size: 28px; font-weight: 600; line-height: 1.05; letter-spacing: -0.05em; }
+.gc-stat { margin-top: 10px; color: rgba(255, 255, 255, 0.85); font-size: 13px; line-height: 1.35; }
+.gc-stat b { color: var(--jaune-dore); font-size: 18px; font-weight: 600; }
+.gc-outro { display: grid; place-items: center; height: 60vh; }
+.gc-all { display: inline-flex; align-items: center; gap: 10px; padding: 16px 26px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px; color: var(--white); font-size: 15px; text-decoration: none; transition: border-color 0.3s, color 0.3s; }
+.gc-all svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.gc-all:hover { border-color: var(--jaune-dore); color: var(--jaune-dore); }
+@media (max-width: 600px) {
+  .gc-sticky { width: 280px; }
+  .gc-row { gap: 15px; }
+  .gc-item { width: 280px; height: 350px; border-radius: 16px; }
+  .gc-name { font-size: 23px; }
+}

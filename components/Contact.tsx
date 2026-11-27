@@ -176,12 +176,11 @@ export default function Contact() {
             )}
         </div>
 
-        {/* coordonnées (ancienne page Contact) : grandes lignes numérotées, remplies de jaune au survol */}
+        {/* coordonnées (ancienne page Contact) : grandes lignes, remplies de jaune au survol */}
         <ol className="ct-lines">
-          {LINES.map((l, i) => {
+          {LINES.map((l) => {
             const inner = (
               <>
-                <span className="ct-num">{String(i + 1).padStart(2, "0")}</span>
                 <span className="ct-lbl">{l.label}</span>
                 <span className="ct-val">
                   {l.value.map((v) => (
