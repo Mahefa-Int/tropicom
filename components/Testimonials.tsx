@@ -9,8 +9,8 @@ import { prefersReducedMotion } from "@/lib/motion";
  * elles ralentissent jusqu'à l'arrêt au survol (le temps de lire) et se laissent glisser
  * à la souris / au doigt. Au survol, un faisceau aux couleurs de la charte
  * (jaune doré → magenta → bleu canard) tourne autour de la carte (CSS, .tm-card::before / ::after).
- * Avis : les vrais avis Google de 4 étoiles et plus (TestimonialsSection, API Google Places) ;
- * à défaut (clé non renseignée, Google indisponible), les avis ci-dessous (FALLBACK_REVIEWS).
+ * Avis : ceux gérés dans admin → Avis (TestimonialsSection), copiés depuis la fiche Google ;
+ * à défaut (aucun avis publié), les avis ci-dessous (FALLBACK_REVIEWS).
  * Avatars de secours : /images/temoignages/*.png (découpés dans la maquette).
  */
 export type Review = {
@@ -23,7 +23,7 @@ export type Review = {
   isNew?: boolean;
 };
 
-export type ReviewSummary = { rating: number; total: number; url?: string };
+export type ReviewSummary = { rating: number; total: number; url?: string; writeUrl?: string };
 
 export const FALLBACK_REVIEWS: Review[] = [
   {
@@ -199,12 +199,22 @@ export default function Testimonials({ reviews = FALLBACK_REVIEWS, summary }: { 
       </h2>
       <p className="tm-tag">
         <span className="dot" aria-hidden="true"></span>Témoignage
-        {summary && summary.total > 0 && (
-          <a className="tm-google" href={summary.url} target="_blank" rel="noopener">
-            Avis Google · {summary.rating.toFixed(1).replace(".", ",")} ★ · {summary.total} avis
-          </a>
-        )}
       </p>
+      {/* note Google (lien vers la fiche) + « Laisser un avis », sous l'étiquette */}
+      {summary && (summary.total > 0 || summary.writeUrl) && (
+        <p className="tm-gbar">
+          {summary.total > 0 && (
+            <a className="tm-google" href={summary.url} target="_blank" rel="noopener">
+              Avis Google · {summary.rating.toFixed(1).replace(".", ",")} ★ · {summary.total} avis
+            </a>
+          )}
+          {summary.writeUrl && (
+            <a className="tm-google tm-write" href={summary.writeUrl} target="_blank" rel="noopener">
+              Laisser un avis
+            </a>
+          )}
+        </p>
+      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="tm-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
 

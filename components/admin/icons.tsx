@@ -28,6 +28,11 @@ export const Icons = {
       <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18" />
     </svg>
   ),
+  star: (
+    <svg {...base}>
+      <path d="m12 3 2.7 5.6 6.1.8-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.8z" />
+    </svg>
+  ),
   calendar: (
     <svg {...base}>
       <rect x="3" y="5" width="18" height="16" rx="2" />

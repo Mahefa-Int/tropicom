@@ -147,10 +147,10 @@ proportionnelle à la largeur de l'écran (`--g: calc(100vw / 1440)`). Sous 900 
 
 **Animations** : elles respectent le réglage « réduire les animations » du système (`lib/motion.ts`).
 
-**Avis Google** (accueil, « Nos clients en parlent ») : `components/TestimonialsSection.tsx` lit les avis de la fiche
-Google via l'API Places (New) (`lib/googleReviews.ts`), garde ceux de **4 étoiles et plus** et les relit une fois
-par jour. Variables : `GOOGLE_PLACES_API_KEY` et `GOOGLE_PLACE_ID`. Limite de Google : 5 avis au plus (les plus
-pertinents). Sans clé ou en cas d'erreur, les avis de secours (`FALLBACK_REVIEWS` dans `Testimonials.tsx`) s'affichent.
+**Avis clients** (accueil, « Nos clients en parlent ») : gérés dans **admin → Avis** (table `reviews`), copiés à la main
+depuis la fiche Google (gratuit, sans API). La même page règle la note globale, le nombre d'avis et l'identifiant de la
+fiche (Place ID, table `settings`), utilisés pour « Avis Google · 4,8 ★ · 28 avis » (lien vers la fiche) et « Laisser un avis ».
+Sans avis publié, les avis de secours (`FALLBACK_REVIEWS` dans `Testimonials.tsx`) s'affichent.
 
 ---
 
@@ -347,3 +347,5 @@ Page Contact → bouton « Prendre rendez-vous » : fenêtre (composant `compone
 - **Pas inclus** (volontairement simple) : lien de visio automatique (à envoyer soi-même), rappel la veille,
   déplacement ou annulation par le client (il répond à l'e-mail), synchronisation avec Google Agenda.
 - **Mise en production** : `npm run db:migrate` (crée la table `appointments`).
+
+Migration `0009_reviews` (avis + réglages) : `npm run db:migrate` sur le serveur.

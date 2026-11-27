@@ -157,6 +157,26 @@ export const appointments = mysqlTable(
   (t) => [index("appointments_starts_idx").on(t.startsAt)],
 );
 
+/** avis clients (copiés depuis la fiche Google), affichés dans « Nos clients en parlent » sur l'accueil */
+export const reviews = mysqlTable("reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  author: varchar("author", { length: 160 }).notNull(),
+  avatarUrl: varchar("avatar_url", { length: 255 }),
+  rating: int("rating").notNull().default(5),
+  text: text("text").notNull(),
+  /** date de l'avis sur Google (affichée « il y a 2 mois ») */
+  reviewDate: date("review_date", { mode: "string" }),
+  status: mysqlEnum("status", ["published", "draft"]).notNull().default("published"),
+  sortOrder: int("sort_order").notNull().default(0),
+  createdAt: datetime("created_at").notNull().default(now()),
+});
+
+/** réglages simples du site (clé → valeur), ex. note Google globale */
+export const settings = mysqlTable("settings", {
+  key: varchar("key", { length: 64 }).primaryKey(),
+  value: text("value").notNull(),
+});
+
 /** statistiques Google Search Console, une ligne par jour (remplie plus tard par la synchronisation) */
 export const gscDaily = mysqlTable("gsc_daily", {
   day: date("day", { mode: "string" }).primaryKey(),
@@ -173,3 +193,4 @@ export type CaseStudy = typeof caseStudies.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type Media = typeof media.$inferSelect;
 export type Appointment = typeof appointments.$inferSelect;
+export type Review = typeof reviews.$inferSelect;

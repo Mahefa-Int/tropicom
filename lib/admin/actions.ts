@@ -18,6 +18,7 @@ import { hashPassword, passwordProblem, verifyPassword } from "./password";
 import { slugify, type FormState } from "./util";
 import { DetailsSchema, emptyDetails, fullTitle } from "@/lib/cases";
 import { toOptimizedWebp, uploadDir } from "./images";
+import { REVIEW_KEYS } from "@/lib/reviews";
 
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
 const optional = (v: string) => (v === "" ? null : v);
@@ -287,6 +288,71 @@ export async function deleteAppointment(id: number) {
   await requireUser();
   await db.delete(schema.appointments).where(eq(schema.appointments.id, id));
   revalidatePath("/admin/rendez-vous");
+}
+
+/* ------------------------------------------------------------------ avis */
+
+const ReviewSchema = z.object({
+  author: z.string().trim().min(1, "Indiquez le nom du client.").max(160),
+  rating: z.coerce.number().int().min(1).max(5),
+  text: z.string().trim().min(1, "Collez le texte de l'avis.").max(5000),
+  reviewDate: z.string().trim().regex(/^(\d{4}-\d{2}-\d{2})?$/, "Date invalide."),
+  avatarUrl: z.string().trim().max(255),
+  status: z.enum(["published", "draft"]),
+  sortOrder: z.coerce.number().int().min(0).max(9999),
+});
+
+/** ajoute (sans id) ou modifie un avis */
+export async function saveReview(_: FormState, form: FormData): Promise<FormState> {
+  await requireUser();
+  const fields = Object.fromEntries(["author", "rating", "text", "reviewDate", "avatarUrl", "status", "sortOrder"].map((k) => [k, str(form, k)]));
+  const parsed = ReviewSchema.safeParse({ ...fields, status: fields.status || "published", sortOrder: fields.sortOrder || "0" });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Formulaire incomplet.", fields };
+  const d = parsed.data;
+  const values = { ...d, reviewDate: optional(d.reviewDate), avatarUrl: optional(d.avatarUrl) };
+  const id = Number(str(form, "id"));
+  if (id) await db.update(schema.reviews).set(values).where(eq(schema.reviews.id, id));
+  else await db.insert(schema.reviews).values(values);
+  revalidatePath("/");
+  revalidatePath("/admin/avis");
+  if (id) redirect("/admin/avis");
+  return { ok: "Avis ajouté." };
+}
+
+export async function setReviewStatus(id: number, status: "published" | "draft") {
+  await requireUser();
+  await db.update(schema.reviews).set({ status }).where(eq(schema.reviews.id, id));
+  revalidatePath("/");
+  revalidatePath("/admin/avis");
+}
+
+export async function deleteReview(id: number) {
+  await requireUser();
+  await db.delete(schema.reviews).where(eq(schema.reviews.id, id));
+  revalidatePath("/");
+  revalidatePath("/admin/avis");
+}
+
+/** note globale, nombre d'avis et identifiant de la fiche Google */
+export async function saveReviewSettings(_: FormState, form: FormData): Promise<FormState> {
+  await requireUser();
+  const rating = str(form, "rating").replace(",", ".");
+  const total = str(form, "total");
+  const placeId = str(form, "placeId");
+  const fields = { rating, total, placeId };
+  if (rating && !(Number(rating) >= 1 && Number(rating) <= 5)) return { error: "La note doit être entre 1 et 5 (ex. 4,8).", fields };
+  if (total && !(Number.isInteger(Number(total)) && Number(total) >= 0)) return { error: "Le nombre d'avis doit être un nombre entier.", fields };
+  if (placeId && !/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: "Identifiant de fiche (Place ID) invalide.", fields };
+  for (const [k, v] of [
+    [REVIEW_KEYS.rating, rating],
+    [REVIEW_KEYS.total, total],
+    [REVIEW_KEYS.placeId, placeId],
+  ]) {
+    await db.insert(schema.settings).values({ key: k, value: v }).onDuplicateKeyUpdate({ set: { value: v } });
+  }
+  revalidatePath("/");
+  revalidatePath("/admin/avis");
+  return { ok: "Réglages enregistrés." };
 }
 
 /* ------------------------------------------------------------------ médias */

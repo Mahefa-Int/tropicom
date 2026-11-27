@@ -16,6 +16,7 @@ const CONTENT = [
   { href: "/admin/realisations", label: "Réalisations", icon: Icons.case },
   { href: "/admin/messages", label: "Messages", icon: Icons.mail, count: "unread" as const },
   { href: "/admin/rendez-vous", label: "Rendez-vous", icon: Icons.calendar, count: "upcoming" as const },
+  { href: "/admin/avis", label: "Avis", icon: Icons.star },
   { href: "/admin/medias", label: "Médiathèque", icon: Icons.image },
 ];
 
