@@ -88,7 +88,7 @@ export default function Maintenance() {
 
       <header className="mt-top">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/logo-tropicom.webp" alt="Tropi'Com" width={110} height={60} className="mt-logo" />
+        <img src="/images/logo-tropicom.webp" alt="Tropi'Com" width={110} height={60} className="mt-logo" fetchPriority="high" />
         <button type="button" className="mt-lock" onClick={open} aria-label="Accès à l'aperçu du site" title="Accès à l'aperçu">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
