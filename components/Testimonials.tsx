@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/motion";
+import CtaIcon from "./CtaIcon";
 
 /**
  * « Nos clients en parlent » — avis clients (après les 5 temps).
@@ -200,21 +201,6 @@ export default function Testimonials({ reviews = FALLBACK_REVIEWS, summary }: { 
       <p className="tm-tag">
         <span className="dot" aria-hidden="true"></span>Témoignage
       </p>
-      {/* note Google (lien vers la fiche) + « Laisser un avis », sous l'étiquette */}
-      {summary && (summary.total > 0 || summary.writeUrl) && (
-        <p className="tm-gbar">
-          {summary.total > 0 && (
-            <a className="tm-google" href={summary.url} target="_blank" rel="noopener">
-              Avis Google · {summary.rating.toFixed(1).replace(".", ",")} ★ · {summary.total} avis
-            </a>
-          )}
-          {summary.writeUrl && (
-            <a className="tm-google tm-write" href={summary.writeUrl} target="_blank" rel="noopener">
-              Laisser un avis
-            </a>
-          )}
-        </p>
-      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="tm-traits" src="/images/graphic-point.png" alt="" width={64} height={32} />
 
@@ -258,6 +244,32 @@ export default function Testimonials({ reviews = FALLBACK_REVIEWS, summary }: { 
           ))}
         </ul>
       </div>
+      {/* sous les avis : note Google (lien vers la fiche) + bouton « Laisser un avis » */}
+      {summary && (summary.total > 0 || summary.writeUrl) && (
+        <div className="tm-gbar">
+          {summary.total > 0 && (
+            <a className="tm-gscore" href={summary.url} target="_blank" rel="noopener" aria-label={`Note Google : ${summary.rating} sur 5, ${summary.total} avis. Voir tous nos avis sur Google`}>
+              <svg className="tm-glogo" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8.1z" />
+                <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z" />
+                <path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.4V7H2.1a11 11 0 0 0 0 10z" />
+                <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z" />
+              </svg>
+              <b>{summary.rating.toFixed(1).replace(".", ",")}</b>
+              <Stars rating={summary.rating} />
+              <span>
+                {summary.total} avis Google <u>Voir tous les avis</u>
+              </span>
+            </a>
+          )}
+          {summary.writeUrl && (
+            <a className="cta tm-write" href={summary.writeUrl} target="_blank" rel="noopener">
+              <CtaIcon />
+              <span className="cta-label">Laisser un avis</span>
+            </a>
+          )}
+        </div>
+      )}
     </section>
   );
 }

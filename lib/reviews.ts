@@ -4,12 +4,12 @@ import { db, schema } from "@/lib/db";
 
 /**
  * Avis clients gérés dans l'admin (admin → Avis), copiés à la main depuis la fiche Google.
- * Gratuit, sans API : la note globale, le nombre d'avis et l'identifiant de la fiche (Place ID)
- * se règlent dans la même page.
+ * Gratuit, sans API : la note globale et le nombre d'avis se règlent dans la même page.
+ * L'identifiant de la fiche Google (Place ID) est fixe : DEFAULT_PLACE_ID ci-dessous (affiché en lecture seule).
  */
 export const REVIEW_KEYS = { rating: "reviews.rating", total: "reviews.total", placeId: "reviews.placeId" } as const;
 
-/** identifiant de la fiche Google « Tropi'Com Agency Madagascar » (à vérifier dans admin → Avis) */
+/** identifiant de la fiche Google « Tropi'Com Agency Madagascar » (non modifiable dans l'admin) */
 export const DEFAULT_PLACE_ID = "ChIJpQVOwWh_8CERCXp45b_qUeM";
 
 export type ReviewSettings = { rating: number; total: number; placeId: string };
@@ -23,7 +23,7 @@ export async function getReviewSettings(): Promise<ReviewSettings> {
   return {
     rating: Number(v(REVIEW_KEYS.rating).replace(",", ".")) || 0,
     total: Number(v(REVIEW_KEYS.total)) || 0,
-    placeId: v(REVIEW_KEYS.placeId) || DEFAULT_PLACE_ID,
+    placeId: DEFAULT_PLACE_ID,
   };
 }
 

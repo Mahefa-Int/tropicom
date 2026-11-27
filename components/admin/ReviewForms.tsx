@@ -101,8 +101,9 @@ export function ReviewSettingsForm({ rating, total, placeId }: { rating: number;
       </div>
       <div className="adm-field">
         <label htmlFor="rs-place">Identifiant de la fiche (Place ID)</label>
-        <input id="rs-place" name="placeId" className="adm-input" defaultValue={f?.placeId ?? placeId} />
-        <small>Sert aux boutons « Voir tous nos avis » et « Laisser un avis ».</small>
+        {/* lecture seule : l'identifiant de la fiche ne change pas */}
+        <input id="rs-place" className="adm-input" value={placeId} readOnly disabled />
+        <small>Sert aux boutons « Voir tous les avis » et « Laisser un avis ». Non modifiable.</small>
       </div>
       <div>
         <button type="submit" className="adm-btn adm-btn--primary" disabled={pending}>

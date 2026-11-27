@@ -333,20 +333,17 @@ export async function deleteReview(id: number) {
   revalidatePath("/admin/avis");
 }
 
-/** note globale, nombre d'avis et identifiant de la fiche Google */
+/** note globale et nombre d'avis (l'identifiant de la fiche Google n'est pas modifiable) */
 export async function saveReviewSettings(_: FormState, form: FormData): Promise<FormState> {
   await requireUser();
   const rating = str(form, "rating").replace(",", ".");
   const total = str(form, "total");
-  const placeId = str(form, "placeId");
-  const fields = { rating, total, placeId };
+  const fields = { rating, total };
   if (rating && !(Number(rating) >= 1 && Number(rating) <= 5)) return { error: "La note doit être entre 1 et 5 (ex. 4,8).", fields };
   if (total && !(Number.isInteger(Number(total)) && Number(total) >= 0)) return { error: "Le nombre d'avis doit être un nombre entier.", fields };
-  if (placeId && !/^[A-Za-z0-9_-]{10,200}$/.test(placeId)) return { error: "Identifiant de fiche (Place ID) invalide.", fields };
   for (const [k, v] of [
     [REVIEW_KEYS.rating, rating],
     [REVIEW_KEYS.total, total],
-    [REVIEW_KEYS.placeId, placeId],
   ]) {
     await db.insert(schema.settings).values({ key: k, value: v }).onDuplicateKeyUpdate({ set: { value: v } });
   }

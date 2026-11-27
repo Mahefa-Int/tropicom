@@ -6,6 +6,7 @@ import type { ExpertiseContent, Stat } from "@/lib/expertises-content";
 import { pad2 } from "@/lib/expertises";
 import { prefersReducedMotion } from "@/lib/motion";
 import GlowField, { type Glow } from "./GlowField";
+import CtaIcon from "./CtaIcon";
 
 /**
  * Page d'une expertise.
@@ -176,11 +177,9 @@ export default function ExpertiseDetail({ e, c }: { e: Expertise; c: ExpertiseCo
             })}
           </h1>
           <p className="xd-intro">{c.intro}</p>
-          <a href="#xd-list" className="xd-down">
-            <span>Découvrir</span>
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" />
-            </svg>
+          <a href="#xd-list" className="cta xd-down">
+            <CtaIcon />
+            <span className="cta-label">Découvrir</span>
           </a>
         </div>
         <div className="xd-shots" aria-hidden="true">
