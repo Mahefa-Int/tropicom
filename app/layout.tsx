@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Bangers } from "next/font/google";
 import "./globals.css";
+import PageViewTracker from "@/components/PageViewTracker";
 
 // Polices (auto-hébergées par Next.js) : DM Sans avec l'axe optique, comme sur la maquette
 const dmSans = DM_Sans({
@@ -32,7 +33,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${dmSans.variable} ${bangers.variable}`}>
       {/* suppressHydrationWarning : certaines extensions du navigateur ajoutent des attributs au <body> */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        {/* compteur de pages vues (admin → Statistiques) */}
+        <PageViewTracker />
+      </body>
     </html>
   );
 }

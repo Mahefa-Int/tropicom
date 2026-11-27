@@ -349,3 +349,15 @@ Page Contact → bouton « Prendre rendez-vous » : fenêtre (composant `compone
 - **Mise en production** : `npm run db:migrate` (crée la table `appointments`).
 
 Migration `0009_reviews` (avis + réglages) : `npm run db:migrate` sur le serveur.
+
+---
+
+## Statistiques de visite
+
+Admin → Statistiques → « Pages les plus visitées » (7, 28 ou 90 jours) : compteur maison, gratuit et sans cookie.
+
+- `components/PageViewTracker.tsx` (dans `app/layout.tsx`) envoie l'adresse de chaque page affichée à `app/api/track/route.ts`,
+  qui ajoute 1 à la table `page_views` (une ligne par jour et par page, aucune donnée personnelle).
+- Non comptés : robots, équipe connectée à l'admin, pages de l'admin, visiteurs qui voient la page de maintenance.
+- Mise en production : migration `0010_page_views` (`npm run db:migrate`, ou la requête SQL dans phpMyAdmin).
+

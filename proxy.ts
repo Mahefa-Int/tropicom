@@ -37,6 +37,6 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  // tout sauf les fichiers techniques, les images envoyées (/media), l'API d'aperçu et les fichiers statiques
-  matcher: ["/((?!_next/|api/preview|media/|favicon|icon|robots.txt|sitemap.xml|.*\\.[a-zA-Z0-9]{2,5}$).*)"],
+  // tout sauf les fichiers techniques, les images envoyées (/media), l'API d'aperçu, le compteur de visites et les fichiers statiques
+  matcher: ["/((?!_next/|api/preview|api/track|media/|favicon|icon|robots.txt|sitemap.xml|.*\\.[a-zA-Z0-9]{2,5}$).*)"],
 };

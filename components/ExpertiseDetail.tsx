@@ -7,6 +7,7 @@ import { pad2 } from "@/lib/expertises";
 import { prefersReducedMotion } from "@/lib/motion";
 import GlowField, { type Glow } from "./GlowField";
 import CtaIcon from "./CtaIcon";
+import { useSpotlight } from "./useSpotlight";
 
 /**
  * Page d'une expertise.
@@ -51,11 +52,13 @@ function Count({ value }: { value: string }) {
   return <b ref={ref}>{shown}</b>;
 }
 
+/** chiffres clés : effet « projecteur » au survol (useSpotlight), comme les cartes des autres pages */
 function Stats({ stats }: { stats: Stat[] }) {
+  const spot = useSpotlight<HTMLUListElement>();
   return (
-    <ul className="xd-stats">
+    <ul className="xd-stats" ref={spot}>
       {stats.map((s) => (
-        <li key={s.label}>
+        <li key={s.label} className="spot">
           <Count value={s.value} />
           <span>{s.label}</span>
         </li>

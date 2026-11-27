@@ -1,4 +1,4 @@
-import { desc, gte, sum, avg } from "drizzle-orm";
+import { desc, gte, sum, avg, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { requireUser } from "@/lib/admin/dal";
 import { LineChart, PageHead } from "@/components/admin/ui";
@@ -8,6 +8,22 @@ export const metadata = { title: "Statistiques" };
 
 const PERIODS = [7, 28, 90];
 
+/** nom lisible des pages du site (sinon l'adresse s'affiche telle quelle) */
+const PAGE_NAMES: Record<string, string> = {
+  "/": "Accueil",
+  "/agence": "L'Agence",
+  "/agence/equipe": "L'équipe",
+  "/agence/notre-histoire": "Notre histoire",
+  "/agence/carrieres": "Carrières",
+  "/expertises": "Expertises",
+  "/realisations": "Réalisations",
+  "/ressources": "Ressources",
+  "/contact": "Contact",
+};
+const pageName = (path: string) =>
+  PAGE_NAMES[path] ??
+  (path.startsWith("/expertises/") ? `Expertise · ${path.split("/")[2]}` : path.startsWith("/realisations/") ? `Réalisation · ${path.split("/")[2]}` : path);
+
 // couleur pleine du demi-cercle, assortie à la tache de chaque carte
 const SOLID: Record<string, string> = {"rgba(70,167,88,.3)": "#46a758", "rgba(62,157,158,.35)": "#3e9d9e", "rgba(247,194,39,.3)": "#f7c227", "rgba(222,11,125,.3)": "#de0b7d"};
 
@@ -16,14 +32,26 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   const { j } = await searchParams;
   const days = PERIODS.includes(Number(j)) ? Number(j) : 28;
   const since = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
-  const [rows, [tot], [last]] = await Promise.all([
+  const views = sum(schema.pageViews.views).mapWith(Number);
+  const [rows, [tot], [last], topPages, [allViews]] = await Promise.all([
     db.select().from(schema.gscDaily).where(gte(schema.gscDaily.day, since)).orderBy(schema.gscDaily.day),
     db
       .select({ clicks: sum(schema.gscDaily.clicks), impressions: sum(schema.gscDaily.impressions), position: avg(schema.gscDaily.position) })
       .from(schema.gscDaily)
       .where(gte(schema.gscDaily.day, since)),
     db.select({ day: schema.gscDaily.day }).from(schema.gscDaily).orderBy(desc(schema.gscDaily.day)).limit(1),
+    // pages les plus visitées (compteur maison, app/api/track)
+    db
+      .select({ path: schema.pageViews.path, views })
+      .from(schema.pageViews)
+      .where(gte(schema.pageViews.day, since))
+      .groupBy(schema.pageViews.path)
+      .orderBy(desc(sql`2`))
+      .limit(15),
+    db.select({ views }).from(schema.pageViews).where(gte(schema.pageViews.day, since)),
   ]);
+  const totalViews = allViews?.views ?? 0;
+  const maxViews = topPages[0]?.views ?? 0;
   const clicks = Number(tot.clicks ?? 0);
   const impressions = Number(tot.impressions ?? 0);
   const ctr = impressions ? (clicks / impressions) * 100 : 0;
@@ -38,13 +66,63 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <PageHead title="Statistiques" text="Visibilité du site dans la recherche Google (Search Console).">
+      <PageHead title="Statistiques" text="Pages les plus visitées du site, et visibilité dans la recherche Google (Search Console).">
         {PERIODS.map((p) => (
           <a key={p} href={`?j=${p}`} className={"adm-btn adm-btn--sm" + (p === days ? "" : " adm-btn--ghost")}>
             {p} jours
           </a>
         ))}
       </PageHead>
+
+      <section className="adm-card" style={{ marginBottom: 16 }}>
+        <h2>Pages les plus visitées</h2>
+        <p className="adm-card-text">
+          {totalViews.toLocaleString("fr-FR")} pages vues sur les {days} derniers jours. Compteur du site, sans cookie : l’équipe connectée à l’admin et les robots ne sont pas comptés.
+        </p>
+        {topPages.length ? (
+          <table className="adm-table">
+            <thead>
+              <tr>
+                <th style={{ width: 40 }}>#</th>
+                <th>Page</th>
+                <th style={{ width: "40%" }}>Part des visites</th>
+                <th style={{ textAlign: "right" }}>Vues</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topPages.map((p, i) => (
+                <tr key={p.path}>
+                  <td className="adm-sub">{i + 1}</td>
+                  <td>
+                    <span className="adm-strong">{pageName(p.path)}</span>
+                    <a className="adm-sub" href={p.path} target="_blank" rel="noopener">
+                      {p.path}
+                    </a>
+                  </td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ flex: 1, height: 6, borderRadius: 3, background: "var(--a-panel-2)", overflow: "hidden" }}>
+                        <span style={{ display: "block", width: `${maxViews ? (p.views / maxViews) * 100 : 0}%`, height: "100%", background: "var(--a-yellow)" }} />
+                      </span>
+                      <small className="adm-sub" style={{ margin: 0, minWidth: 42, textAlign: "right" }}>
+                        {totalViews ? Math.round((p.views / totalViews) * 100) : 0} %
+                      </small>
+                    </div>
+                  </td>
+                  <td style={{ textAlign: "right" }} className="adm-strong">
+                    {p.views.toLocaleString("fr-FR")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="adm-empty" style={{ padding: "20px 0" }}>
+            <b>Aucune visite enregistrée sur cette période</b>
+            Les visites sont comptées à partir de maintenant (pendant la maintenance, seuls les accès avec le code sont comptés).
+          </p>
+        )}
+      </section>
 
       {!rows.length && (
         <div className="adm-notice" style={{ marginBottom: 16 }}>

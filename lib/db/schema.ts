@@ -2,7 +2,7 @@
  * Schéma de la base (MariaDB / MySQL) du back-office.
  * Modifier ce fichier, puis : npm run db:generate (crée la migration SQL) et npm run db:migrate (l'applique).
  */
-import { mysqlTable, int, varchar, text, longtext, datetime, mysqlEnum, boolean, date, double, uniqueIndex, index } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, longtext, datetime, mysqlEnum, boolean, date, double, uniqueIndex, index, primaryKey } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
 const now = () => sql`CURRENT_TIMESTAMP`;
@@ -176,6 +176,17 @@ export const settings = mysqlTable("settings", {
   key: varchar("key", { length: 64 }).primaryKey(),
   value: text("value").notNull(),
 });
+
+/** pages vues du site public, comptées par jour et par adresse (compteur maison, sans cookie) */
+export const pageViews = mysqlTable(
+  "page_views",
+  {
+    day: date("day", { mode: "string" }).notNull(),
+    path: varchar("path", { length: 190 }).notNull(),
+    views: int("views").notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.path] })],
+);
 
 /** statistiques Google Search Console, une ligne par jour (remplie plus tard par la synchronisation) */
 export const gscDaily = mysqlTable("gsc_daily", {

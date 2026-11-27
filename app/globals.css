@@ -6564,7 +6564,7 @@ a {
 /* ---- effet « projecteur » (components/useSpotlight.ts) : lumière dorée qui suit la souris ;
    bord éclairé (cœur blanc) + halo dans la carte. Cartes : Content Sprint, Quatre modules, Quatre briques (Expertises), valeurs (L'Agence), entrées de la page Ressources ---- */
 .spot { --mx: -999px; --my: -999px; --spot: calc(170 * var(--g, 1px)); isolation: isolate; }
-.pl-stats li.spot, .pl-mods li.spot, .pl-bricks li.spot { position: relative; }
+.pl-stats li.spot, .pl-mods li.spot, .pl-bricks li.spot, .xd-stats li.spot { position: relative; }
 .spot::before, .spot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
 .spot::before {
   padding: 1.5px;
