@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CtaIcon from "./CtaIcon";
+import GlowField, { type Glow } from "./GlowField";
+import Fireflies from "./Fireflies";
 import { TYPES, ZONES, buildSlots, hhmm, longDate, type BookingType, type Busy } from "@/lib/booking";
 import { bookAppointment, getBusy } from "@/lib/booking-actions";
 
@@ -13,6 +15,19 @@ import { bookAppointment, getBusy } from "@/lib/booking-actions";
  */
 
 const dayKey = (t: number, tz: string) => new Intl.DateTimeFormat("fr-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(t); // AAAA-MM-JJ
+/** morceau de date dans le fuseau choisi (« lun. », « 16 », « déc. ») */
+const fmtPart = (t: number, tz: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("fr-FR", { timeZone: tz, ...o }).format(t).replace(".", "");
+const hourIn = (t: number, tz: string) => Number(new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", hourCycle: "h23" }).format(t));
+
+/* fond de la fenêtre : halos et lucioles de la charte */
+const RIBBON_GLOWS: Glow[] = [
+  { x: 1180, y: 60, rx: 520, ry: 420, c: "247, 194, 39", a: 0.28, dx: 60, dy: 40, sp: 0.35, m: -20 },
+  { x: 120, y: 620, rx: 520, ry: 420, c: "222, 11, 125", a: 0.3, dx: 70, dy: 40, sp: 0.3, ph: 2, m: 20 },
+  { x: 700, y: 700, rx: 460, ry: 360, c: "62, 157, 158", a: 0.22, dx: 60, dy: 40, sp: 0.3, ph: 4, m: 10 },
+];
+const ffLeft = (_i: number, r: (a: number, b: number) => number) => r(2, 98);
+const ffTop = (_i: number, r: (a: number, b: number) => number) => r(5, 95);
+
 const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 const DOW = ["L", "M", "M", "J", "V", "S", "D"];
 
@@ -55,6 +70,13 @@ export default function Booking({ popup = false }: { popup?: boolean }) {
   }, [slots, tz]);
 
   const firstKey = byDay.keys().next().value as string | undefined;
+
+  // fenêtre : premier jour libre choisi d'office ; flèches du ruban = défilement d'un écran
+  const stripRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (popup && firstKey && (!day || !byDay.has(day))) setDay(firstKey);
+  }, [popup, day, firstKey, byDay]);
+  const slide = (dir: number) => stripRef.current?.scrollBy({ left: dir * stripRef.current.clientWidth * 0.8, behavior: "smooth" });
   const [y, mo] = month ?? (firstKey ? [Number(firstKey.slice(0, 4)), Number(firstKey.slice(5, 7)) - 1] : [new Date().getFullYear(), new Date().getMonth()]);
   const lastKey = [...byDay.keys()].pop();
   const canPrev = firstKey ? y * 12 + mo > Number(firstKey.slice(0, 4)) * 12 + Number(firstKey.slice(5, 7)) - 1 : false;
@@ -130,8 +152,14 @@ export default function Booking({ popup = false }: { popup?: boolean }) {
       {/* apparition sur un conteneur fixe : la classe de la carte change à chaque étape */}
       <div className="bk-card-wrap" data-reveal={popup ? undefined : true}>
       <div className={"bk-card is-" + step}>
-        {/* ---------- colonne de gauche : le rendez-vous (en fenêtre : seulement après le choix du créneau) ---------- */}
-        {!(popup && step === "choose") && (
+        {popup && (
+          <>
+            <GlowField glows={RIBBON_GLOWS} breath={0.7} />
+            <Fireflies className="bkr-fireflies" count={12} left={ffLeft} top={ffTop} />
+          </>
+        )}
+        {/* ---------- colonne de gauche : le rendez-vous (page /rendez-vous seulement ; en fenêtre, résumé en haut du formulaire) ---------- */}
+        {!popup && (
         <aside className="bk-info">
           {step === "choose" ? (
             <>
@@ -197,8 +225,114 @@ export default function Booking({ popup = false }: { popup?: boolean }) {
         </aside>
         )}
 
-        {/* ---------- étape 1 : calendrier + créneaux ---------- */}
-        {step === "choose" && (
+        {/* ---------- étape 1 (fenêtre de la page Contact) : ruban de jours + heures ---------- */}
+        {step === "choose" && popup && (
+          <div className="bkr">
+            <h2 className="bkr-title">
+              Choisissez <em>un moment.</em>
+            </h2>
+
+            <div className="bkr-strip">
+              <button type="button" className="bkr-arrow" onClick={() => slide(-1)} aria-label="Jours précédents">
+                <Ico d="M12 4 6 10l6 6" />
+              </button>
+              <div className="bkr-days" ref={stripRef} role="listbox" aria-label="Jours disponibles">
+                {[...byDay.keys()].map((k, i) => {
+                  const t0 = byDay.get(k)![0];
+                  const on = day === k;
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      role="option"
+                      aria-selected={on}
+                      className={"bkr-day" + (on ? " is-on" : "")}
+                      style={{ "--i": i } as React.CSSProperties}
+                      onClick={() => {
+                        setDay(k);
+                        setSlot(null);
+                        setError("");
+                      }}
+                    >
+                      <small>{fmtPart(t0, tz, { weekday: "short" })}</small>
+                      <b>{fmtPart(t0, tz, { day: "numeric" })}</b>
+                      <small>{fmtPart(t0, tz, { month: "short" })}</small>
+                      <i>{byDay.get(k)!.length} créneaux</i>
+                    </button>
+                  );
+                })}
+              </div>
+              <button type="button" className="bkr-arrow" onClick={() => slide(1)} aria-label="Jours suivants">
+                <Ico d="m8 4 6 6-6 6" />
+              </button>
+            </div>
+
+            {error && (
+              <p className="bk-error" role="alert">
+                {error}
+              </p>
+            )}
+
+            {day && byDay.get(day) && (
+              <div className="bkr-times" key={day + tz}>
+                {(
+                  [
+                    ["Matin", "M10 3v2M10 15v2M3 10h2M15 10h2M5 5l1.4 1.4M13.6 13.6 15 15M5 15l1.4-1.4M13.6 6.4 15 5M10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z", (t: number) => hourIn(t, tz) < 12],
+                    ["Après-midi", "M3 13h14M5 13a5 5 0 0 1 10 0M10 4v2M4.3 7.3l1.4 1.4M15.7 7.3l-1.4 1.4M7 16h6", (t: number) => hourIn(t, tz) >= 12],
+                  ] as const
+                ).map(([label, icon, keep]) => {
+                  const list = byDay.get(day)!.filter(keep);
+                  if (!list.length) return null;
+                  return (
+                    <div key={label} className="bkr-group">
+                      <p>
+                        <Ico d={icon} />
+                        {label}
+                      </p>
+                      <div className="bkr-pills">
+                        {list.map((t, i) => (
+                          <button
+                            key={t}
+                            type="button"
+                            className={"bkr-time" + (slot === t ? " is-on" : "")}
+                            style={{ "--i": i } as React.CSSProperties}
+                            onClick={() => {
+                              setSlot(t);
+                              setError("");
+                            }}
+                          >
+                            {hhmm(t, tz)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="bkr-foot">
+              <label className="bk-tz">
+                <Ico d="M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15ZM2.5 10h15M10 2.5c2.2 2.3 2.2 12.7 0 15M10 2.5c-2.2 2.3-2.2 12.7 0 15" />
+                Heures :
+                <select value={tz} onChange={(e) => setTz(e.target.value)}>
+                  {ZONES.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      {z.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button type="button" className="cta bkr-next" disabled={!slot} onClick={() => setStep("form")}>
+                <CtaIcon />
+                <span className="cta-label">{slot ? `Suivant · ${hhmm(slot, tz)}` : "Choisissez une heure"}</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ---------- étape 1 (page /rendez-vous) : calendrier + créneaux ---------- */}
+        {step === "choose" && !popup && (
           <>
             <div className="bk-cal">
               <div className="bk-cal-head">
@@ -303,16 +437,38 @@ export default function Booking({ popup = false }: { popup?: boolean }) {
               submit();
             }}
           >
-            <p className="bk-k">Vos coordonnées</p>
+            {popup ? (
+              <>
+                <h2 className="bkr-title">
+                  Vos <em>coordonnées.</em>
+                </h2>
+                <div className="bkr-recap">
+                  <span>
+                    <Ico d="M3 5.5h14v11H3zM3 9h14M7 3v4M13 3v4" />
+                    <span className="bk-cap">{slot && longDate(slot, tz)}</span>
+                  </span>
+                  <span>
+                    <Ico d="M10 5v5l3 2M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" />
+                    {slot && `${hhmm(slot, tz)} – ${hhmm(end, tz)}`}
+                    <small>({zoneLabel})</small>
+                  </span>
+                  <button type="button" onClick={() => setStep("choose")}>
+                    Modifier
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className="bk-k">Vos coordonnées</p>
+            )}
             <div className="bk-row">
-              <Field label="Nom et prénom" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required autoComplete="name" />
-              <Field label="Structure" value={form.company} onChange={(v) => setForm({ ...form, company: v })} placeholder="Hôtel, lodge, agence…" autoComplete="organization" />
+              <Field compact={popup} label="Nom et prénom" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required autoComplete="name" />
+              <Field compact={popup} label="Structure" value={form.company} onChange={(v) => setForm({ ...form, company: v })} placeholder="Hôtel, lodge, agence…" autoComplete="organization" />
             </div>
             <div className="bk-row">
-              <Field label="E-mail" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required autoComplete="email" />
-              <Field label="Téléphone / WhatsApp" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} autoComplete="tel" />
+              <Field compact={popup} label="E-mail" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required autoComplete="email" />
+              <Field compact={popup} label="Téléphone / WhatsApp" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} autoComplete="tel" />
             </div>
-            <div className="bk-field">
+            <div className={"bk-field" + (popup ? " bk-field--inline" : "")}>
               <span>Comment échanger ?</span>
               <div className="bk-seg">
                 {[
@@ -321,14 +477,20 @@ export default function Booking({ popup = false }: { popup?: boolean }) {
                 ].map(([v, l]) => (
                   <label key={v} className={form.mode === v ? "is-on" : undefined}>
                     <input type="radio" name="mode" value={v} checked={form.mode === v} onChange={() => setForm({ ...form, mode: v })} />
+                    {popup && <Ico d={v === "visio" ? "M2.5 6.5h10v7h-10zM12.5 9l5-3v8l-5-3" : "M6 3h3l1.2 3.2-1.6 1a8.4 8.4 0 0 0 4.9 4.9l1-1.6L17.7 11v3a1.7 1.7 0 0 1-1.8 1.7A13.7 13.7 0 0 1 4.3 4.8 1.7 1.7 0 0 1 6 3z"} />}
                     {l}
                   </label>
                 ))}
               </div>
             </div>
             <label className="bk-field">
-              <span>Votre besoin, en quelques mots</span>
-              <textarea rows={3} value={form.need} onChange={(e) => setForm({ ...form, need: e.target.value })} placeholder="Ex. plus de réservations directes, refonte du site, réseaux sociaux…" />
+              <span className={popup ? "bk-sr" : undefined}>Votre besoin, en quelques mots</span>
+              <textarea
+                rows={popup ? 2 : 3}
+                value={form.need}
+                onChange={(e) => setForm({ ...form, need: e.target.value })}
+                placeholder={popup ? "Votre besoin, en quelques mots (facultatif)" : "Ex. plus de réservations directes, refonte du site, réseaux sociaux…"}
+              />
             </label>
             {error && (
               <p className="bk-error" role="alert">
@@ -414,14 +576,23 @@ function Ico({ d }: { d: string }) {
   );
 }
 
-function Field({ label, value, onChange, type = "text", ...rest }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean; placeholder?: string; autoComplete?: string }) {
+/** champ de formulaire ; compact (fenêtre) : libellé caché, affiché dans le champ */
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+  compact = false,
+  ...rest
+}: { label: string; value: string; onChange: (v: string) => void; type?: string; compact?: boolean; required?: boolean; placeholder?: string; autoComplete?: string }) {
+  const ph = compact ? `${label}${rest.placeholder ? ` (${rest.placeholder.replace(/…$/, "")})` : ""}${rest.required ? " *" : ""}` : rest.placeholder;
   return (
     <label className="bk-field">
-      <span>
+      <span className={compact ? "bk-sr" : undefined}>
         {label}
         {rest.required && <i aria-hidden="true"> *</i>}
       </span>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} {...rest} />
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} {...rest} placeholder={ph} />
     </label>
   );
 }
